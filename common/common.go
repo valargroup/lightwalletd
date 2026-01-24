@@ -424,11 +424,190 @@ func stopIngestor() {
 	}
 }
 
+// pirStartupSync synchronizes the PIR service with the current chain state on startup.
+// This ensures the PIR database is caught up before we enter the normal block processing loop.
+// The flow is:
+//  1. Get PIR service status to find current PIR database height
+//  2. Get chain tip from zcashd
+//  3. If PIR is behind, send all missing blocks to PIR service
+//  4. Wait for PIR rebuild to complete
+//  5. Return to allow normal block processing to continue
+func pirStartupSync(c *BlockCache) {
+	extractor := GetNullifierExtractor()
+	if extractor == nil || !extractor.IsEnabled() {
+		return
+	}
+
+	ctx := context.Background()
+
+	// Get PIR status
+	pirStatus := extractor.GetPirStatus(ctx)
+	if pirStatus == nil {
+		Log.Warn("[PIR Startup] Could not get PIR status, skipping startup sync")
+		return
+	}
+
+	pirHeight := pirStatus.PirDbHeight
+	Log.WithFields(logrus.Fields{
+		"pir_db_height":   pirHeight,
+		"pending_blocks":  pirStatus.PendingBlocks,
+		"num_nullifiers":  pirStatus.NumNullifiers,
+		"rebuild_in_prog": pirStatus.RebuildInProgress,
+	}).Info("[PIR Startup] Current PIR status")
+
+	// Get chain tip from zcashd
+	result, err := RawRequest("getblockcount", []json.RawMessage{})
+	if err != nil {
+		Log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warn("[PIR Startup] Could not get chain tip, skipping startup sync")
+		return
+	}
+	var chainTip uint64
+	if err := json.Unmarshal(result, &chainTip); err != nil {
+		Log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warn("[PIR Startup] Could not parse chain tip, skipping startup sync")
+		return
+	}
+
+	Log.WithFields(logrus.Fields{
+		"chain_tip":     chainTip,
+		"pir_db_height": pirHeight,
+		"blocks_behind": chainTip - pirHeight,
+	}).Info("[PIR Startup] Chain tip vs PIR height")
+
+	// If already caught up (within 1 block), skip sync
+	if chainTip <= pirHeight+1 {
+		Log.Info("[PIR Startup] PIR is caught up, no startup sync needed")
+		return
+	}
+
+	// Calculate blocks to sync
+	startHeight := pirHeight + 1
+	blocksToSync := chainTip - pirHeight
+
+	Log.WithFields(logrus.Fields{
+		"start_height":   startHeight,
+		"end_height":     chainTip,
+		"blocks_to_sync": blocksToSync,
+	}).Info("[PIR Startup] Starting catch-up sync")
+
+	// Send all missing blocks to PIR service
+	syncedBlocks := uint64(0)
+	blocksWithNullifiers := uint64(0)
+	lastLogTime := Time.Now()
+
+	for height := startHeight; height <= chainTip; height++ {
+		block, err := getBlockFromRPC(int(height))
+		if err != nil {
+			Log.WithFields(logrus.Fields{
+				"height": height,
+				"error":  err,
+			}).Warn("[PIR Startup] Failed to get block, retrying...")
+			Time.Sleep(2 * time.Second)
+			// Retry once
+			block, err = getBlockFromRPC(int(height))
+			if err != nil {
+				Log.WithFields(logrus.Fields{
+					"height": height,
+					"error":  err,
+				}).Error("[PIR Startup] Failed to get block after retry, aborting sync")
+				return
+			}
+		}
+
+		if block == nil {
+			continue
+		}
+
+		// Send to PIR service synchronously
+		if err := extractor.ExtractAndSendSync(ctx, block); err != nil {
+			Log.WithFields(logrus.Fields{
+				"height": height,
+				"error":  err,
+			}).Warn("[PIR Startup] Failed to send block to PIR, continuing...")
+		} else {
+			// Check if block had nullifiers (ExtractAndSendSync only sends if there are nullifiers)
+			hasNullifiers := false
+			for _, tx := range block.Vtx {
+				if len(tx.Actions) > 0 {
+					hasNullifiers = true
+					break
+				}
+			}
+			if hasNullifiers {
+				blocksWithNullifiers++
+			}
+		}
+
+		syncedBlocks++
+
+		// Log progress every 5 seconds
+		if Time.Now().Sub(lastLogTime).Seconds() >= 5 {
+			lastLogTime = Time.Now()
+			Log.WithFields(logrus.Fields{
+				"current_height":        height,
+				"synced_blocks":         syncedBlocks,
+				"blocks_with_nullifiers": blocksWithNullifiers,
+				"progress_pct":          float64(syncedBlocks) / float64(blocksToSync) * 100,
+			}).Info("[PIR Startup] Sync progress")
+		}
+	}
+
+	Log.WithFields(logrus.Fields{
+		"synced_blocks":          syncedBlocks,
+		"blocks_with_nullifiers": blocksWithNullifiers,
+	}).Info("[PIR Startup] Finished sending blocks, waiting for rebuild...")
+
+	// Wait for PIR service to finish rebuilding
+	// Use a generous timeout since rebuilds can take several minutes for large databases
+	waitCtx, cancel := context.WithTimeout(ctx, 30*time.Minute)
+	defer cancel()
+
+	// Poll for rebuild completion
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-waitCtx.Done():
+			Log.Warn("[PIR Startup] Timeout waiting for PIR rebuild, continuing anyway")
+			return
+		case <-ticker.C:
+			status := extractor.GetPirStatus(ctx)
+			if status == nil {
+				continue
+			}
+
+			Log.WithFields(logrus.Fields{
+				"status":          status.Status,
+				"pir_db_height":   status.PirDbHeight,
+				"pending_blocks":  status.PendingBlocks,
+				"rebuild_in_prog": status.RebuildInProgress,
+			}).Debug("[PIR Startup] Waiting for rebuild...")
+
+			// Consider done when not rebuilding and pending is low
+			// (some blocks may have arrived during our sync)
+			if !status.RebuildInProgress && status.PendingBlocks < 10 {
+				Log.WithFields(logrus.Fields{
+					"final_pir_height": status.PirDbHeight,
+					"pending_blocks":   status.PendingBlocks,
+				}).Info("[PIR Startup] Rebuild complete, entering normal operation")
+				return
+			}
+		}
+	}
+}
+
 // BlockIngestor runs as a goroutine and polls zcashd for new blocks, adding them
 // to the cache. The repetition count, rep, is nonzero only for unit-testing.
 func BlockIngestor(c *BlockCache, rep int) {
 	lastLog := Time.Now()
 	lastHeightLogged := 0
+
+	// PIR startup sync: catch up to chain tip before entering main loop
+	pirStartupSync(c)
 
 	// Start listening for new blocks
 	for i := 0; rep == 0 || i < rep; i++ {

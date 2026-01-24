@@ -220,6 +220,87 @@ func (e *NullifierExtractor) HandleReorg(ctx context.Context, reorgHeight uint64
 	}()
 }
 
+// GetPirStatus returns the current PIR service status.
+// Returns nil if PIR is not enabled or if there's an error getting status.
+func (e *NullifierExtractor) GetPirStatus(ctx context.Context) *pirclient.PirStatus {
+	if !e.enabled {
+		return nil
+	}
+
+	status, err := e.pirClient.GetStatus(ctx)
+	if err != nil {
+		Log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warn("Failed to get PIR status")
+		return nil
+	}
+	return status
+}
+
+// WaitForReady waits for the PIR service to be ready (not rebuilding).
+// Returns error if context is cancelled or times out.
+func (e *NullifierExtractor) WaitForReady(ctx context.Context, pollInterval time.Duration) error {
+	if !e.enabled {
+		return nil
+	}
+	return e.pirClient.WaitForReady(ctx, pollInterval)
+}
+
+// ExtractAndSendSync extracts Orchard nullifiers from a CompactBlock and sends them
+// to the PIR service synchronously. This is used during startup catch-up where we
+// want to send blocks sequentially and track progress.
+// Returns error if the send fails.
+func (e *NullifierExtractor) ExtractAndSendSync(ctx context.Context, block *walletrpc.CompactBlock) error {
+	if !e.enabled || block == nil {
+		return nil
+	}
+
+	// Extract nullifiers from all transactions in the block
+	var nullifiers []pirclient.IngestNullifierEntry
+
+	for txIndex, tx := range block.Vtx {
+		// Extract Orchard nullifiers from actions
+		for _, action := range tx.Actions {
+			if len(action.Nullifier) == 32 {
+				nullifiers = append(nullifiers, pirclient.IngestNullifierEntry{
+					Nullifier: hex.EncodeToString(action.Nullifier),
+					TxIndex:   uint16(txIndex),
+				})
+			}
+		}
+	}
+
+	// Only send if there are nullifiers to ingest
+	if len(nullifiers) == 0 {
+		return nil
+	}
+
+	// Build the request
+	req := &pirclient.IngestRequest{
+		BlockHeight: block.Height,
+		BlockHash:   hex.EncodeToString(block.Hash),
+		Nullifiers:  nullifiers,
+	}
+
+	// Send synchronously
+	_, err := e.pirClient.IngestNullifiers(ctx, req)
+	if err != nil {
+		Log.WithFields(logrus.Fields{
+			"height":     block.Height,
+			"nullifiers": len(nullifiers),
+			"error":      err,
+		}).Error("Failed to ingest nullifiers to PIR service (sync)")
+		return err
+	}
+
+	Log.WithFields(logrus.Fields{
+		"height":     block.Height,
+		"nullifiers": len(nullifiers),
+	}).Debug("Nullifiers ingested to PIR service (sync)")
+
+	return nil
+}
+
 // Global extractor instance (set during startup)
 var NullifierExtractorInstance *NullifierExtractor
 
