@@ -237,11 +237,25 @@ message YpirParams {
 }
 
 // InsPIRe-specific parameters (when available)
+// All fields are required for the client to construct PIR queries.
 message InspireParams {
-    uint64 numRows = 1;          // Number of rows
-    uint64 numCols = 2;          // Number of columns
-    uint64 elementSize = 3;      // Element size
-    uint32 factor = 4;           // InsPIRe factor parameter
+    // Full InsPIRe setup parameters (from PIR server)
+    uint64 polyLen = 1;           // Polynomial length (e.g., 2048)
+    uint64 dbDim1 = 2;            // First database dimension
+    uint64 instances = 3;         // Number of PIR instances
+    uint64 dbRows = 4;            // Database rows
+    uint64 dbCols = 5;            // Database columns
+    uint64 gamma = 6;             // Gamma parameter
+    uint64 interpolateDegree = 7; // Interpolation degree
+    uint64 ptModulus = 8;         // Plaintext modulus
+    uint64 c = 9;                 // C parameter
+    uint64 tGsw = 10;             // GSW parameter
+    uint64 q2Bits = 11;           // Q2 bits
+    uint64 tExpLeft = 12;         // T expansion left
+
+    // Response metadata (from PIR server)
+    uint64 recordSize = 13;       // Size of each record in bytes
+    uint32 factor = 14;           // InsPIRe factor parameter
 }
 
 // Response containing PIR parameters

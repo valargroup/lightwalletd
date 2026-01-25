@@ -960,11 +960,24 @@ func (s *lwdStreamer) GetPirParams(ctx context.Context, req *walletrpc.GetPirPar
 	// Try to get InsPIRe parameters (may not be available)
 	inspireParams, err := s.pirClient.GetInspireParams(ctx)
 	if err == nil {
+		setup := inspireParams.PirSetup
 		response.InspireParams = &walletrpc.InspireParams{
-			NumRows:     uint64(inspireParams.PirSetup.DbRows),
-			NumCols:     uint64(inspireParams.PirSetup.DbCols),
-			ElementSize: uint64(inspireParams.RecordSize),
-			Factor:      uint32(inspireParams.Factor),
+			// Full InsPIRe setup parameters
+			PolyLen:           uint64(setup.PolyLen),
+			DbDim1:            uint64(setup.DbDim1),
+			Instances:         uint64(setup.Instances),
+			DbRows:            uint64(setup.DbRows),
+			DbCols:            uint64(setup.DbCols),
+			Gamma:             uint64(setup.Gamma),
+			InterpolateDegree: uint64(setup.InterpolateDegree),
+			PtModulus:         setup.PtModulus,
+			C:                 uint64(setup.C),
+			TGsw:              uint64(setup.TGsw),
+			Q2Bits:            uint64(setup.Q2Bits),
+			TExpLeft:          uint64(setup.TExpLeft),
+			// Response metadata
+			RecordSize: uint64(inspireParams.RecordSize),
+			Factor:     uint32(inspireParams.Factor),
 		}
 	}
 
