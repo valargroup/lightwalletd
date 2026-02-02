@@ -30,21 +30,23 @@ import (
 )
 
 type lwdStreamer struct {
-	cache      *common.BlockCache
-	chainName  string
-	pingEnable bool
-	pirClient  *pirclient.Client
-	mutex      sync.Mutex
+	cache              *common.BlockCache
+	chainName          string
+	pingEnable         bool
+	txidPirClient      *pirclient.Client // For txid lookup and action data queries
+	nullifierPirClient *pirclient.Client // For nullifier PIR queries (YPIR, InsPIRe)
+	mutex              sync.Mutex
 	walletrpc.UnimplementedCompactTxStreamerServer
 }
 
 // NewLwdStreamer constructs a gRPC context.
-func NewLwdStreamer(cache *common.BlockCache, chainName string, enablePing bool, pirClient *pirclient.Client) (walletrpc.CompactTxStreamerServer, error) {
+func NewLwdStreamer(cache *common.BlockCache, chainName string, enablePing bool, txidPirClient, nullifierPirClient *pirclient.Client) (walletrpc.CompactTxStreamerServer, error) {
 	return &lwdStreamer{
-		cache:      cache,
-		chainName:  chainName,
-		pingEnable: enablePing,
-		pirClient:  pirClient,
+		cache:              cache,
+		chainName:          chainName,
+		pingEnable:         enablePing,
+		txidPirClient:      txidPirClient,
+		nullifierPirClient: nullifierPirClient,
 	}, nil
 }
 
@@ -909,15 +911,15 @@ func (s *lwdStreamer) Ping(ctx context.Context, in *walletrpc.Duration) (*wallet
 func (s *lwdStreamer) GetPirParams(ctx context.Context, req *walletrpc.GetPirParamsRequest) (*walletrpc.PirParamsResponse, error) {
 	common.Log.Debugf("gRPC GetPirParams()\n")
 
-	// Check if PIR is enabled
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
+	// Check if nullifier PIR is enabled
+	if s.nullifierPirClient == nil || !s.nullifierPirClient.IsEnabled() {
 		return &walletrpc.PirParamsResponse{
 			PirReady: false,
 		}, nil
 	}
 
 	// Get status to check readiness and get basic info
-	pirStatus, err := s.pirClient.GetStatus(ctx)
+	pirStatus, err := s.nullifierPirClient.GetStatus(ctx)
 	if err != nil {
 		common.Log.Warnf("GetPirParams: failed to get PIR status: %s", err)
 		return &walletrpc.PirParamsResponse{
@@ -932,7 +934,7 @@ func (s *lwdStreamer) GetPirParams(ctx context.Context, req *walletrpc.GetPirPar
 	}
 
 	// Get YPIR parameters
-	ypirParams, err := s.pirClient.GetYpirParams(ctx)
+	ypirParams, err := s.nullifierPirClient.GetYpirParams(ctx)
 	if err != nil {
 		common.Log.Warnf("GetPirParams: failed to get YPIR params: %s", err)
 	} else {
@@ -958,7 +960,7 @@ func (s *lwdStreamer) GetPirParams(ctx context.Context, req *walletrpc.GetPirPar
 	}
 
 	// Try to get InsPIRe parameters (may not be available)
-	inspireParams, err := s.pirClient.GetInspireParams(ctx)
+	inspireParams, err := s.nullifierPirClient.GetInspireParams(ctx)
 	if err == nil {
 		setup := inspireParams.PirSetup
 		response.InspireParams = &walletrpc.InspireParams{
@@ -989,9 +991,9 @@ func (s *lwdStreamer) GetPirParams(ctx context.Context, req *walletrpc.GetPirPar
 func (s *lwdStreamer) YpirQuery(ctx context.Context, req *walletrpc.YpirQueryRequest) (*walletrpc.YpirQueryResponse, error) {
 	common.Log.Debugf("gRPC YpirQuery(query_len=%d)\n", len(req.Query))
 
-	// Check if PIR is enabled
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
-		return nil, status.Error(codes.Unavailable, "PIR service not enabled")
+	// Check if nullifier PIR is enabled
+	if s.nullifierPirClient == nil || !s.nullifierPirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "Nullifier PIR service not enabled")
 	}
 
 	// The query bytes are expected to be JSON-encoded YpirQueryRequest from the client
@@ -1001,7 +1003,7 @@ func (s *lwdStreamer) YpirQuery(ctx context.Context, req *walletrpc.YpirQueryReq
 	}
 
 	// Execute the query
-	resp, err := s.pirClient.QueryYpir(ctx, &clientReq)
+	resp, err := s.nullifierPirClient.QueryYpir(ctx, &clientReq)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "YPIR query failed: %s", err.Error())
 	}
@@ -1021,13 +1023,13 @@ func (s *lwdStreamer) YpirQuery(ctx context.Context, req *walletrpc.YpirQueryReq
 func (s *lwdStreamer) InspireQuery(ctx context.Context, req *walletrpc.InspireQueryRequest) (*walletrpc.InspireQueryResponse, error) {
 	common.Log.Debugf("gRPC InspireQuery(query_len=%d)\n", len(req.Query))
 
-	// Check if PIR is enabled
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
-		return nil, status.Error(codes.Unavailable, "PIR service not enabled")
+	// Check if nullifier PIR is enabled
+	if s.nullifierPirClient == nil || !s.nullifierPirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "Nullifier PIR service not enabled")
 	}
 
 	// Use binary query endpoint for efficiency
-	resp, err := s.pirClient.QueryInspireBinary(ctx, req.Query)
+	resp, err := s.nullifierPirClient.QueryInspireBinary(ctx, req.Query)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "InsPIRe query failed: %s", err.Error())
 	}
@@ -1043,19 +1045,19 @@ func (s *lwdStreamer) InspireQuery(ctx context.Context, req *walletrpc.InspireQu
 	}, nil
 }
 
-// GetPirStatus returns the current status of the PIR service.
+// GetPirStatus returns the current status of the nullifier PIR service.
 func (s *lwdStreamer) GetPirStatus(ctx context.Context, req *walletrpc.GetPirStatusRequest) (*walletrpc.PirStatusResponse, error) {
 	common.Log.Debugf("gRPC GetPirStatus()\n")
 
-	// Check if PIR is enabled
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
+	// Check if nullifier PIR is enabled
+	if s.nullifierPirClient == nil || !s.nullifierPirClient.IsEnabled() {
 		return &walletrpc.PirStatusResponse{
 			Available: false,
 			Status:    "unavailable",
 		}, nil
 	}
 
-	pirStatus, err := s.pirClient.GetStatus(ctx)
+	pirStatus, err := s.nullifierPirClient.GetStatus(ctx)
 	if err != nil {
 		common.Log.Warnf("GetPirStatus: failed to get PIR status: %s", err)
 		return &walletrpc.PirStatusResponse{
@@ -1088,11 +1090,11 @@ func (s *lwdStreamer) GetPirStatus(ctx context.Context, req *walletrpc.GetPirSta
 func (s *lwdStreamer) GetTxidLookupParams(ctx context.Context, req *walletrpc.TxidLookupParamsRequest) (*walletrpc.TxidLookupParamsResponse, error) {
 	common.Log.Debugf("gRPC GetTxidLookupParams()\n")
 
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
-		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	if s.txidPirClient == nil || !s.txidPirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "Txid PIR service not configured")
 	}
 
-	params, err := s.pirClient.GetTxidLookupParams(ctx)
+	params, err := s.txidPirClient.GetTxidLookupParams(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get txid lookup params: %s", err.Error())
 	}
@@ -1148,11 +1150,11 @@ func (s *lwdStreamer) GetTxidLookupParams(ctx context.Context, req *walletrpc.Tx
 func (s *lwdStreamer) TxidLookupQuery(ctx context.Context, req *walletrpc.TxidLookupQueryRequest) (*walletrpc.TxidLookupQueryResponse, error) {
 	common.Log.Debugf("gRPC TxidLookupQuery(query_len=%d)\n", len(req.QueryData))
 
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
-		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	if s.txidPirClient == nil || !s.txidPirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "Txid PIR service not configured")
 	}
 
-	resp, err := s.pirClient.TxidLookupQuery(ctx, req.QueryData)
+	resp, err := s.txidPirClient.TxidLookupQuery(ctx, req.QueryData)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "txid lookup query failed: %s", err.Error())
 	}
@@ -1167,11 +1169,11 @@ func (s *lwdStreamer) TxidLookupQuery(ctx context.Context, req *walletrpc.TxidLo
 func (s *lwdStreamer) GetActionDataParams(ctx context.Context, req *walletrpc.ActionDataParamsRequest) (*walletrpc.ActionDataParamsResponse, error) {
 	common.Log.Debugf("gRPC GetActionDataParams()\n")
 
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
-		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	if s.txidPirClient == nil || !s.txidPirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "Txid PIR service not configured")
 	}
 
-	params, err := s.pirClient.GetActionDataParams(ctx)
+	params, err := s.txidPirClient.GetActionDataParams(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get action data params: %s", err.Error())
 	}
@@ -1210,11 +1212,11 @@ func (s *lwdStreamer) GetActionDataParams(ctx context.Context, req *walletrpc.Ac
 func (s *lwdStreamer) ActionDataQuery(ctx context.Context, req *walletrpc.ActionDataQueryRequest) (*walletrpc.ActionDataQueryResponse, error) {
 	common.Log.Debugf("gRPC ActionDataQuery(query_len=%d)\n", len(req.QueryData))
 
-	if s.pirClient == nil || !s.pirClient.IsEnabled() {
-		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	if s.txidPirClient == nil || !s.txidPirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "Txid PIR service not configured")
 	}
 
-	resp, err := s.pirClient.ActionDataQuery(ctx, req.QueryData)
+	resp, err := s.txidPirClient.ActionDataQuery(ctx, req.QueryData)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "action data query failed: %s", err.Error())
 	}

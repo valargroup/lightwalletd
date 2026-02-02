@@ -57,7 +57,9 @@ type Options struct {
 	DarksideTimeout     uint64 `json:"darkside_timeout"`
 
 	// PIR (Private Information Retrieval) configuration
-	PirServiceURL       string        `json:"pir_service_url,omitempty"`
+	// Separate URLs for txid PIR and nullifier PIR (they may run on different servers)
+	TxidPirURL          string        `json:"txid_pir_url,omitempty"`
+	NullifierPirURL     string        `json:"nullifier_pir_url,omitempty"`
 	PirTrialDecryptBlks int           `json:"pir_trial_decrypt_blocks,omitempty"`
 	PirTimeout          time.Duration `json:"pir_timeout,omitempty"`
 	PirWaitOnStartup    bool          `json:"pir_wait_on_startup,omitempty"`

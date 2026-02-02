@@ -62,8 +62,9 @@ var rootCmd = &cobra.Command{
 			PingEnable:          viper.GetBool("ping-very-insecure"),
 			Darkside:            viper.GetBool("darkside-very-insecure"),
 			DarksideTimeout:     viper.GetUint64("darkside-timeout"),
-			// PIR options
-			PirServiceURL:       viper.GetString("pir-service-url"),
+			// PIR options (separate URLs for txid and nullifier PIR)
+			TxidPirURL:          viper.GetString("txid-pir-url"),
+			NullifierPirURL:     viper.GetString("nullifier-pir-url"),
 			PirTrialDecryptBlks: viper.GetInt("pir-trial-decrypt-blocks"),
 			PirTimeout:          viper.GetDuration("pir-timeout"),
 			PirWaitOnStartup:    viper.GetBool("pir-wait-on-startup"),
@@ -232,43 +233,47 @@ func startServer(opts *common.Options) error {
 		}
 	}
 
-	// Initialize PIR client if configured
-	var pirClient *pirclient.Client
-	pirEnabled := false
-	if opts.PirServiceURL != "" {
+	// Initialize separate PIR clients if configured
+	var txidPirClient *pirclient.Client
+	var nullifierPirClient *pirclient.Client
+
+	// Txid PIR client (for tx-lookup and action-data queries)
+	if opts.TxidPirURL != "" {
 		common.Log.WithFields(logrus.Fields{
-			"url":     opts.PirServiceURL,
+			"url":     opts.TxidPirURL,
 			"timeout": opts.PirTimeout,
-		}).Info("Initializing PIR client")
+		}).Info("Initializing txid PIR client")
+		txidPirClient = pirclient.NewClient(opts.TxidPirURL, opts.PirTimeout)
+	}
 
-		pirClient = pirclient.NewClient(opts.PirServiceURL, opts.PirTimeout)
+	// Nullifier PIR client (for nullifier ingestion and queries)
+	if opts.NullifierPirURL != "" {
+		common.Log.WithFields(logrus.Fields{
+			"url":     opts.NullifierPirURL,
+			"timeout": opts.PirTimeout,
+		}).Info("Initializing nullifier PIR client")
+		nullifierPirClient = pirclient.NewClient(opts.NullifierPirURL, opts.PirTimeout)
 
-		// Wait for PIR service to be ready if configured
+		// Wait for nullifier PIR service to be ready if configured
 		if opts.PirWaitOnStartup {
-			common.Log.Info("Waiting for PIR service to be ready...")
+			common.Log.Info("Waiting for nullifier PIR service to be ready...")
 			ctx, cancel := context.WithTimeout(context.Background(), opts.PirStartupTimeout)
 			defer cancel()
 
-			if err := pirClient.WaitForReady(ctx, 2*time.Second); err != nil {
+			if err := nullifierPirClient.WaitForReady(ctx, 2*time.Second); err != nil {
 				common.Log.WithFields(logrus.Fields{
 					"error":   err,
 					"timeout": opts.PirStartupTimeout,
-				}).Warn("PIR service did not become ready in time, continuing without PIR")
-				common.Log.Info("PIR features will be unavailable. Wallet clients will use trial decryption for all nullifier checks.")
-				// Set pirClient to nil to indicate PIR is not available
-				pirClient = nil
+				}).Warn("Nullifier PIR service did not become ready in time, continuing without it")
+				nullifierPirClient = nil
 			} else {
-				common.Log.Info("PIR service is ready")
-				pirEnabled = true
+				common.Log.Info("Nullifier PIR service is ready")
 			}
-		} else {
-			// Not waiting on startup, assume PIR is available
-			pirEnabled = true
 		}
 
-		// Create and set the nullifier extractor only if PIR is enabled
-		if pirEnabled && pirClient != nil {
-			extractor := common.NewNullifierExtractor(pirClient)
+		// Create and set the nullifier extractor only if nullifier PIR client is available
+		if nullifierPirClient != nil {
+			extractor := common.NewNullifierExtractor(nullifierPirClient)
 			common.SetNullifierExtractor(extractor)
 			common.Log.Info("Nullifier extractor initialized for PIR integration")
 		}
@@ -318,7 +323,7 @@ func startServer(opts *common.Options) error {
 
 	// Compact transaction service initialization
 	{
-		service, err := frontend.NewLwdStreamer(cache, chainName, opts.PingEnable, pirClient)
+		service, err := frontend.NewLwdStreamer(cache, chainName, opts.PingEnable, txidPirClient, nullifierPirClient)
 		if err != nil {
 			common.Log.WithFields(logrus.Fields{
 				"error": err,
@@ -404,12 +409,13 @@ func init() {
 	rootCmd.Flags().Int("darkside-timeout", 30, "override 30 minute default darkside timeout")
 	rootCmd.Flags().String("donation-address", "", "Zcash UA address to accept donations for operating this server")
 
-	// PIR (Private Information Retrieval) flags for privacy-preserving nullifier lookups
-	// See docs/PIR_CLIENT_INTEGRATION.md for architecture details
-	rootCmd.Flags().String("pir-service-url", "", "URL of the nullifier-pir service (e.g., http://localhost:3001). Leave empty to disable PIR and use trial decryption for all nullifier checks")
+	// PIR (Private Information Retrieval) flags - separate URLs for txid and nullifier PIR
+	// These services may run on different machines/ports
+	rootCmd.Flags().String("txid-pir-url", "", "URL of the txid PIR service for tx-lookup and action-data queries (e.g., http://localhost:8081). Leave empty to disable txid PIR")
+	rootCmd.Flags().String("nullifier-pir-url", "", "URL of the nullifier PIR service for nullifier ingestion and queries (e.g., http://localhost:3001). Leave empty to disable nullifier PIR")
 	rootCmd.Flags().Int("pir-trial-decrypt-blocks", 5, "number of recent blocks to use trial decryption instead of PIR. PIR database rebuilds are expensive, so recent blocks use trial decryption while the PIR database catches up")
 	rootCmd.Flags().Duration("pir-timeout", 30*time.Second, "timeout for individual PIR service HTTP requests (ingestion, queries)")
-	rootCmd.Flags().Bool("pir-wait-on-startup", true, "wait for PIR service to be ready before accepting client connections. If false, PIR endpoints may return errors until service is ready. If the wait times out, lightwalletd continues without PIR")
+	rootCmd.Flags().Bool("pir-wait-on-startup", false, "wait for nullifier PIR service to be ready before accepting client connections")
 	rootCmd.Flags().Duration("pir-startup-timeout", 5*time.Minute, "maximum time to wait for PIR service on startup (only used if --pir-wait-on-startup=true)")
 
 	viper.BindPFlag("grpc-bind-addr", rootCmd.Flags().Lookup("grpc-bind-addr"))
@@ -453,14 +459,16 @@ func init() {
 	viper.BindPFlag("donation-address", rootCmd.Flags().Lookup("donation-address"))
 
 	// PIR viper bindings
-	viper.BindPFlag("pir-service-url", rootCmd.Flags().Lookup("pir-service-url"))
-	viper.SetDefault("pir-service-url", "")
+	viper.BindPFlag("txid-pir-url", rootCmd.Flags().Lookup("txid-pir-url"))
+	viper.SetDefault("txid-pir-url", "")
+	viper.BindPFlag("nullifier-pir-url", rootCmd.Flags().Lookup("nullifier-pir-url"))
+	viper.SetDefault("nullifier-pir-url", "")
 	viper.BindPFlag("pir-trial-decrypt-blocks", rootCmd.Flags().Lookup("pir-trial-decrypt-blocks"))
 	viper.SetDefault("pir-trial-decrypt-blocks", 5)
 	viper.BindPFlag("pir-timeout", rootCmd.Flags().Lookup("pir-timeout"))
 	viper.SetDefault("pir-timeout", 30*time.Second)
 	viper.BindPFlag("pir-wait-on-startup", rootCmd.Flags().Lookup("pir-wait-on-startup"))
-	viper.SetDefault("pir-wait-on-startup", true)
+	viper.SetDefault("pir-wait-on-startup", false)
 	viper.BindPFlag("pir-startup-timeout", rootCmd.Flags().Lookup("pir-startup-timeout"))
 	viper.SetDefault("pir-startup-timeout", 5*time.Minute)
 
