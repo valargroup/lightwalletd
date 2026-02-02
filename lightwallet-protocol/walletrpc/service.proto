@@ -330,6 +330,60 @@ message PirStatusResponse {
     string lastBuildTime = 8;
 }
 
+// ============ Txid PIR messages (privacy-preserving transaction lookup) ============
+
+// Request for txid lookup PIR parameters
+message TxidLookupParamsRequest {}
+
+// Response containing txid lookup PIR parameters
+message TxidLookupParamsResponse {
+    uint64 db_version = 1;       // Database version for cache invalidation
+    uint32 start_height = 2;     // First block height in PIR database
+    uint32 end_height = 3;       // Last block height in PIR database
+    uint64 tx_count = 4;         // Total transactions in database
+    uint64 factor = 5;           // PIR factor parameter
+    uint64 record_size = 6;      // Size of each record in bytes
+    InspireParams inspire = 7;   // InsPIRe parameters (reused from nullifier PIR)
+    CuckooParams cuckoo = 8;     // Cuckoo hash parameters (reused from nullifier PIR)
+}
+
+// Request for action data PIR parameters
+message ActionDataParamsRequest {}
+
+// Response containing action data PIR parameters
+message ActionDataParamsResponse {
+    uint64 db_version = 1;       // Database version for cache invalidation
+    uint32 start_height = 2;     // First block height in PIR database
+    uint32 end_height = 3;       // Last block height in PIR database
+    uint64 action_count = 4;     // Total actions in database
+    uint64 column_height = 5;    // Column height for SimplePIR
+    uint64 factor = 6;           // PIR factor parameter
+    uint64 record_size = 7;      // Size of each record in bytes (640 for now)
+    InspireParams inspire = 8;   // InsPIRe parameters
+}
+
+// Request to execute a txid lookup PIR query
+message TxidLookupQueryRequest {
+    bytes query_data = 1;        // Encrypted PIR query
+}
+
+// Response from a txid lookup PIR query
+message TxidLookupQueryResponse {
+    bytes response_data = 1;     // Encrypted PIR response
+    double server_time_ms = 2;   // Server processing time for diagnostics
+}
+
+// Request to execute an action data PIR query
+message ActionDataQueryRequest {
+    bytes query_data = 1;        // Encrypted PIR query
+}
+
+// Response from an action data PIR query
+message ActionDataQueryResponse {
+    bytes response_data = 1;     // Encrypted PIR response
+    double server_time_ms = 2;   // Server processing time for diagnostics
+}
+
 service CompactTxStreamer {
     // Return the BlockID of the block at the tip of the best chain
     rpc GetLatestBlock(ChainSpec) returns (BlockID) {}
@@ -434,4 +488,23 @@ service CompactTxStreamer {
     // Get the current status of the PIR service.
     // Useful for monitoring and debugging.
     rpc GetPirStatus(GetPirStatusRequest) returns (PirStatusResponse) {}
+
+    // ============ Txid PIR methods (privacy-preserving transaction lookup) ============
+    // These methods proxy to an external PIR server for txid-based lookups.
+    // SDK uses these to enhance transactions without revealing which txid it's interested in.
+
+    // Get parameters for txid lookup PIR queries.
+    // Returns Cuckoo and InsPIRe params needed to construct queries.
+    rpc GetTxidLookupParams(TxidLookupParamsRequest) returns (TxidLookupParamsResponse) {}
+
+    // Execute a txid lookup PIR query.
+    // Given (block_height, tx_index), returns (start_action_index, action_count).
+    rpc TxidLookupQuery(TxidLookupQueryRequest) returns (TxidLookupQueryResponse) {}
+
+    // Get parameters for action data PIR queries.
+    rpc GetActionDataParams(ActionDataParamsRequest) returns (ActionDataParamsResponse) {}
+
+    // Execute an action data PIR query.
+    // Returns encrypted action data for trial decryption.
+    rpc ActionDataQuery(ActionDataQueryRequest) returns (ActionDataQueryResponse) {}
 }

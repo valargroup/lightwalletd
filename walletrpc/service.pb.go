@@ -2187,6 +2187,478 @@ func (x *PirStatusResponse) GetLastBuildTime() string {
 	return ""
 }
 
+// Request for txid lookup PIR parameters
+type TxidLookupParamsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TxidLookupParamsRequest) Reset() {
+	*x = TxidLookupParamsRequest{}
+	mi := &file_service_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TxidLookupParamsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TxidLookupParamsRequest) ProtoMessage() {}
+
+func (x *TxidLookupParamsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TxidLookupParamsRequest.ProtoReflect.Descriptor instead.
+func (*TxidLookupParamsRequest) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{32}
+}
+
+// Response containing txid lookup PIR parameters
+type TxidLookupParamsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DbVersion     uint64                 `protobuf:"varint,1,opt,name=db_version,json=dbVersion,proto3" json:"db_version,omitempty"`       // Database version for cache invalidation
+	StartHeight   uint32                 `protobuf:"varint,2,opt,name=start_height,json=startHeight,proto3" json:"start_height,omitempty"` // First block height in PIR database
+	EndHeight     uint32                 `protobuf:"varint,3,opt,name=end_height,json=endHeight,proto3" json:"end_height,omitempty"`       // Last block height in PIR database
+	TxCount       uint64                 `protobuf:"varint,4,opt,name=tx_count,json=txCount,proto3" json:"tx_count,omitempty"`             // Total transactions in database
+	Factor        uint64                 `protobuf:"varint,5,opt,name=factor,proto3" json:"factor,omitempty"`                              // PIR factor parameter
+	RecordSize    uint64                 `protobuf:"varint,6,opt,name=record_size,json=recordSize,proto3" json:"record_size,omitempty"`    // Size of each record in bytes
+	Inspire       *InspireParams         `protobuf:"bytes,7,opt,name=inspire,proto3" json:"inspire,omitempty"`                             // InsPIRe parameters (reused from nullifier PIR)
+	Cuckoo        *CuckooParams          `protobuf:"bytes,8,opt,name=cuckoo,proto3" json:"cuckoo,omitempty"`                               // Cuckoo hash parameters (reused from nullifier PIR)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TxidLookupParamsResponse) Reset() {
+	*x = TxidLookupParamsResponse{}
+	mi := &file_service_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TxidLookupParamsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TxidLookupParamsResponse) ProtoMessage() {}
+
+func (x *TxidLookupParamsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TxidLookupParamsResponse.ProtoReflect.Descriptor instead.
+func (*TxidLookupParamsResponse) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *TxidLookupParamsResponse) GetDbVersion() uint64 {
+	if x != nil {
+		return x.DbVersion
+	}
+	return 0
+}
+
+func (x *TxidLookupParamsResponse) GetStartHeight() uint32 {
+	if x != nil {
+		return x.StartHeight
+	}
+	return 0
+}
+
+func (x *TxidLookupParamsResponse) GetEndHeight() uint32 {
+	if x != nil {
+		return x.EndHeight
+	}
+	return 0
+}
+
+func (x *TxidLookupParamsResponse) GetTxCount() uint64 {
+	if x != nil {
+		return x.TxCount
+	}
+	return 0
+}
+
+func (x *TxidLookupParamsResponse) GetFactor() uint64 {
+	if x != nil {
+		return x.Factor
+	}
+	return 0
+}
+
+func (x *TxidLookupParamsResponse) GetRecordSize() uint64 {
+	if x != nil {
+		return x.RecordSize
+	}
+	return 0
+}
+
+func (x *TxidLookupParamsResponse) GetInspire() *InspireParams {
+	if x != nil {
+		return x.Inspire
+	}
+	return nil
+}
+
+func (x *TxidLookupParamsResponse) GetCuckoo() *CuckooParams {
+	if x != nil {
+		return x.Cuckoo
+	}
+	return nil
+}
+
+// Request for action data PIR parameters
+type ActionDataParamsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActionDataParamsRequest) Reset() {
+	*x = ActionDataParamsRequest{}
+	mi := &file_service_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActionDataParamsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActionDataParamsRequest) ProtoMessage() {}
+
+func (x *ActionDataParamsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActionDataParamsRequest.ProtoReflect.Descriptor instead.
+func (*ActionDataParamsRequest) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{34}
+}
+
+// Response containing action data PIR parameters
+type ActionDataParamsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DbVersion     uint64                 `protobuf:"varint,1,opt,name=db_version,json=dbVersion,proto3" json:"db_version,omitempty"`          // Database version for cache invalidation
+	StartHeight   uint32                 `protobuf:"varint,2,opt,name=start_height,json=startHeight,proto3" json:"start_height,omitempty"`    // First block height in PIR database
+	EndHeight     uint32                 `protobuf:"varint,3,opt,name=end_height,json=endHeight,proto3" json:"end_height,omitempty"`          // Last block height in PIR database
+	ActionCount   uint64                 `protobuf:"varint,4,opt,name=action_count,json=actionCount,proto3" json:"action_count,omitempty"`    // Total actions in database
+	ColumnHeight  uint64                 `protobuf:"varint,5,opt,name=column_height,json=columnHeight,proto3" json:"column_height,omitempty"` // Column height for SimplePIR
+	Factor        uint64                 `protobuf:"varint,6,opt,name=factor,proto3" json:"factor,omitempty"`                                 // PIR factor parameter
+	RecordSize    uint64                 `protobuf:"varint,7,opt,name=record_size,json=recordSize,proto3" json:"record_size,omitempty"`       // Size of each record in bytes (640 for now)
+	Inspire       *InspireParams         `protobuf:"bytes,8,opt,name=inspire,proto3" json:"inspire,omitempty"`                                // InsPIRe parameters
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActionDataParamsResponse) Reset() {
+	*x = ActionDataParamsResponse{}
+	mi := &file_service_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActionDataParamsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActionDataParamsResponse) ProtoMessage() {}
+
+func (x *ActionDataParamsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActionDataParamsResponse.ProtoReflect.Descriptor instead.
+func (*ActionDataParamsResponse) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *ActionDataParamsResponse) GetDbVersion() uint64 {
+	if x != nil {
+		return x.DbVersion
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetStartHeight() uint32 {
+	if x != nil {
+		return x.StartHeight
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetEndHeight() uint32 {
+	if x != nil {
+		return x.EndHeight
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetActionCount() uint64 {
+	if x != nil {
+		return x.ActionCount
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetColumnHeight() uint64 {
+	if x != nil {
+		return x.ColumnHeight
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetFactor() uint64 {
+	if x != nil {
+		return x.Factor
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetRecordSize() uint64 {
+	if x != nil {
+		return x.RecordSize
+	}
+	return 0
+}
+
+func (x *ActionDataParamsResponse) GetInspire() *InspireParams {
+	if x != nil {
+		return x.Inspire
+	}
+	return nil
+}
+
+// Request to execute a txid lookup PIR query
+type TxidLookupQueryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QueryData     []byte                 `protobuf:"bytes,1,opt,name=query_data,json=queryData,proto3" json:"query_data,omitempty"` // Encrypted PIR query
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TxidLookupQueryRequest) Reset() {
+	*x = TxidLookupQueryRequest{}
+	mi := &file_service_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TxidLookupQueryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TxidLookupQueryRequest) ProtoMessage() {}
+
+func (x *TxidLookupQueryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TxidLookupQueryRequest.ProtoReflect.Descriptor instead.
+func (*TxidLookupQueryRequest) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *TxidLookupQueryRequest) GetQueryData() []byte {
+	if x != nil {
+		return x.QueryData
+	}
+	return nil
+}
+
+// Response from a txid lookup PIR query
+type TxidLookupQueryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResponseData  []byte                 `protobuf:"bytes,1,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`     // Encrypted PIR response
+	ServerTimeMs  float64                `protobuf:"fixed64,2,opt,name=server_time_ms,json=serverTimeMs,proto3" json:"server_time_ms,omitempty"` // Server processing time for diagnostics
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TxidLookupQueryResponse) Reset() {
+	*x = TxidLookupQueryResponse{}
+	mi := &file_service_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TxidLookupQueryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TxidLookupQueryResponse) ProtoMessage() {}
+
+func (x *TxidLookupQueryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TxidLookupQueryResponse.ProtoReflect.Descriptor instead.
+func (*TxidLookupQueryResponse) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *TxidLookupQueryResponse) GetResponseData() []byte {
+	if x != nil {
+		return x.ResponseData
+	}
+	return nil
+}
+
+func (x *TxidLookupQueryResponse) GetServerTimeMs() float64 {
+	if x != nil {
+		return x.ServerTimeMs
+	}
+	return 0
+}
+
+// Request to execute an action data PIR query
+type ActionDataQueryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QueryData     []byte                 `protobuf:"bytes,1,opt,name=query_data,json=queryData,proto3" json:"query_data,omitempty"` // Encrypted PIR query
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActionDataQueryRequest) Reset() {
+	*x = ActionDataQueryRequest{}
+	mi := &file_service_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActionDataQueryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActionDataQueryRequest) ProtoMessage() {}
+
+func (x *ActionDataQueryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActionDataQueryRequest.ProtoReflect.Descriptor instead.
+func (*ActionDataQueryRequest) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *ActionDataQueryRequest) GetQueryData() []byte {
+	if x != nil {
+		return x.QueryData
+	}
+	return nil
+}
+
+// Response from an action data PIR query
+type ActionDataQueryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResponseData  []byte                 `protobuf:"bytes,1,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`     // Encrypted PIR response
+	ServerTimeMs  float64                `protobuf:"fixed64,2,opt,name=server_time_ms,json=serverTimeMs,proto3" json:"server_time_ms,omitempty"` // Server processing time for diagnostics
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActionDataQueryResponse) Reset() {
+	*x = ActionDataQueryResponse{}
+	mi := &file_service_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActionDataQueryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActionDataQueryResponse) ProtoMessage() {}
+
+func (x *ActionDataQueryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActionDataQueryResponse.ProtoReflect.Descriptor instead.
+func (*ActionDataQueryResponse) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *ActionDataQueryResponse) GetResponseData() []byte {
+	if x != nil {
+		return x.ResponseData
+	}
+	return nil
+}
+
+func (x *ActionDataQueryResponse) GetServerTimeMs() float64 {
+	if x != nil {
+		return x.ServerTimeMs
+	}
+	return 0
+}
+
 var File_service_proto protoreflect.FileDescriptor
 
 const file_service_proto_rawDesc = "" +
@@ -2347,7 +2819,45 @@ const file_service_proto_rawDesc = "" +
 	"numBuckets\x18\x06 \x01(\x04R\n" +
 	"numBuckets\x12,\n" +
 	"\x11rebuildInProgress\x18\a \x01(\bR\x11rebuildInProgress\x12$\n" +
-	"\rlastBuildTime\x18\b \x01(\tR\rlastBuildTime*L\n" +
+	"\rlastBuildTime\x18\b \x01(\tR\rlastBuildTime\"\x19\n" +
+	"\x17TxidLookupParamsRequest\"\xcc\x02\n" +
+	"\x18TxidLookupParamsResponse\x12\x1d\n" +
+	"\n" +
+	"db_version\x18\x01 \x01(\x04R\tdbVersion\x12!\n" +
+	"\fstart_height\x18\x02 \x01(\rR\vstartHeight\x12\x1d\n" +
+	"\n" +
+	"end_height\x18\x03 \x01(\rR\tendHeight\x12\x19\n" +
+	"\btx_count\x18\x04 \x01(\x04R\atxCount\x12\x16\n" +
+	"\x06factor\x18\x05 \x01(\x04R\x06factor\x12\x1f\n" +
+	"\vrecord_size\x18\x06 \x01(\x04R\n" +
+	"recordSize\x12>\n" +
+	"\ainspire\x18\a \x01(\v2$.cash.z.wallet.sdk.rpc.InspireParamsR\ainspire\x12;\n" +
+	"\x06cuckoo\x18\b \x01(\v2#.cash.z.wallet.sdk.rpc.CuckooParamsR\x06cuckoo\"\x19\n" +
+	"\x17ActionDataParamsRequest\"\xbc\x02\n" +
+	"\x18ActionDataParamsResponse\x12\x1d\n" +
+	"\n" +
+	"db_version\x18\x01 \x01(\x04R\tdbVersion\x12!\n" +
+	"\fstart_height\x18\x02 \x01(\rR\vstartHeight\x12\x1d\n" +
+	"\n" +
+	"end_height\x18\x03 \x01(\rR\tendHeight\x12!\n" +
+	"\faction_count\x18\x04 \x01(\x04R\vactionCount\x12#\n" +
+	"\rcolumn_height\x18\x05 \x01(\x04R\fcolumnHeight\x12\x16\n" +
+	"\x06factor\x18\x06 \x01(\x04R\x06factor\x12\x1f\n" +
+	"\vrecord_size\x18\a \x01(\x04R\n" +
+	"recordSize\x12>\n" +
+	"\ainspire\x18\b \x01(\v2$.cash.z.wallet.sdk.rpc.InspireParamsR\ainspire\"7\n" +
+	"\x16TxidLookupQueryRequest\x12\x1d\n" +
+	"\n" +
+	"query_data\x18\x01 \x01(\fR\tqueryData\"d\n" +
+	"\x17TxidLookupQueryResponse\x12#\n" +
+	"\rresponse_data\x18\x01 \x01(\fR\fresponseData\x12$\n" +
+	"\x0eserver_time_ms\x18\x02 \x01(\x01R\fserverTimeMs\"7\n" +
+	"\x16ActionDataQueryRequest\x12\x1d\n" +
+	"\n" +
+	"query_data\x18\x01 \x01(\fR\tqueryData\"d\n" +
+	"\x17ActionDataQueryResponse\x12#\n" +
+	"\rresponse_data\x18\x01 \x01(\fR\fresponseData\x12$\n" +
+	"\x0eserver_time_ms\x18\x02 \x01(\x01R\fserverTimeMs*L\n" +
 	"\bPoolType\x12\x15\n" +
 	"\x11POOL_TYPE_INVALID\x10\x00\x12\x0f\n" +
 	"\vTRANSPARENT\x10\x01\x12\v\n" +
@@ -2355,7 +2865,7 @@ const file_service_proto_rawDesc = "" +
 	"\aORCHARD\x10\x03*,\n" +
 	"\x10ShieldedProtocol\x12\v\n" +
 	"\asapling\x10\x00\x12\v\n" +
-	"\aorchard\x10\x012\xbf\x12\n" +
+	"\aorchard\x10\x012\x9b\x16\n" +
 	"\x11CompactTxStreamer\x12T\n" +
 	"\x0eGetLatestBlock\x12 .cash.z.wallet.sdk.rpc.ChainSpec\x1a\x1e.cash.z.wallet.sdk.rpc.BlockID\"\x00\x12Q\n" +
 	"\bGetBlock\x12\x1e.cash.z.wallet.sdk.rpc.BlockID\x1a#.cash.z.wallet.sdk.rpc.CompactBlock\"\x00\x12[\n" +
@@ -2380,7 +2890,11 @@ const file_service_proto_rawDesc = "" +
 	"\fGetPirParams\x12*.cash.z.wallet.sdk.rpc.GetPirParamsRequest\x1a(.cash.z.wallet.sdk.rpc.PirParamsResponse\"\x00\x12`\n" +
 	"\tYpirQuery\x12'.cash.z.wallet.sdk.rpc.YpirQueryRequest\x1a(.cash.z.wallet.sdk.rpc.YpirQueryResponse\"\x00\x12i\n" +
 	"\fInspireQuery\x12*.cash.z.wallet.sdk.rpc.InspireQueryRequest\x1a+.cash.z.wallet.sdk.rpc.InspireQueryResponse\"\x00\x12f\n" +
-	"\fGetPirStatus\x12*.cash.z.wallet.sdk.rpc.GetPirStatusRequest\x1a(.cash.z.wallet.sdk.rpc.PirStatusResponse\"\x00B\x1bZ\x16lightwalletd/walletrpc\xba\x02\x00b\x06proto3"
+	"\fGetPirStatus\x12*.cash.z.wallet.sdk.rpc.GetPirStatusRequest\x1a(.cash.z.wallet.sdk.rpc.PirStatusResponse\"\x00\x12x\n" +
+	"\x13GetTxidLookupParams\x12..cash.z.wallet.sdk.rpc.TxidLookupParamsRequest\x1a/.cash.z.wallet.sdk.rpc.TxidLookupParamsResponse\"\x00\x12r\n" +
+	"\x0fTxidLookupQuery\x12-.cash.z.wallet.sdk.rpc.TxidLookupQueryRequest\x1a..cash.z.wallet.sdk.rpc.TxidLookupQueryResponse\"\x00\x12x\n" +
+	"\x13GetActionDataParams\x12..cash.z.wallet.sdk.rpc.ActionDataParamsRequest\x1a/.cash.z.wallet.sdk.rpc.ActionDataParamsResponse\"\x00\x12r\n" +
+	"\x0fActionDataQuery\x12-.cash.z.wallet.sdk.rpc.ActionDataQueryRequest\x1a..cash.z.wallet.sdk.rpc.ActionDataQueryResponse\"\x00B\x1bZ\x16lightwalletd/walletrpc\xba\x02\x00b\x06proto3"
 
 var (
 	file_service_proto_rawDescOnce sync.Once
@@ -2395,7 +2909,7 @@ func file_service_proto_rawDescGZIP() []byte {
 }
 
 var file_service_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
 var file_service_proto_goTypes = []any{
 	(PoolType)(0),                         // 0: cash.z.wallet.sdk.rpc.PoolType
 	(ShieldedProtocol)(0),                 // 1: cash.z.wallet.sdk.rpc.ShieldedProtocol
@@ -2431,8 +2945,16 @@ var file_service_proto_goTypes = []any{
 	(*InspireQueryResponse)(nil),          // 31: cash.z.wallet.sdk.rpc.InspireQueryResponse
 	(*GetPirStatusRequest)(nil),           // 32: cash.z.wallet.sdk.rpc.GetPirStatusRequest
 	(*PirStatusResponse)(nil),             // 33: cash.z.wallet.sdk.rpc.PirStatusResponse
-	(*CompactBlock)(nil),                  // 34: cash.z.wallet.sdk.rpc.CompactBlock
-	(*CompactTx)(nil),                     // 35: cash.z.wallet.sdk.rpc.CompactTx
+	(*TxidLookupParamsRequest)(nil),       // 34: cash.z.wallet.sdk.rpc.TxidLookupParamsRequest
+	(*TxidLookupParamsResponse)(nil),      // 35: cash.z.wallet.sdk.rpc.TxidLookupParamsResponse
+	(*ActionDataParamsRequest)(nil),       // 36: cash.z.wallet.sdk.rpc.ActionDataParamsRequest
+	(*ActionDataParamsResponse)(nil),      // 37: cash.z.wallet.sdk.rpc.ActionDataParamsResponse
+	(*TxidLookupQueryRequest)(nil),        // 38: cash.z.wallet.sdk.rpc.TxidLookupQueryRequest
+	(*TxidLookupQueryResponse)(nil),       // 39: cash.z.wallet.sdk.rpc.TxidLookupQueryResponse
+	(*ActionDataQueryRequest)(nil),        // 40: cash.z.wallet.sdk.rpc.ActionDataQueryRequest
+	(*ActionDataQueryResponse)(nil),       // 41: cash.z.wallet.sdk.rpc.ActionDataQueryResponse
+	(*CompactBlock)(nil),                  // 42: cash.z.wallet.sdk.rpc.CompactBlock
+	(*CompactTx)(nil),                     // 43: cash.z.wallet.sdk.rpc.CompactTx
 }
 var file_service_proto_depIdxs = []int32{
 	2,  // 0: cash.z.wallet.sdk.rpc.BlockRange.start:type_name -> cash.z.wallet.sdk.rpc.BlockID
@@ -2446,59 +2968,70 @@ var file_service_proto_depIdxs = []int32{
 	24, // 8: cash.z.wallet.sdk.rpc.PirParamsResponse.cuckooParams:type_name -> cash.z.wallet.sdk.rpc.CuckooParams
 	25, // 9: cash.z.wallet.sdk.rpc.PirParamsResponse.ypirParams:type_name -> cash.z.wallet.sdk.rpc.YpirParams
 	26, // 10: cash.z.wallet.sdk.rpc.PirParamsResponse.inspireParams:type_name -> cash.z.wallet.sdk.rpc.InspireParams
-	7,  // 11: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestBlock:input_type -> cash.z.wallet.sdk.rpc.ChainSpec
-	2,  // 12: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlock:input_type -> cash.z.wallet.sdk.rpc.BlockID
-	2,  // 13: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockNullifiers:input_type -> cash.z.wallet.sdk.rpc.BlockID
-	3,  // 14: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRange:input_type -> cash.z.wallet.sdk.rpc.BlockRange
-	3,  // 15: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRangeNullifiers:input_type -> cash.z.wallet.sdk.rpc.BlockRange
-	4,  // 16: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTransaction:input_type -> cash.z.wallet.sdk.rpc.TxFilter
-	5,  // 17: cash.z.wallet.sdk.rpc.CompactTxStreamer.SendTransaction:input_type -> cash.z.wallet.sdk.rpc.RawTransaction
-	10, // 18: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTxids:input_type -> cash.z.wallet.sdk.rpc.TransparentAddressBlockFilter
-	10, // 19: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTransactions:input_type -> cash.z.wallet.sdk.rpc.TransparentAddressBlockFilter
-	14, // 20: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalance:input_type -> cash.z.wallet.sdk.rpc.AddressList
-	13, // 21: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalanceStream:input_type -> cash.z.wallet.sdk.rpc.Address
-	16, // 22: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolTx:input_type -> cash.z.wallet.sdk.rpc.GetMempoolTxRequest
-	8,  // 23: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolStream:input_type -> cash.z.wallet.sdk.rpc.Empty
-	2,  // 24: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTreeState:input_type -> cash.z.wallet.sdk.rpc.BlockID
-	8,  // 25: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestTreeState:input_type -> cash.z.wallet.sdk.rpc.Empty
-	18, // 26: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetSubtreeRoots:input_type -> cash.z.wallet.sdk.rpc.GetSubtreeRootsArg
-	20, // 27: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxos:input_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosArg
-	20, // 28: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxosStream:input_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosArg
-	8,  // 29: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLightdInfo:input_type -> cash.z.wallet.sdk.rpc.Empty
-	11, // 30: cash.z.wallet.sdk.rpc.CompactTxStreamer.Ping:input_type -> cash.z.wallet.sdk.rpc.Duration
-	23, // 31: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirParams:input_type -> cash.z.wallet.sdk.rpc.GetPirParamsRequest
-	28, // 32: cash.z.wallet.sdk.rpc.CompactTxStreamer.YpirQuery:input_type -> cash.z.wallet.sdk.rpc.YpirQueryRequest
-	30, // 33: cash.z.wallet.sdk.rpc.CompactTxStreamer.InspireQuery:input_type -> cash.z.wallet.sdk.rpc.InspireQueryRequest
-	32, // 34: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirStatus:input_type -> cash.z.wallet.sdk.rpc.GetPirStatusRequest
-	2,  // 35: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestBlock:output_type -> cash.z.wallet.sdk.rpc.BlockID
-	34, // 36: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlock:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
-	34, // 37: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockNullifiers:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
-	34, // 38: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRange:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
-	34, // 39: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRangeNullifiers:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
-	5,  // 40: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTransaction:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
-	6,  // 41: cash.z.wallet.sdk.rpc.CompactTxStreamer.SendTransaction:output_type -> cash.z.wallet.sdk.rpc.SendResponse
-	5,  // 42: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTxids:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
-	5,  // 43: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTransactions:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
-	15, // 44: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalance:output_type -> cash.z.wallet.sdk.rpc.Balance
-	15, // 45: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalanceStream:output_type -> cash.z.wallet.sdk.rpc.Balance
-	35, // 46: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolTx:output_type -> cash.z.wallet.sdk.rpc.CompactTx
-	5,  // 47: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolStream:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
-	17, // 48: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTreeState:output_type -> cash.z.wallet.sdk.rpc.TreeState
-	17, // 49: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestTreeState:output_type -> cash.z.wallet.sdk.rpc.TreeState
-	19, // 50: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetSubtreeRoots:output_type -> cash.z.wallet.sdk.rpc.SubtreeRoot
-	22, // 51: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxos:output_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosReplyList
-	21, // 52: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxosStream:output_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosReply
-	9,  // 53: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLightdInfo:output_type -> cash.z.wallet.sdk.rpc.LightdInfo
-	12, // 54: cash.z.wallet.sdk.rpc.CompactTxStreamer.Ping:output_type -> cash.z.wallet.sdk.rpc.PingResponse
-	27, // 55: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirParams:output_type -> cash.z.wallet.sdk.rpc.PirParamsResponse
-	29, // 56: cash.z.wallet.sdk.rpc.CompactTxStreamer.YpirQuery:output_type -> cash.z.wallet.sdk.rpc.YpirQueryResponse
-	31, // 57: cash.z.wallet.sdk.rpc.CompactTxStreamer.InspireQuery:output_type -> cash.z.wallet.sdk.rpc.InspireQueryResponse
-	33, // 58: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirStatus:output_type -> cash.z.wallet.sdk.rpc.PirStatusResponse
-	35, // [35:59] is the sub-list for method output_type
-	11, // [11:35] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	26, // 11: cash.z.wallet.sdk.rpc.TxidLookupParamsResponse.inspire:type_name -> cash.z.wallet.sdk.rpc.InspireParams
+	24, // 12: cash.z.wallet.sdk.rpc.TxidLookupParamsResponse.cuckoo:type_name -> cash.z.wallet.sdk.rpc.CuckooParams
+	26, // 13: cash.z.wallet.sdk.rpc.ActionDataParamsResponse.inspire:type_name -> cash.z.wallet.sdk.rpc.InspireParams
+	7,  // 14: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestBlock:input_type -> cash.z.wallet.sdk.rpc.ChainSpec
+	2,  // 15: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlock:input_type -> cash.z.wallet.sdk.rpc.BlockID
+	2,  // 16: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockNullifiers:input_type -> cash.z.wallet.sdk.rpc.BlockID
+	3,  // 17: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRange:input_type -> cash.z.wallet.sdk.rpc.BlockRange
+	3,  // 18: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRangeNullifiers:input_type -> cash.z.wallet.sdk.rpc.BlockRange
+	4,  // 19: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTransaction:input_type -> cash.z.wallet.sdk.rpc.TxFilter
+	5,  // 20: cash.z.wallet.sdk.rpc.CompactTxStreamer.SendTransaction:input_type -> cash.z.wallet.sdk.rpc.RawTransaction
+	10, // 21: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTxids:input_type -> cash.z.wallet.sdk.rpc.TransparentAddressBlockFilter
+	10, // 22: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTransactions:input_type -> cash.z.wallet.sdk.rpc.TransparentAddressBlockFilter
+	14, // 23: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalance:input_type -> cash.z.wallet.sdk.rpc.AddressList
+	13, // 24: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalanceStream:input_type -> cash.z.wallet.sdk.rpc.Address
+	16, // 25: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolTx:input_type -> cash.z.wallet.sdk.rpc.GetMempoolTxRequest
+	8,  // 26: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolStream:input_type -> cash.z.wallet.sdk.rpc.Empty
+	2,  // 27: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTreeState:input_type -> cash.z.wallet.sdk.rpc.BlockID
+	8,  // 28: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestTreeState:input_type -> cash.z.wallet.sdk.rpc.Empty
+	18, // 29: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetSubtreeRoots:input_type -> cash.z.wallet.sdk.rpc.GetSubtreeRootsArg
+	20, // 30: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxos:input_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosArg
+	20, // 31: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxosStream:input_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosArg
+	8,  // 32: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLightdInfo:input_type -> cash.z.wallet.sdk.rpc.Empty
+	11, // 33: cash.z.wallet.sdk.rpc.CompactTxStreamer.Ping:input_type -> cash.z.wallet.sdk.rpc.Duration
+	23, // 34: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirParams:input_type -> cash.z.wallet.sdk.rpc.GetPirParamsRequest
+	28, // 35: cash.z.wallet.sdk.rpc.CompactTxStreamer.YpirQuery:input_type -> cash.z.wallet.sdk.rpc.YpirQueryRequest
+	30, // 36: cash.z.wallet.sdk.rpc.CompactTxStreamer.InspireQuery:input_type -> cash.z.wallet.sdk.rpc.InspireQueryRequest
+	32, // 37: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirStatus:input_type -> cash.z.wallet.sdk.rpc.GetPirStatusRequest
+	34, // 38: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTxidLookupParams:input_type -> cash.z.wallet.sdk.rpc.TxidLookupParamsRequest
+	38, // 39: cash.z.wallet.sdk.rpc.CompactTxStreamer.TxidLookupQuery:input_type -> cash.z.wallet.sdk.rpc.TxidLookupQueryRequest
+	36, // 40: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetActionDataParams:input_type -> cash.z.wallet.sdk.rpc.ActionDataParamsRequest
+	40, // 41: cash.z.wallet.sdk.rpc.CompactTxStreamer.ActionDataQuery:input_type -> cash.z.wallet.sdk.rpc.ActionDataQueryRequest
+	2,  // 42: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestBlock:output_type -> cash.z.wallet.sdk.rpc.BlockID
+	42, // 43: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlock:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
+	42, // 44: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockNullifiers:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
+	42, // 45: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRange:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
+	42, // 46: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetBlockRangeNullifiers:output_type -> cash.z.wallet.sdk.rpc.CompactBlock
+	5,  // 47: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTransaction:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
+	6,  // 48: cash.z.wallet.sdk.rpc.CompactTxStreamer.SendTransaction:output_type -> cash.z.wallet.sdk.rpc.SendResponse
+	5,  // 49: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTxids:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
+	5,  // 50: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressTransactions:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
+	15, // 51: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalance:output_type -> cash.z.wallet.sdk.rpc.Balance
+	15, // 52: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTaddressBalanceStream:output_type -> cash.z.wallet.sdk.rpc.Balance
+	43, // 53: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolTx:output_type -> cash.z.wallet.sdk.rpc.CompactTx
+	5,  // 54: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetMempoolStream:output_type -> cash.z.wallet.sdk.rpc.RawTransaction
+	17, // 55: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTreeState:output_type -> cash.z.wallet.sdk.rpc.TreeState
+	17, // 56: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLatestTreeState:output_type -> cash.z.wallet.sdk.rpc.TreeState
+	19, // 57: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetSubtreeRoots:output_type -> cash.z.wallet.sdk.rpc.SubtreeRoot
+	22, // 58: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxos:output_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosReplyList
+	21, // 59: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetAddressUtxosStream:output_type -> cash.z.wallet.sdk.rpc.GetAddressUtxosReply
+	9,  // 60: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetLightdInfo:output_type -> cash.z.wallet.sdk.rpc.LightdInfo
+	12, // 61: cash.z.wallet.sdk.rpc.CompactTxStreamer.Ping:output_type -> cash.z.wallet.sdk.rpc.PingResponse
+	27, // 62: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirParams:output_type -> cash.z.wallet.sdk.rpc.PirParamsResponse
+	29, // 63: cash.z.wallet.sdk.rpc.CompactTxStreamer.YpirQuery:output_type -> cash.z.wallet.sdk.rpc.YpirQueryResponse
+	31, // 64: cash.z.wallet.sdk.rpc.CompactTxStreamer.InspireQuery:output_type -> cash.z.wallet.sdk.rpc.InspireQueryResponse
+	33, // 65: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetPirStatus:output_type -> cash.z.wallet.sdk.rpc.PirStatusResponse
+	35, // 66: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetTxidLookupParams:output_type -> cash.z.wallet.sdk.rpc.TxidLookupParamsResponse
+	39, // 67: cash.z.wallet.sdk.rpc.CompactTxStreamer.TxidLookupQuery:output_type -> cash.z.wallet.sdk.rpc.TxidLookupQueryResponse
+	37, // 68: cash.z.wallet.sdk.rpc.CompactTxStreamer.GetActionDataParams:output_type -> cash.z.wallet.sdk.rpc.ActionDataParamsResponse
+	41, // 69: cash.z.wallet.sdk.rpc.CompactTxStreamer.ActionDataQuery:output_type -> cash.z.wallet.sdk.rpc.ActionDataQueryResponse
+	42, // [42:70] is the sub-list for method output_type
+	14, // [14:42] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_service_proto_init() }
@@ -2513,7 +3046,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_service_proto_rawDesc), len(file_service_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   32,
+			NumMessages:   40,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

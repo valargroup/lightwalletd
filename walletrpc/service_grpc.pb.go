@@ -47,6 +47,10 @@ const (
 	CompactTxStreamer_YpirQuery_FullMethodName                = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/YpirQuery"
 	CompactTxStreamer_InspireQuery_FullMethodName             = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/InspireQuery"
 	CompactTxStreamer_GetPirStatus_FullMethodName             = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/GetPirStatus"
+	CompactTxStreamer_GetTxidLookupParams_FullMethodName      = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/GetTxidLookupParams"
+	CompactTxStreamer_TxidLookupQuery_FullMethodName          = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/TxidLookupQuery"
+	CompactTxStreamer_GetActionDataParams_FullMethodName      = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/GetActionDataParams"
+	CompactTxStreamer_ActionDataQuery_FullMethodName          = "/cash.z.wallet.sdk.rpc.CompactTxStreamer/ActionDataQuery"
 )
 
 // CompactTxStreamerClient is the client API for CompactTxStreamer service.
@@ -134,6 +138,17 @@ type CompactTxStreamerClient interface {
 	// Get the current status of the PIR service.
 	// Useful for monitoring and debugging.
 	GetPirStatus(ctx context.Context, in *GetPirStatusRequest, opts ...grpc.CallOption) (*PirStatusResponse, error)
+	// Get parameters for txid lookup PIR queries.
+	// Returns Cuckoo and InsPIRe params needed to construct queries.
+	GetTxidLookupParams(ctx context.Context, in *TxidLookupParamsRequest, opts ...grpc.CallOption) (*TxidLookupParamsResponse, error)
+	// Execute a txid lookup PIR query.
+	// Given (block_height, tx_index), returns (start_action_index, action_count).
+	TxidLookupQuery(ctx context.Context, in *TxidLookupQueryRequest, opts ...grpc.CallOption) (*TxidLookupQueryResponse, error)
+	// Get parameters for action data PIR queries.
+	GetActionDataParams(ctx context.Context, in *ActionDataParamsRequest, opts ...grpc.CallOption) (*ActionDataParamsResponse, error)
+	// Execute an action data PIR query.
+	// Returns encrypted action data for trial decryption.
+	ActionDataQuery(ctx context.Context, in *ActionDataQueryRequest, opts ...grpc.CallOption) (*ActionDataQueryResponse, error)
 }
 
 type compactTxStreamerClient struct {
@@ -459,6 +474,46 @@ func (c *compactTxStreamerClient) GetPirStatus(ctx context.Context, in *GetPirSt
 	return out, nil
 }
 
+func (c *compactTxStreamerClient) GetTxidLookupParams(ctx context.Context, in *TxidLookupParamsRequest, opts ...grpc.CallOption) (*TxidLookupParamsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TxidLookupParamsResponse)
+	err := c.cc.Invoke(ctx, CompactTxStreamer_GetTxidLookupParams_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *compactTxStreamerClient) TxidLookupQuery(ctx context.Context, in *TxidLookupQueryRequest, opts ...grpc.CallOption) (*TxidLookupQueryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TxidLookupQueryResponse)
+	err := c.cc.Invoke(ctx, CompactTxStreamer_TxidLookupQuery_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *compactTxStreamerClient) GetActionDataParams(ctx context.Context, in *ActionDataParamsRequest, opts ...grpc.CallOption) (*ActionDataParamsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ActionDataParamsResponse)
+	err := c.cc.Invoke(ctx, CompactTxStreamer_GetActionDataParams_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *compactTxStreamerClient) ActionDataQuery(ctx context.Context, in *ActionDataQueryRequest, opts ...grpc.CallOption) (*ActionDataQueryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ActionDataQueryResponse)
+	err := c.cc.Invoke(ctx, CompactTxStreamer_ActionDataQuery_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CompactTxStreamerServer is the server API for CompactTxStreamer service.
 // All implementations must embed UnimplementedCompactTxStreamerServer
 // for forward compatibility.
@@ -544,6 +599,17 @@ type CompactTxStreamerServer interface {
 	// Get the current status of the PIR service.
 	// Useful for monitoring and debugging.
 	GetPirStatus(context.Context, *GetPirStatusRequest) (*PirStatusResponse, error)
+	// Get parameters for txid lookup PIR queries.
+	// Returns Cuckoo and InsPIRe params needed to construct queries.
+	GetTxidLookupParams(context.Context, *TxidLookupParamsRequest) (*TxidLookupParamsResponse, error)
+	// Execute a txid lookup PIR query.
+	// Given (block_height, tx_index), returns (start_action_index, action_count).
+	TxidLookupQuery(context.Context, *TxidLookupQueryRequest) (*TxidLookupQueryResponse, error)
+	// Get parameters for action data PIR queries.
+	GetActionDataParams(context.Context, *ActionDataParamsRequest) (*ActionDataParamsResponse, error)
+	// Execute an action data PIR query.
+	// Returns encrypted action data for trial decryption.
+	ActionDataQuery(context.Context, *ActionDataQueryRequest) (*ActionDataQueryResponse, error)
 	mustEmbedUnimplementedCompactTxStreamerServer()
 }
 
@@ -625,6 +691,18 @@ func (UnimplementedCompactTxStreamerServer) InspireQuery(context.Context, *Inspi
 }
 func (UnimplementedCompactTxStreamerServer) GetPirStatus(context.Context, *GetPirStatusRequest) (*PirStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPirStatus not implemented")
+}
+func (UnimplementedCompactTxStreamerServer) GetTxidLookupParams(context.Context, *TxidLookupParamsRequest) (*TxidLookupParamsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTxidLookupParams not implemented")
+}
+func (UnimplementedCompactTxStreamerServer) TxidLookupQuery(context.Context, *TxidLookupQueryRequest) (*TxidLookupQueryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TxidLookupQuery not implemented")
+}
+func (UnimplementedCompactTxStreamerServer) GetActionDataParams(context.Context, *ActionDataParamsRequest) (*ActionDataParamsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetActionDataParams not implemented")
+}
+func (UnimplementedCompactTxStreamerServer) ActionDataQuery(context.Context, *ActionDataQueryRequest) (*ActionDataQueryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActionDataQuery not implemented")
 }
 func (UnimplementedCompactTxStreamerServer) mustEmbedUnimplementedCompactTxStreamerServer() {}
 func (UnimplementedCompactTxStreamerServer) testEmbeddedByValue()                           {}
@@ -1012,6 +1090,78 @@ func _CompactTxStreamer_GetPirStatus_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompactTxStreamer_GetTxidLookupParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TxidLookupParamsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompactTxStreamerServer).GetTxidLookupParams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompactTxStreamer_GetTxidLookupParams_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompactTxStreamerServer).GetTxidLookupParams(ctx, req.(*TxidLookupParamsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompactTxStreamer_TxidLookupQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TxidLookupQueryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompactTxStreamerServer).TxidLookupQuery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompactTxStreamer_TxidLookupQuery_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompactTxStreamerServer).TxidLookupQuery(ctx, req.(*TxidLookupQueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompactTxStreamer_GetActionDataParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActionDataParamsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompactTxStreamerServer).GetActionDataParams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompactTxStreamer_GetActionDataParams_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompactTxStreamerServer).GetActionDataParams(ctx, req.(*ActionDataParamsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompactTxStreamer_ActionDataQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActionDataQueryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompactTxStreamerServer).ActionDataQuery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompactTxStreamer_ActionDataQuery_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompactTxStreamerServer).ActionDataQuery(ctx, req.(*ActionDataQueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CompactTxStreamer_ServiceDesc is the grpc.ServiceDesc for CompactTxStreamer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1078,6 +1228,22 @@ var CompactTxStreamer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPirStatus",
 			Handler:    _CompactTxStreamer_GetPirStatus_Handler,
+		},
+		{
+			MethodName: "GetTxidLookupParams",
+			Handler:    _CompactTxStreamer_GetTxidLookupParams_Handler,
+		},
+		{
+			MethodName: "TxidLookupQuery",
+			Handler:    _CompactTxStreamer_TxidLookupQuery_Handler,
+		},
+		{
+			MethodName: "GetActionDataParams",
+			Handler:    _CompactTxStreamer_GetActionDataParams_Handler,
+		},
+		{
+			MethodName: "ActionDataQuery",
+			Handler:    _CompactTxStreamer_ActionDataQuery_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
