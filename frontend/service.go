@@ -1119,6 +1119,8 @@ func (s *lwdStreamer) GetTxidLookupParams(ctx context.Context, req *walletrpc.Tx
 			BucketSize:       uint32(params.CuckooParams.BucketSize),
 			HashSeed:         seedBytes,
 			NumHashFunctions: 3, // Standard Cuckoo uses 3 hash functions
+			ValueSize:        uint32(params.CuckooParams.ValueSize),
+			EntrySize:        uint32(params.CuckooParams.EntrySize),
 		},
 		Inspire: &walletrpc.InspireParams{
 			PolyLen:           uint64(params.PirSetup.PolyLen),

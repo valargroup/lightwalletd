@@ -1494,6 +1494,8 @@ type CuckooParams struct {
 	BucketSize       uint32                 `protobuf:"varint,2,opt,name=bucketSize,proto3" json:"bucketSize,omitempty"`             // Size of each bucket in bytes
 	HashSeed         []byte                 `protobuf:"bytes,3,opt,name=hashSeed,proto3" json:"hashSeed,omitempty"`                  // Seed for the hash functions
 	NumHashFunctions uint32                 `protobuf:"varint,4,opt,name=numHashFunctions,proto3" json:"numHashFunctions,omitempty"` // Number of hash functions used
+	ValueSize        uint32                 `protobuf:"varint,5,opt,name=valueSize,proto3" json:"valueSize,omitempty"`               // Size of each value in bytes (for txid PIR)
+	EntrySize        uint32                 `protobuf:"varint,6,opt,name=entrySize,proto3" json:"entrySize,omitempty"`               // Size of each entry in bytes (for txid PIR)
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1552,6 +1554,20 @@ func (x *CuckooParams) GetHashSeed() []byte {
 func (x *CuckooParams) GetNumHashFunctions() uint32 {
 	if x != nil {
 		return x.NumHashFunctions
+	}
+	return 0
+}
+
+func (x *CuckooParams) GetValueSize() uint32 {
+	if x != nil {
+		return x.ValueSize
+	}
+	return 0
+}
+
+func (x *CuckooParams) GetEntrySize() uint32 {
+	if x != nil {
+		return x.EntrySize
 	}
 	return 0
 }
@@ -2758,7 +2774,7 @@ const file_service_proto_rawDesc = "" +
 	"\x06height\x18\x05 \x01(\x04R\x06height\"k\n" +
 	"\x18GetAddressUtxosReplyList\x12O\n" +
 	"\faddressUtxos\x18\x01 \x03(\v2+.cash.z.wallet.sdk.rpc.GetAddressUtxosReplyR\faddressUtxos\"\x15\n" +
-	"\x13GetPirParamsRequest\"\x96\x01\n" +
+	"\x13GetPirParamsRequest\"\xd2\x01\n" +
 	"\fCuckooParams\x12\x1e\n" +
 	"\n" +
 	"numBuckets\x18\x01 \x01(\x04R\n" +
@@ -2767,7 +2783,9 @@ const file_service_proto_rawDesc = "" +
 	"bucketSize\x18\x02 \x01(\rR\n" +
 	"bucketSize\x12\x1a\n" +
 	"\bhashSeed\x18\x03 \x01(\fR\bhashSeed\x12*\n" +
-	"\x10numHashFunctions\x18\x04 \x01(\rR\x10numHashFunctions\"b\n" +
+	"\x10numHashFunctions\x18\x04 \x01(\rR\x10numHashFunctions\x12\x1c\n" +
+	"\tvalueSize\x18\x05 \x01(\rR\tvalueSize\x12\x1c\n" +
+	"\tentrySize\x18\x06 \x01(\rR\tentrySize\"b\n" +
 	"\n" +
 	"YpirParams\x12\x18\n" +
 	"\anumRows\x18\x01 \x01(\x04R\anumRows\x12\x18\n" +

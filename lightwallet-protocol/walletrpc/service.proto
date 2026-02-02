@@ -227,6 +227,8 @@ message CuckooParams {
     uint32 bucketSize = 2;       // Size of each bucket in bytes
     bytes hashSeed = 3;          // Seed for the hash functions
     uint32 numHashFunctions = 4; // Number of hash functions used
+    uint32 valueSize = 5;        // Size of each value in bytes (for txid PIR)
+    uint32 entrySize = 6;        // Size of each entry in bytes (for txid PIR)
 }
 
 // YPIR-specific parameters
