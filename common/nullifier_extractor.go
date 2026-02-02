@@ -24,6 +24,14 @@ const (
 	// DefaultPirRequestTimeout is the default timeout for PIR service requests
 	// when no context timeout is provided.
 	DefaultPirRequestTimeout = 30 * time.Second
+
+	// CircuitBreakerThreshold is the number of consecutive failures before
+	// disabling the extractor temporarily.
+	CircuitBreakerThreshold = 5
+
+	// CircuitBreakerResetInterval is how often to try reconnecting after
+	// the circuit breaker trips.
+	CircuitBreakerResetInterval = 60 * time.Second
 )
 
 // NullifierExtractor extracts Orchard nullifiers from blocks and sends them to the PIR service.
@@ -35,6 +43,11 @@ type NullifierExtractor struct {
 	pendingIngests   int64         // Atomic counter for monitoring
 	failedIngests    int64         // Atomic counter for failed ingestions
 	requestTimeout   time.Duration // Timeout for PIR requests
+
+	// Circuit breaker state
+	consecutiveFailures int64     // Atomic counter for consecutive failures
+	circuitOpen         int32     // Atomic flag: 1 if circuit is open (service unavailable)
+	lastCircuitOpenTime int64     // Unix timestamp when circuit was last opened
 }
 
 // NewNullifierExtractor creates a new NullifierExtractor.
@@ -67,6 +80,39 @@ func (e *NullifierExtractor) IsEnabled() bool {
 	return e.enabled
 }
 
+// isCircuitOpen returns true if the circuit breaker is open (service unavailable).
+func (e *NullifierExtractor) isCircuitOpen() bool {
+	return atomic.LoadInt32(&e.circuitOpen) == 1
+}
+
+// shouldAttemptReset checks if enough time has passed to try resetting the circuit.
+func (e *NullifierExtractor) shouldAttemptReset() bool {
+	lastOpen := atomic.LoadInt64(&e.lastCircuitOpenTime)
+	return time.Now().Unix()-lastOpen >= int64(CircuitBreakerResetInterval.Seconds())
+}
+
+// recordSuccess resets the circuit breaker on successful request.
+func (e *NullifierExtractor) recordSuccess() {
+	atomic.StoreInt64(&e.consecutiveFailures, 0)
+	if atomic.CompareAndSwapInt32(&e.circuitOpen, 1, 0) {
+		Log.Info("PIR service connection restored, resuming nullifier ingestion")
+	}
+}
+
+// recordFailure increments the failure counter and potentially opens the circuit.
+func (e *NullifierExtractor) recordFailure() {
+	failures := atomic.AddInt64(&e.consecutiveFailures, 1)
+	if failures >= CircuitBreakerThreshold {
+		if atomic.CompareAndSwapInt32(&e.circuitOpen, 0, 1) {
+			atomic.StoreInt64(&e.lastCircuitOpenTime, time.Now().Unix())
+			Log.WithFields(logrus.Fields{
+				"consecutive_failures": failures,
+				"retry_interval":       CircuitBreakerResetInterval,
+			}).Warn("PIR service appears unavailable, pausing nullifier ingestion (will retry periodically)")
+		}
+	}
+}
+
 // ExtractAndSend extracts Orchard nullifiers from a CompactBlock and sends them to the PIR service.
 // This method is designed to be called during block ingestion.
 // Errors are logged but do not block block processing.
@@ -74,6 +120,15 @@ func (e *NullifierExtractor) IsEnabled() bool {
 func (e *NullifierExtractor) ExtractAndSend(ctx context.Context, block *walletrpc.CompactBlock) {
 	if !e.enabled || block == nil {
 		return
+	}
+
+	// Check circuit breaker - if open, only attempt reset periodically
+	if e.isCircuitOpen() {
+		if !e.shouldAttemptReset() {
+			// Circuit is open and it's not time to retry yet
+			return
+		}
+		// Time to try reconnecting - proceed with request
 	}
 
 	// Extract nullifiers from all transactions in the block (under lock for thread safety)
@@ -146,14 +201,19 @@ func (e *NullifierExtractor) ExtractAndSend(ctx context.Context, block *walletrp
 		resp, err := e.pirClient.IngestNullifiers(reqCtx, req)
 		if err != nil {
 			atomic.AddInt64(&e.failedIngests, 1)
-			Log.WithFields(logrus.Fields{
-				"height":     blockHeight,
-				"nullifiers": numNullifiers,
-				"error":      err,
-			}).Error("Failed to ingest nullifiers to PIR service")
+			e.recordFailure()
+			// Only log if circuit is not yet open (to avoid log spam)
+			if !e.isCircuitOpen() {
+				Log.WithFields(logrus.Fields{
+					"height":     blockHeight,
+					"nullifiers": numNullifiers,
+					"error":      err,
+				}).Error("Failed to ingest nullifiers to PIR service")
+			}
 			return
 		}
 
+		e.recordSuccess()
 		Log.WithFields(logrus.Fields{
 			"height":        blockHeight,
 			"nullifiers":    numNullifiers,
@@ -166,8 +226,17 @@ func (e *NullifierExtractor) ExtractAndSend(ctx context.Context, block *walletrp
 // HandleReorg notifies the PIR service of a chain reorganization.
 // This should be called when the block cache detects a reorg.
 // Reorg notifications are critical, so this method will retry on failure.
+// Note: Reorgs are still skipped if the circuit is open to avoid blocking.
 func (e *NullifierExtractor) HandleReorg(ctx context.Context, reorgHeight uint64) {
 	if !e.enabled {
+		return
+	}
+
+	// Check circuit breaker - reorgs are skipped if service is unavailable
+	if e.isCircuitOpen() && !e.shouldAttemptReset() {
+		Log.WithFields(logrus.Fields{
+			"reorg_height": reorgHeight,
+		}).Warn("PIR service unavailable, skipping reorg notification")
 		return
 	}
 
@@ -205,13 +274,17 @@ func (e *NullifierExtractor) HandleReorg(ctx context.Context, reorgHeight uint64
 		resp, err := e.pirClient.HandleReorg(reqCtx, reorgHeight)
 		if err != nil {
 			atomic.AddInt64(&e.failedIngests, 1)
-			Log.WithFields(logrus.Fields{
-				"reorg_height": reorgHeight,
-				"error":        err,
-			}).Error("Failed to notify PIR service of reorg")
+			e.recordFailure()
+			if !e.isCircuitOpen() {
+				Log.WithFields(logrus.Fields{
+					"reorg_height": reorgHeight,
+					"error":        err,
+				}).Error("Failed to notify PIR service of reorg")
+			}
 			return
 		}
 
+		e.recordSuccess()
 		Log.WithFields(logrus.Fields{
 			"reorg_height":   reorgHeight,
 			"blocks_removed": resp.BlocksRemoved,
@@ -249,9 +322,14 @@ func (e *NullifierExtractor) WaitForReady(ctx context.Context, pollInterval time
 // ExtractAndSendSync extracts Orchard nullifiers from a CompactBlock and sends them
 // to the PIR service synchronously. This is used during startup catch-up where we
 // want to send blocks sequentially and track progress.
-// Returns error if the send fails.
+// Returns error if the send fails, or nil if the circuit breaker is open.
 func (e *NullifierExtractor) ExtractAndSendSync(ctx context.Context, block *walletrpc.CompactBlock) error {
 	if !e.enabled || block == nil {
+		return nil
+	}
+
+	// Check circuit breaker
+	if e.isCircuitOpen() && !e.shouldAttemptReset() {
 		return nil
 	}
 
@@ -285,14 +363,18 @@ func (e *NullifierExtractor) ExtractAndSendSync(ctx context.Context, block *wall
 	// Send synchronously
 	_, err := e.pirClient.IngestNullifiers(ctx, req)
 	if err != nil {
-		Log.WithFields(logrus.Fields{
-			"height":     block.Height,
-			"nullifiers": len(nullifiers),
-			"error":      err,
-		}).Error("Failed to ingest nullifiers to PIR service (sync)")
+		e.recordFailure()
+		if !e.isCircuitOpen() {
+			Log.WithFields(logrus.Fields{
+				"height":     block.Height,
+				"nullifiers": len(nullifiers),
+				"error":      err,
+			}).Error("Failed to ingest nullifiers to PIR service (sync)")
+		}
 		return err
 	}
 
+	e.recordSuccess()
 	Log.WithFields(logrus.Fields{
 		"height":     block.Height,
 		"nullifiers": len(nullifiers),
