@@ -424,3 +424,168 @@ func (c *Client) QueryInspireBinary(ctx context.Context, queryData []byte) (*Bin
 
 	return &queryResp, nil
 }
+
+// ============ Txid PIR methods ============
+
+// TxidDbVersion contains the database version info for txid PIR.
+type TxidDbVersion struct {
+	Version     uint64 `json:"version"`
+	StartHeight uint32 `json:"start_height"`
+	EndHeight   uint32 `json:"end_height"`
+}
+
+// TxidLookupParams contains the parameters for txid lookup PIR queries.
+type TxidLookupParams struct {
+	Protocol     string        `json:"protocol"`
+	DbVersion    TxidDbVersion `json:"db_version"`
+	TxCount      uint64        `json:"tx_count"`
+	Factor       uint64        `json:"factor"`
+	RecordSize   uint64        `json:"record_size"`
+	PirSetup     InspireSetup  `json:"pir_setup"`
+	CuckooParams CuckooParams  `json:"cuckoo_params"`
+}
+
+// ActionDataParams contains the parameters for action data PIR queries.
+type ActionDataParams struct {
+	Protocol     string        `json:"protocol"`
+	DbVersion    TxidDbVersion `json:"db_version"`
+	ActionCount  uint64        `json:"action_count"`
+	ColumnHeight uint64        `json:"column_height"`
+	NumColumns   uint64        `json:"num_columns"`
+	Factor       uint64        `json:"factor"`
+	RecordSize   uint64        `json:"record_size"`
+	ActionSize   uint64        `json:"action_size"`
+	PirSetup     InspireSetup  `json:"pir_setup"`
+}
+
+// TxidQueryResponse is the response from a txid PIR query (tx-lookup or action-data).
+type TxidQueryResponse struct {
+	ResponseData     []byte  `json:"-"` // Binary response data (not JSON)
+	ServerTimeMs     float64 `json:"processing_time_ms"`
+}
+
+// GetTxidLookupParams retrieves the txid lookup PIR parameters.
+func (c *Client) GetTxidLookupParams(ctx context.Context) (*TxidLookupParams, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", c.baseURL+"/pir/tx-lookup/params", nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating request: %w", err)
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var params TxidLookupParams
+	if err := json.NewDecoder(resp.Body).Decode(&params); err != nil {
+		return nil, fmt.Errorf("decoding response: %w", err)
+	}
+
+	return &params, nil
+}
+
+// TxidLookupQuery performs a txid lookup PIR query (binary request/response).
+func (c *Client) TxidLookupQuery(ctx context.Context, queryData []byte) (*TxidQueryResponse, error) {
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", c.baseURL+"/pir/tx-lookup/query", bytes.NewReader(queryData))
+	if err != nil {
+		return nil, fmt.Errorf("creating request: %w", err)
+	}
+	httpReq.Header.Set("Content-Type", "application/octet-stream")
+
+	resp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		respBody, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	// Read raw binary response
+	responseData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading response: %w", err)
+	}
+
+	// Extract server time from header if available
+	serverTimeMs := 0.0
+	if timeHeader := resp.Header.Get("X-Processing-Time-Ms"); timeHeader != "" {
+		fmt.Sscanf(timeHeader, "%f", &serverTimeMs)
+	}
+
+	return &TxidQueryResponse{
+		ResponseData: responseData,
+		ServerTimeMs: serverTimeMs,
+	}, nil
+}
+
+// GetActionDataParams retrieves the action data PIR parameters.
+func (c *Client) GetActionDataParams(ctx context.Context) (*ActionDataParams, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", c.baseURL+"/pir/action-data/params", nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating request: %w", err)
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var params ActionDataParams
+	if err := json.NewDecoder(resp.Body).Decode(&params); err != nil {
+		return nil, fmt.Errorf("decoding response: %w", err)
+	}
+
+	return &params, nil
+}
+
+// ActionDataQuery performs an action data PIR query (binary request/response).
+func (c *Client) ActionDataQuery(ctx context.Context, queryData []byte) (*TxidQueryResponse, error) {
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", c.baseURL+"/pir/action-data/query", bytes.NewReader(queryData))
+	if err != nil {
+		return nil, fmt.Errorf("creating request: %w", err)
+	}
+	httpReq.Header.Set("Content-Type", "application/octet-stream")
+
+	resp, err := c.httpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		respBody, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	// Read raw binary response
+	responseData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading response: %w", err)
+	}
+
+	// Extract server time from header if available
+	serverTimeMs := 0.0
+	if timeHeader := resp.Header.Get("X-Processing-Time-Ms"); timeHeader != "" {
+		fmt.Sscanf(timeHeader, "%f", &serverTimeMs)
+	}
+
+	return &TxidQueryResponse{
+		ResponseData: responseData,
+		ServerTimeMs: serverTimeMs,
+	}, nil
+}
