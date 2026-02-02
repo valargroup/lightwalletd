@@ -1097,10 +1097,14 @@ func (s *lwdStreamer) GetTxidLookupParams(ctx context.Context, req *walletrpc.Tx
 		return nil, status.Errorf(codes.Internal, "failed to get txid lookup params: %s", err.Error())
 	}
 
-	// Convert seed from string to bytes
-	seedBytes, err := hex.DecodeString(params.CuckooParams.Seed)
+	// Convert seed from decimal string to uint64, then to little-endian bytes
+	seedUint, err := strconv.ParseUint(params.CuckooParams.Seed, 10, 64)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "invalid hex seed from PIR service: %s", err.Error())
+		return nil, status.Errorf(codes.Internal, "invalid seed from PIR service: %s", err.Error())
+	}
+	seedBytes := make([]byte, 8)
+	for i := 0; i < 8; i++ {
+		seedBytes[i] = byte(seedUint >> (i * 8))
 	}
 
 	response := &walletrpc.TxidLookupParamsResponse{
