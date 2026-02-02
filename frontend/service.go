@@ -1082,6 +1082,143 @@ func (s *lwdStreamer) GetPirStatus(ctx context.Context, req *walletrpc.GetPirSta
 	return response, nil
 }
 
+// ============ Txid PIR handlers ============
+
+// GetTxidLookupParams returns the parameters for txid lookup PIR queries.
+func (s *lwdStreamer) GetTxidLookupParams(ctx context.Context, req *walletrpc.TxidLookupParamsRequest) (*walletrpc.TxidLookupParamsResponse, error) {
+	common.Log.Debugf("gRPC GetTxidLookupParams()\n")
+
+	if s.pirClient == nil || !s.pirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	}
+
+	params, err := s.pirClient.GetTxidLookupParams(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get txid lookup params: %s", err.Error())
+	}
+
+	// Convert seed from string to bytes
+	seedBytes, err := hex.DecodeString(params.CuckooParams.Seed)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "invalid hex seed from PIR service: %s", err.Error())
+	}
+
+	response := &walletrpc.TxidLookupParamsResponse{
+		DbVersion:   params.DbVersion.Version,
+		StartHeight: params.DbVersion.StartHeight,
+		EndHeight:   params.DbVersion.EndHeight,
+		TxCount:     params.TxCount,
+		Factor:      params.Factor,
+		RecordSize:  params.RecordSize,
+		Cuckoo: &walletrpc.CuckooParams{
+			NumBuckets:       uint64(params.CuckooParams.NumBuckets),
+			BucketSize:       uint32(params.CuckooParams.BucketSize),
+			HashSeed:         seedBytes,
+			NumHashFunctions: 3, // Standard Cuckoo uses 3 hash functions
+		},
+		Inspire: &walletrpc.InspireParams{
+			PolyLen:           uint64(params.PirSetup.PolyLen),
+			DbDim1:            uint64(params.PirSetup.DbDim1),
+			Instances:         uint64(params.PirSetup.Instances),
+			DbRows:            uint64(params.PirSetup.DbRows),
+			DbCols:            uint64(params.PirSetup.DbCols),
+			Gamma:             uint64(params.PirSetup.Gamma),
+			InterpolateDegree: uint64(params.PirSetup.InterpolateDegree),
+			PtModulus:         params.PirSetup.PtModulus,
+			C:                 uint64(params.PirSetup.C),
+			TGsw:              uint64(params.PirSetup.TGsw),
+			Q2Bits:            uint64(params.PirSetup.Q2Bits),
+			TExpLeft:          uint64(params.PirSetup.TExpLeft),
+			RecordSize:        params.RecordSize,
+			Factor:            uint32(params.Factor),
+		},
+	}
+
+	common.Log.Tracef("  return: %+v\n", response)
+	return response, nil
+}
+
+// TxidLookupQuery executes a txid lookup PIR query.
+func (s *lwdStreamer) TxidLookupQuery(ctx context.Context, req *walletrpc.TxidLookupQueryRequest) (*walletrpc.TxidLookupQueryResponse, error) {
+	common.Log.Debugf("gRPC TxidLookupQuery(query_len=%d)\n", len(req.QueryData))
+
+	if s.pirClient == nil || !s.pirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	}
+
+	resp, err := s.pirClient.TxidLookupQuery(ctx, req.QueryData)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "txid lookup query failed: %s", err.Error())
+	}
+
+	return &walletrpc.TxidLookupQueryResponse{
+		ResponseData: resp.ResponseData,
+		ServerTimeMs: resp.ServerTimeMs,
+	}, nil
+}
+
+// GetActionDataParams returns the parameters for action data PIR queries.
+func (s *lwdStreamer) GetActionDataParams(ctx context.Context, req *walletrpc.ActionDataParamsRequest) (*walletrpc.ActionDataParamsResponse, error) {
+	common.Log.Debugf("gRPC GetActionDataParams()\n")
+
+	if s.pirClient == nil || !s.pirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	}
+
+	params, err := s.pirClient.GetActionDataParams(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get action data params: %s", err.Error())
+	}
+
+	response := &walletrpc.ActionDataParamsResponse{
+		DbVersion:    params.DbVersion.Version,
+		StartHeight:  params.DbVersion.StartHeight,
+		EndHeight:    params.DbVersion.EndHeight,
+		ActionCount:  params.ActionCount,
+		ColumnHeight: params.ColumnHeight,
+		Factor:       params.Factor,
+		RecordSize:   params.RecordSize,
+		Inspire: &walletrpc.InspireParams{
+			PolyLen:           uint64(params.PirSetup.PolyLen),
+			DbDim1:            uint64(params.PirSetup.DbDim1),
+			Instances:         uint64(params.PirSetup.Instances),
+			DbRows:            uint64(params.PirSetup.DbRows),
+			DbCols:            uint64(params.PirSetup.DbCols),
+			Gamma:             uint64(params.PirSetup.Gamma),
+			InterpolateDegree: uint64(params.PirSetup.InterpolateDegree),
+			PtModulus:         params.PirSetup.PtModulus,
+			C:                 uint64(params.PirSetup.C),
+			TGsw:              uint64(params.PirSetup.TGsw),
+			Q2Bits:            uint64(params.PirSetup.Q2Bits),
+			TExpLeft:          uint64(params.PirSetup.TExpLeft),
+			RecordSize:        params.RecordSize,
+			Factor:            uint32(params.Factor),
+		},
+	}
+
+	common.Log.Tracef("  return: %+v\n", response)
+	return response, nil
+}
+
+// ActionDataQuery executes an action data PIR query.
+func (s *lwdStreamer) ActionDataQuery(ctx context.Context, req *walletrpc.ActionDataQueryRequest) (*walletrpc.ActionDataQueryResponse, error) {
+	common.Log.Debugf("gRPC ActionDataQuery(query_len=%d)\n", len(req.QueryData))
+
+	if s.pirClient == nil || !s.pirClient.IsEnabled() {
+		return nil, status.Error(codes.Unavailable, "PIR service not configured")
+	}
+
+	resp, err := s.pirClient.ActionDataQuery(ctx, req.QueryData)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "action data query failed: %s", err.Error())
+	}
+
+	return &walletrpc.ActionDataQueryResponse{
+		ResponseData: resp.ResponseData,
+		ServerTimeMs: resp.ServerTimeMs,
+	}, nil
+}
+
 // SetMetaState lets the test driver control some GetLightdInfo values.
 func (s *DarksideStreamer) Reset(ctx context.Context, ms *walletrpc.DarksideMetaState) (*walletrpc.Empty, error) {
 	match, err := regexp.Match("\\A[a-fA-F0-9]+\\z", []byte(ms.BranchID))
