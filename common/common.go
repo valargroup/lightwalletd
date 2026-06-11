@@ -464,6 +464,11 @@ func ingestWorkers() int {
 // It also stops polling the backend's tip on every block: the tip height is
 // refreshed only once we've caught up to the last known tip, eliminating one RPC
 // round-trip per block during bulk sync. (#2)
+//
+// While caught up, the backend's tip hash (which getblockchaininfo already
+// returns, so no extra RPC) is compared against the cache tip so that a reorg
+// that replaces the tip block without advancing the height is detected within
+// one poll interval, matching the serial path's getbestblockhash check. (#3)
 func blockIngestorParallel(c *BlockCache) {
 	lastLog := Time.Now()
 	lastHeightLogged := 0
@@ -474,7 +479,8 @@ func blockIngestorParallel(c *BlockCache) {
 	}
 	Log.Info("block ingestor: parallel prefetch enabled (workers=", workers, ", window=", window, ")")
 
-	tipHeight := -1 // last known backend tip height; -1 forces a refresh
+	tipHeight := -1      // last known backend tip height; -1 forces a refresh
+	var tipHash hash32.T // backend tip hash (big-endian); Nil if unknown
 
 	for {
 		// stop if requested
@@ -498,10 +504,27 @@ func blockIngestorParallel(c *BlockCache) {
 				continue
 			}
 			tipHeight = int(ci.Blocks)
+			if tipHash, err = hash32.Decode(ci.BestBlockHash); err != nil {
+				// No usable tip hash from this backend; fall back to
+				// height-only idle detection.
+				tipHash = hash32.Nil
+			}
 		}
 
 		if next > tipHeight {
-			// Caught up; nothing new. Mirror the serial path's behaviour.
+			// Caught up; nothing new.
+			// (#3) The backend's tip hash not matching ours means the tip was
+			// replaced by a reorg that didn't advance the height (or the chain
+			// shrank below our tip). Walk back one block, same as the serial
+			// path does when getbestblockhash stops matching; the prev-hash
+			// check on re-fetch walks back further if the reorg is deeper.
+			if latest := c.GetLatestHash(); latest != hash32.Nil &&
+				tipHash != hash32.Nil && tipHash != hash32.Reverse(latest) {
+				Log.Info("REORG: dropping block ", next-1, " ", displayHash(latest))
+				c.Reorg(next - 1)
+				continue
+			}
+			// Mirror the serial path's behaviour.
 			c.Sync()
 			if lastHeightLogged != next-1 {
 				lastHeightLogged = next - 1
