@@ -79,6 +79,12 @@ func (b *Block) GetHeight() int {
 	if b.height != -1 {
 		return b.height
 	}
+	// A crafted block can parse with no transactions, or with a first
+	// transaction that has no transparent inputs (the parser doesn't verify
+	// that it's a coinbase); don't trust that the inputs exist.
+	if len(b.vtx) == 0 || len(b.vtx[0].transparentInputs) == 0 {
+		return -1
+	}
 	coinbaseScript := bytestring.String(b.vtx[0].transparentInputs[0].ScriptSig)
 	var heightNum int64
 	if !coinbaseScript.ReadScriptInt64(&heightNum) {
@@ -142,7 +148,10 @@ func (b *Block) ParseFromSlice(data []byte) (rest []byte, err error) {
 	}
 	data = []byte(s)
 
-	vtx := make([]*Transaction, 0, txCount)
+	// txCount comes from the (untrusted) serialized block; don't reserve more
+	// capacity than could possibly parse from the remaining data (each
+	// transaction is at least one byte).
+	vtx := make([]*Transaction, 0, min(txCount, len(data)))
 	var i int
 	for i = 0; i < txCount && len(data) > 0; i++ {
 		tx := NewTransaction()

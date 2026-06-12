@@ -350,7 +350,9 @@ func getBlockFromRPC(height int) (*walletrpc.CompactBlock, error) {
 	var block1 ZcashRpcReplyGetblock1
 	err = json.Unmarshal(result, &block1)
 	if err != nil {
-		Log.Fatal("getBlockFromRPC: Can't unmarshal block:", err)
+		// A backend bug shouldn't be able to take down the server; the
+		// caller (ingestor or gRPC handler) will retry or report it.
+		return nil, fmt.Errorf("can't unmarshal verbose getblock response: %w", err)
 	}
 	blockHash, err := json.Marshal(block1.Hash)
 	if err != nil {
@@ -386,6 +388,13 @@ func getBlockFromRPC(height int) (*walletrpc.CompactBlock, error) {
 	}
 	if block.GetHeight() != height {
 		return nil, errors.New("received unexpected height block")
+	}
+	// The verbose response's txid list must correspond 1:1 with the raw
+	// block's transactions; indexing it blindly below would panic if the
+	// backend served inconsistent responses.
+	if len(block1.Tx) != len(block.Transactions()) {
+		return nil, fmt.Errorf("getblock verbose txid count %d != block transaction count %d",
+			len(block1.Tx), len(block.Transactions()))
 	}
 	for i, t := range block.Transactions() {
 		txidBigEndian, err := hash32.Decode(block1.Tx[i])

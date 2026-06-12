@@ -73,3 +73,16 @@ func TestCompactBlocks(t *testing.T) {
 	}
 
 }
+
+// GetHeight must not panic on structurally valid but non-consensus blocks: a
+// block that parsed with zero transactions, or whose first transaction has no
+// transparent inputs (the parser doesn't verify it's a coinbase).
+func TestGetHeightMalformedBlocks(t *testing.T) {
+	if got := (&Block{height: -1}).GetHeight(); got != -1 {
+		t.Error("GetHeight on a block with no transactions:", got, "want -1")
+	}
+	noInputs := &Block{height: -1, vtx: []*Transaction{NewTransaction()}}
+	if got := noInputs.GetHeight(); got != -1 {
+		t.Error("GetHeight with no transparent inputs:", got, "want -1")
+	}
+}
