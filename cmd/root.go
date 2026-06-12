@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -36,6 +37,22 @@ import (
 
 var cfgFile string
 var logger = logrus.New()
+
+// ingestRPCPoolSize returns the max number of pooled HTTP connections to the
+// backend RPC. It defaults to the ingest worker count (LWD_INGEST_WORKERS, 8)
+// plus headroom for concurrent frontend gRPC traffic, and can be overridden
+// directly with LWD_RPC_POOL.
+func ingestRPCPoolSize() int {
+	workers := 8
+	if v, err := strconv.Atoi(os.Getenv("LWD_INGEST_WORKERS")); err == nil && v > 0 {
+		workers = v
+	}
+	pool := workers + 16
+	if v, err := strconv.Atoi(os.Getenv("LWD_RPC_POOL")); err == nil && v > 0 {
+		pool = v
+	}
+	return pool
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -192,15 +209,15 @@ func startServer(opts *common.Options) error {
 	// of block streamer.
 
 	var chainName string
-	var rpcClient *rpcclient.Client
+	var connCfg *rpcclient.ConnConfig
 	var err error
 	if opts.Darkside {
 		chainName = "darkside"
 	} else {
 		if opts.RPCUser != "" && opts.RPCPassword != "" && opts.RPCHost != "" && opts.RPCPort != "" {
-			rpcClient, err = frontend.NewZRPCFromFlags(opts)
+			connCfg, err = frontend.NewZRPCFromFlags(opts)
 		} else {
-			rpcClient, err = frontend.NewZRPCFromConf(opts.ZcashConfPath)
+			connCfg, err = frontend.NewZRPCFromConf(opts.ZcashConfPath)
 		}
 		if err != nil {
 			common.Log.WithFields(logrus.Fields{
@@ -208,7 +225,11 @@ func startServer(opts *common.Options) error {
 			}).Fatal("setting up RPC connection to zebrad or zcashd")
 		}
 		// Indirect function for test mocking (so unit tests can talk to stub functions).
-		common.RawRequest = rpcClient.RawRequest
+		// zr8: use a connection-pooled, concurrent HTTP requester instead of the
+		// btcd rpcclient, which serializes all POSTs through a single goroutine and
+		// throttled the parallel block ingestor. Pool size tracks ingest concurrency
+		// with headroom for frontend gRPC traffic.
+		common.RawRequest = frontend.NewZcashRPCRawRequester(connCfg, ingestRPCPoolSize())
 
 		// Ensure that we can communicate with zcashd
 		common.FirstRPC()
