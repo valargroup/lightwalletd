@@ -13,6 +13,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -38,6 +39,7 @@ const (
 	testBlockid40 = "0000000000000000000000000000000000000000000000000000000000380640"
 	testBlockid41 = "0000000000000000000000000000000000000000000000000000000000380641"
 	testBlockid42 = "0000000000000000000000000000000000000000000000000000000000380642"
+	testBlockid43 = "0000000000000000000000000000000000000000000000000000000000380643"
 )
 
 // TestMain does common setup that's shared across multiple tests
@@ -407,6 +409,246 @@ func TestBlockIngestor(t *testing.T) {
 		t.Error("unexpected final step", step)
 	}
 	step = 0
+	sleepCount = 0
+	sleepDuration = 0
+	os.RemoveAll(unitTestPath)
+}
+
+// ------------------------------------------ blockIngestorParallel()
+
+// parallelIngestStub drives blockIngestorParallel through catch-up, idle sync,
+// a same-height tip reorg, a transient fetch error, a missing block (tip
+// refresh), and a two-block walk-back after the backend's chain shrinks.
+//
+// Unlike the serial stubs, it can't assert one global call sequence: the batch
+// getblock fetches arrive concurrently and in any order. So it replies based
+// on the requested height, and sequences phases on the getblockchaininfo call
+// count (gbci), which only the ingestor's single main loop issues. The phase
+// is stable while fetchers run because the ingestor blocks in wg.Wait().
+//
+// Schedule, by getblockchaininfo call:
+//
+//	1: tip=380643            -> fetches 380640-43 concurrently, commits all
+//	2: tip=380643, hash match -> idle (synced), sleep
+//	3: tip=380643, hash differs -> same-height reorg: drop and re-fetch 380643
+//	4: tip=380644            -> fetch 380644 fails (-32), retry gets -8 (nil),
+//	                            forcing a tip refresh
+//	5: tip=380643, hash differs -> drop 380643; re-fetch gets -8 (nil)
+//	6: tip=380642, hash differs -> chain shrank: drop 380642, re-fetch, commit
+//	7: tip=380643            -> fetch 380643, commit (back to full height)
+//	8+: tip=380643, hash match -> idle; signal the test to stop the ingestor
+type parallelIngestStub struct {
+	mu         sync.Mutex
+	gbci       int            // getblockchaininfo calls so far (the phase)
+	verboseReq map[string]int // per-height getblock-verbose request counts
+	rawReq     map[string]int // per-hash getblock-raw request counts
+	syncedOnce sync.Once
+	synced     chan struct{} // closed once the final phase is reached
+}
+
+func (s *parallelIngestStub) rawRequest(method string, params []json.RawMessage) (json.RawMessage, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	switch method {
+	case "getblockchaininfo":
+		return s.getblockchaininfo()
+	case "getblock":
+		var arg string
+		if err := json.Unmarshal(params[0], &arg); err != nil {
+			testT.Error("could not unmarshal getblock arg:", params[0])
+			return nil, errors.New("bad arg")
+		}
+		return s.getblock(arg, string(params[1]))
+	}
+	testT.Error("unexpected method", method)
+	return nil, errors.New("unexpected method")
+}
+
+func (s *parallelIngestStub) getblockchaininfo() (json.RawMessage, error) {
+	s.gbci++
+	reply := func(tip int, hash string) (json.RawMessage, error) {
+		r, _ := json.Marshal(&ZcashdRpcReplyGetblockchaininfo{
+			Blocks:        tip,
+			BestBlockHash: hash,
+		})
+		return r, nil
+	}
+	// Used where the ingestor doesn't consult the hash (next <= tip).
+	dummyHash := strings.Repeat("11", 32)
+	switch s.gbci {
+	case 1:
+		return reply(380643, dummyHash)
+	case 2:
+		// The whole batch must have been committed before the ingestor
+		// asks for the tip again, each block fetched exactly once.
+		if testcache.GetNextHeight() != 380644 {
+			testT.Error("batch not committed before tip refresh:", testcache.GetNextHeight())
+		}
+		for _, h := range []string{"380640", "380641", "380642", "380643"} {
+			if s.verboseReq[h] != 1 {
+				testT.Error("unexpected catch-up fetch count for", h, ":", s.verboseReq[h])
+			}
+		}
+		return reply(380643, displayHash(testcache.GetLatestHash()))
+	case 3:
+		// Same height, different hash: a reorg replaced the tip block.
+		return reply(380643, strings.Repeat("45", 32))
+	case 4:
+		// The dropped tip must have been re-fetched and re-committed.
+		if s.verboseReq["380643"] != 2 {
+			testT.Error("tip not re-fetched after same-height reorg:", s.verboseReq["380643"])
+		}
+		if testcache.GetNextHeight() != 380644 {
+			testT.Error("tip not re-committed after same-height reorg:", testcache.GetNextHeight())
+		}
+		return reply(380644, dummyHash)
+	case 5:
+		return reply(380643, strings.Repeat("56", 32))
+	case 6:
+		return reply(380642, strings.Repeat("56", 32))
+	case 7:
+		return reply(380643, dummyHash)
+	default: // 8 and beyond: synced; idle until the test stops the ingestor
+		s.syncedOnce.Do(func() { close(s.synced) })
+		return reply(380643, displayHash(testcache.GetLatestHash()))
+	}
+}
+
+func (s *parallelIngestStub) getblock(arg string, verbose string) (json.RawMessage, error) {
+	fakeIds := map[string]string{
+		"380640": testBlockid40,
+		"380641": testBlockid41,
+		"380642": testBlockid42,
+		"380643": testBlockid43,
+	}
+	rawBlocks := map[string]int{
+		testBlockid40: 0,
+		testBlockid41: 1,
+		testBlockid42: 2,
+		testBlockid43: 3,
+	}
+	if id, ok := fakeIds[arg]; ok || arg == "380644" {
+		if verbose != "1" {
+			testT.Error("expected verbose getblock for height", arg)
+		}
+		s.verboseReq[arg]++
+		n := s.verboseReq[arg]
+		phase := s.gbci
+		expected := false
+		switch arg {
+		case "380640", "380641":
+			expected = n == 1 && phase == 1
+		case "380642":
+			// catch-up, then re-fetch after the chain-shrink walk-back
+			expected = n == 1 && phase == 1 || n == 2 && phase == 6
+		case "380643":
+			switch {
+			case n == 1 && phase == 1, n == 2 && phase == 3, n == 4 && phase == 7:
+				expected = true
+			case n == 3 && phase == 5:
+				// the replacement tip isn't available yet
+				return nil, errors.New("-8: Block height out of range")
+			}
+		case "380644":
+			switch {
+			case n == 1 && phase == 4:
+				// transient failure; the ingestor logs, sleeps, retries
+				return nil, errors.New("-32: server busy")
+			case n == 2 && phase == 4:
+				// gone: forces a tip refresh
+				return nil, errors.New("-8: Block height out of range")
+			}
+			testT.Error("unexpected getblock 380644: request", n, "phase", phase)
+			return nil, errors.New("-8: Block height out of range")
+		}
+		if !expected {
+			testT.Error("unexpected getblock", arg, ": request", n, "phase", phase)
+		}
+		txids := "\"" + testTxid + "\""
+		if arg == "380643" {
+			// this block has two transactions; getBlockFromRPC requires the
+			// verbose txid list to match
+			txids += ", \"" + testTxid + "\""
+		}
+		return []byte("{\"Tx\": [" + txids + "], \"Hash\": \"" + id + "\"}"), nil
+	}
+	if i, ok := rawBlocks[arg]; ok {
+		if verbose != "0" {
+			testT.Error("expected raw getblock for hash", arg)
+		}
+		s.rawReq[arg]++
+		return blocks[i], nil
+	}
+	testT.Error("unexpected getblock arg", arg)
+	return nil, errors.New("unexpected getblock arg")
+}
+
+func TestBlockIngestorParallel(t *testing.T) {
+	testT = t
+	// Fewer workers than the batch of 4 exercises the semaphore.
+	t.Setenv("LWD_INGEST_WORKERS", "2")
+	stub := &parallelIngestStub{
+		verboseReq: make(map[string]int),
+		rawReq:     make(map[string]int),
+		synced:     make(chan struct{}),
+	}
+	RawRequest = stub.rawRequest
+	Time.Sleep = sleepStub
+	Time.Now = nowStub
+	os.RemoveAll(unitTestPath)
+	testcache = NewBlockCache(unitTestPath, unitTestChain, 380640, -1)
+
+	done := make(chan struct{})
+	go func() {
+		blockIngestorParallel(testcache)
+		close(done)
+	}()
+
+	select {
+	case <-stub.synced:
+	case <-time.After(30 * time.Second):
+		t.Error("timeout waiting for ingestor to reach the synced phase")
+	}
+	select {
+	case stopIngestorChan <- struct{}{}:
+	case <-time.After(5 * time.Second):
+		t.Fatal("ingestor did not accept stop")
+	}
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("ingestor did not exit after stop")
+	}
+
+	if got := testcache.GetNextHeight(); got != 380644 {
+		t.Error("unexpected nextBlock after ingest:", got)
+	}
+	stub.mu.Lock()
+	wantVerbose := map[string]int{
+		"380640": 1, // catch-up only
+		"380641": 1, // catch-up only
+		"380642": 2, // catch-up + chain-shrink walk-back
+		"380643": 4, // catch-up + same-height reorg + unavailable + recovery
+		"380644": 2, // transient error + gone
+	}
+	for h, want := range wantVerbose {
+		if stub.verboseReq[h] != want {
+			t.Error("height", h, "verbose requests:", stub.verboseReq[h], "want", want)
+		}
+	}
+	wantRaw := map[string]int{
+		testBlockid40: 1,
+		testBlockid41: 1,
+		testBlockid42: 2,
+		testBlockid43: 3, // every successful verbose fetch except the -8s
+	}
+	for id, want := range wantRaw {
+		if stub.rawReq[id] != want {
+			t.Error("hash", id, "raw requests:", stub.rawReq[id], "want", want)
+		}
+	}
+	stub.mu.Unlock()
+
 	sleepCount = 0
 	sleepDuration = 0
 	os.RemoveAll(unitTestPath)
