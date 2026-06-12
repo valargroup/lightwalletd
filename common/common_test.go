@@ -1140,3 +1140,53 @@ func TestMempoolStreamCancelOnEmptyMempool(t *testing.T) {
 	sleepCount = 0
 	sleepDuration = 0
 }
+
+// ------------------------------------------ getBlockFromRPC() hardening
+
+// A backend (or a man-in-the-middle; the RPC connection is plain HTTP) that
+// returns inconsistent or malformed getblock responses must produce errors,
+// not panics or process exits.
+func getblockHardeningStub(method string, params []json.RawMessage) (json.RawMessage, error) {
+	if method != "getblock" {
+		testT.Error("unexpected method", method)
+	}
+	step++
+	switch step {
+	case 1:
+		// Verbose reply listing no txids for a block that has one
+		// transaction; indexing the txid list blindly would panic.
+		return []byte("{\"Tx\": [], \"Hash\": \"" + testBlockid40 + "\"}"), nil
+	case 2:
+		return blocks[0], nil
+	case 3:
+		// Valid JSON that isn't the expected verbose-getblock shape;
+		// this used to Log.Fatal (process exit).
+		return []byte("[1,2,3]"), nil
+	}
+	testT.Error("getblockHardeningStub called too many times")
+	return nil, nil
+}
+
+func TestGetBlockFromRPCBadBackendReplies(t *testing.T) {
+	testT = t
+	RawRequest = getblockHardeningStub
+	step = 0
+
+	block, err := getBlockFromRPC(380640)
+	if block != nil || err == nil {
+		t.Fatal("expected an error for mismatched txid count, got block:", block, "err:", err)
+	}
+	if !strings.Contains(err.Error(), "txid count") {
+		t.Error("unexpected error for mismatched txid count:", err)
+	}
+
+	block, err = getBlockFromRPC(380640)
+	if block != nil || err == nil {
+		t.Fatal("expected an error for malformed verbose response, got block:", block, "err:", err)
+	}
+	if !strings.Contains(err.Error(), "can't unmarshal verbose getblock response") {
+		t.Error("unexpected error for malformed verbose response:", err)
+	}
+
+	step = 0
+}

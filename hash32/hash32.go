@@ -21,9 +21,12 @@ var Nil = [32]byte{}
 // FromSlice converts a slice to a hash32. If the slice is too long,
 // the return is only the first 32 bytes; if the slice is too short,
 // the remaining bytes in the return value are zeros. This should
-// not happen in practice.
+// not happen in practice. (A direct T(arg) conversion would panic
+// on a slice shorter than 32 bytes.)
 func FromSlice(arg []byte) T {
-	return T(arg)
+	var r T
+	copy(r[:], arg)
+	return r
 }
 
 // ToSlice converts a hash32 to a byte slice.
@@ -42,7 +45,7 @@ func Reverse(arg T) T {
 }
 
 func ReverseSlice(arg []byte) []byte {
-	return ToSlice(Reverse(T(arg)))
+	return ToSlice(Reverse(FromSlice(arg)))
 }
 
 func Decode(s string) (T, error) {
