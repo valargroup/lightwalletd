@@ -567,10 +567,18 @@ func (tx *Transaction) parseV6(data []byte) ([]byte, error) {
 	}
 	if tx.nVersionGroupID != IRONWOOD_NU6_3_VERSION_GROUP_ID {
 		// This shouldn't be possible
-		return nil, fmt.Errorf("version group ID %d must be 0xFFFFFFFF", tx.nVersionGroupID)
+		return nil, fmt.Errorf(
+			"version group ID 0x%08X must be 0x%08X",
+			tx.nVersionGroupID,
+			IRONWOOD_NU6_3_VERSION_GROUP_ID,
+		)
 	}
 	if tx.consensusBranchID != IRONWOOD_NU6_3_CONSENSUS_BRANCH_ID {
-		return nil, fmt.Errorf("consensus branch ID %d must be 0xFFFFFFFF", tx.consensusBranchID)
+		return nil, fmt.Errorf(
+			"consensus branch ID 0x%08X must be 0x%08X",
+			tx.consensusBranchID,
+			IRONWOOD_NU6_3_CONSENSUS_BRANCH_ID,
+		)
 	}
 	if !s.Skip(4) {
 		return nil, errors.New("could not skip nLockTime")
@@ -717,8 +725,8 @@ const IRONWOOD_NU6_3_TX_VERSION uint32 = 6
 const OVERWINTER_VERSION_GROUP_ID uint32 = 0x03C48270
 const SAPLING_VERSION_GROUP_ID uint32 = 0x892F2085
 const ZIP225_VERSION_GROUP_ID uint32 = 0x26A7270A
-const IRONWOOD_NU6_3_VERSION_GROUP_ID uint32 = 0xFFFFFFFF
-const IRONWOOD_NU6_3_CONSENSUS_BRANCH_ID uint32 = 0xFFFFFFFF
+const IRONWOOD_NU6_3_VERSION_GROUP_ID uint32 = 0xD884B698
+const IRONWOOD_NU6_3_CONSENSUS_BRANCH_ID uint32 = 0x37A5165B
 
 func (tx *Transaction) isOverwinterV3() bool {
 	return tx.fOverwintered &&

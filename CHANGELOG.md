@@ -30,8 +30,8 @@ The most recent changes are listed first.
   (`GetMempoolTx`).
 
 - Add Ironwood compact block, tree state, subtree root, and Ironwood / NU6.3 V6
-  transaction parsing support. Empty `poolTypes` requests now include Ironwood
-  shielded data.
+  transaction parsing support using the finalized NU6.3 IDs. Empty `poolTypes`
+  requests now include Ironwood shielded data.
 
 
 ### Changed

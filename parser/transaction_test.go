@@ -117,7 +117,7 @@ func TestV5TransactionParser(t *testing.T) {
 }
 
 func TestIronwoodNU6_3V6TransactionParser(t *testing.T) {
-	rawTxData, err := hex.DecodeString("06000080ffffffffffffffff0000000000000000000000000000")
+	rawTxData, err := hex.DecodeString("0600008098b684d85b16a5370000000000000000000000000000")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +160,7 @@ func TestIronwoodNU6_3V6TransactionParser(t *testing.T) {
 }
 
 func TestIronwoodNU6_3V6TransactionParserRejectsOtherConsensusBranchID(t *testing.T) {
-	rawTxData, err := hex.DecodeString("06000080ffffffff000000000000000000000000000000000000")
+	rawTxData, err := hex.DecodeString("0600008098b684d800000000000000000000000000000000")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -179,8 +179,8 @@ func TestIronwoodNU6_3V6TransactionParserKeepsIronwoodBundle(t *testing.T) {
 	var raw bytes.Buffer
 	raw.Write([]byte{
 		0x06, 0x00, 0x00, 0x80, // fOverwintered | version 6
-		0xff, 0xff, 0xff, 0xff, // version group ID
-		0xff, 0xff, 0xff, 0xff, // consensus branch ID
+		0x98, 0xb6, 0x84, 0xd8, // version group ID
+		0x5b, 0x16, 0xa5, 0x37, // consensus branch ID
 		0x00, 0x00, 0x00, 0x00, // lock time
 		0x00, 0x00, 0x00, 0x00, // expiry height
 		0x00, // tx_in_count
