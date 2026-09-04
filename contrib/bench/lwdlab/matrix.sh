@@ -80,8 +80,14 @@ run_selected direct-hex "$lab_dir/lightwalletd-direct-hex" "$lab_dir/nocache" 1 
 run_selected range-filter "$lab_dir/lightwalletd-range-filter" "$lab_dir/cache-dense" 1 false \
   -op range -concurrency 16 -duration "$duration" -start 100 -end 131 -pools sapling
 
+run_selected range-filter-default "$lab_dir/lightwalletd-range-filter" "$lab_dir/cache-dense" 1 false \
+  -op range -concurrency 8 -duration "$duration" -start 100 -end 131
+
 run_selected range-direct "$lab_dir/lightwalletd-range-direct" "$lab_dir/cache-sparse" 1 false \
   -op range -concurrency 32 -duration "$duration" -start 100 -end 355
+
+run_selected range-direct-short "$lab_dir/lightwalletd-range-direct" "$lab_dir/cache-sparse" 1 false \
+  -op range -concurrency 64 -duration "$duration" -start 100 -end 100
 
 run_selected mempool-filter "$lab_dir/lightwalletd-mempool-filter" "$lab_dir/cache-dense" 1 false \
   -op mempool -concurrency 16 -duration "$duration" -mempool 4000 -exclude 3900
