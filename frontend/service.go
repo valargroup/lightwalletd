@@ -1042,10 +1042,20 @@ func (s *lwdStreamer) GetSubtreeRoots(arg *walletrpc.GetSubtreeRootsArg, resp wa
 			return status.FromContextError(err).Err()
 		}
 		subtree := reply.Subtrees[i]
-		block, err := common.GetBlock(resp.Context(), s.cache, subtree.End_height)
-		if block == nil {
-			// It may be worth trying to determine a more specific error code
-			return status.Error(codes.Internal, err.Error())
+		blockHeight := uint64(subtree.End_height)
+		blockHash, cached := s.cache.GetBlockHash(subtree.End_height)
+		if !cached {
+			block, err := common.GetBlock(resp.Context(), s.cache, subtree.End_height)
+			if err != nil {
+				return status.Errorf(codes.Internal,
+					"GetSubtreeRoots: failed to load completing block %d: %s", subtree.End_height, err.Error())
+			}
+			if block == nil {
+				return status.Errorf(codes.Internal,
+					"GetSubtreeRoots: completing block %d is unavailable", subtree.End_height)
+			}
+			blockHash = hash32.FromSlice(block.Hash)
+			blockHeight = block.Height
 		}
 		roothash, err := hex.DecodeString(subtree.Root)
 		if err != nil {
@@ -1054,8 +1064,8 @@ func (s *lwdStreamer) GetSubtreeRoots(arg *walletrpc.GetSubtreeRootsArg, resp wa
 		}
 		r := walletrpc.SubtreeRoot{
 			RootHash:              roothash,
-			CompletingBlockHash:   hash32.ReverseSlice(block.Hash),
-			CompletingBlockHeight: block.Height,
+			CompletingBlockHash:   hash32.ToSlice(hash32.Reverse(blockHash)),
+			CompletingBlockHeight: blockHeight,
 		}
 		err = resp.Send(&r)
 		if err != nil {

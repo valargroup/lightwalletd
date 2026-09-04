@@ -20,6 +20,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/zcash/lightwalletd/common"
+	"github.com/zcash/lightwalletd/hash32"
 	"github.com/zcash/lightwalletd/walletrpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -1440,6 +1441,7 @@ func TestGetMempoolTxAbortsRefreshOnClientCancel(t *testing.T) {
 
 type testgetsubtreeroots struct {
 	walletrpc.CompactTxStreamer_GetSubtreeRootsServer
+	roots []*walletrpc.SubtreeRoot
 }
 
 func (tg *testgetsubtreeroots) Context() context.Context {
@@ -1447,7 +1449,52 @@ func (tg *testgetsubtreeroots) Context() context.Context {
 }
 
 func (tg *testgetsubtreeroots) Send(sr *walletrpc.SubtreeRoot) error {
+	tg.roots = append(tg.roots, sr)
 	return nil
+}
+
+func TestGetSubtreeRootsUsesCachedBlockMetadata(t *testing.T) {
+	testT = t
+	defer resetGlobals()
+	lwd, cache := testsetup()
+	blockHash := make([]byte, 32)
+	for i := range blockHash {
+		blockHash[i] = byte(i)
+	}
+	if err := cache.Add(380640, &walletrpc.CompactBlock{
+		Height: 380640,
+		Hash:   blockHash,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	common.RawRequest = func(ctx context.Context, method string, params []json.RawMessage) (json.RawMessage, error) {
+		if method != "z_getsubtreesbyindex" {
+			return nil, fmt.Errorf("unexpected method %q", method)
+		}
+		return json.Marshal(common.ZcashdRpcReplyGetsubtreebyindex{
+			Subtrees: []common.Subtree{{
+				Root:       strings.Repeat("11", 32),
+				End_height: 380640,
+			}},
+		})
+	}
+
+	stream := &testgetsubtreeroots{}
+	if err := lwd.GetSubtreeRoots(&walletrpc.GetSubtreeRootsArg{
+		ShieldedProtocol: walletrpc.ShieldedProtocol_sapling,
+	}, stream); err != nil {
+		t.Fatal(err)
+	}
+	if len(stream.roots) != 1 {
+		t.Fatalf("roots=%d, want 1", len(stream.roots))
+	}
+	root := stream.roots[0]
+	if root.CompletingBlockHeight != 380640 {
+		t.Fatalf("height=%d, want 380640", root.CompletingBlockHeight)
+	}
+	if !bytes.Equal(root.CompletingBlockHash, hash32.ReverseSlice(blockHash)) {
+		t.Fatalf("completing block hash=%x, want %x", root.CompletingBlockHash, hash32.ReverseSlice(blockHash))
+	}
 }
 
 // An unrecognized ShieldedProtocol must arrive as InvalidArgument, not Unknown.
