@@ -4,14 +4,17 @@
 package common
 
 import (
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/zcash/lightwalletd/hash32"
 	"github.com/zcash/lightwalletd/parser"
 	"github.com/zcash/lightwalletd/walletrpc"
+	"google.golang.org/protobuf/proto"
 )
 
 var compacts []*walletrpc.CompactBlock
@@ -71,6 +74,7 @@ func TestCache(t *testing.T) {
 		t.Fatal("unexpected initial nextBlock")
 	}
 	fillCache(t)
+	testBlockHashCache(t)
 	reorgCache(t)
 	fillCache(t)
 
@@ -110,6 +114,35 @@ func TestCache(t *testing.T) {
 	// Clean up the test files.
 	cache.Close()
 	os.RemoveAll(unitTestPath)
+}
+
+func testBlockHashCache(t *testing.T) {
+	const height = 289465
+	want := hash32.FromSlice(compacts[5].Hash)
+
+	var wg sync.WaitGroup
+	for range 32 {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			got, ok := cache.GetBlockHash(height)
+			if !ok || got != want {
+				t.Errorf("GetBlockHash(%d)=(%x, %v), want (%x, true)", height, got, ok, want)
+			}
+		}()
+	}
+	wg.Wait()
+
+	cache.Reorg(height)
+	replacement := proto.Clone(compacts[5]).(*walletrpc.CompactBlock)
+	replacement.Hash = bytes.Repeat([]byte{0xab}, 32)
+	if err := cache.Add(height, replacement); err != nil {
+		t.Fatal(err)
+	}
+	got, ok := cache.GetBlockHash(height)
+	if !ok || got != hash32.FromSlice(replacement.Hash) {
+		t.Fatalf("GetBlockHash retained a pre-reorg hash: got (%x, %v)", got, ok)
+	}
 }
 
 func reorgCache(t *testing.T) {
