@@ -22,12 +22,14 @@ func main() {
 		runBackend(os.Args[2:])
 	case "load":
 		runLoad(os.Args[2:])
+	case "record":
+		runRecord(os.Args[2:])
 	default:
 		usage()
 	}
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: lwdlab <generate-cache|backend|load> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: lwdlab <generate-cache|backend|load|record> [flags]")
 	os.Exit(2)
 }

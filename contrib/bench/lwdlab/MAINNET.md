@@ -47,7 +47,11 @@ The public archive manifest at
 - Compressed bytes: 270,281,049,101 (about 252 GiB).
 - SHA-256: `65deeca1874a195e290a92f7096bab51ddfc2d14c86f966e6e7e6eed139fd5db`.
 
-This is a candidate bootstrap source, not a downloaded or validated local fixture.
+An isolated Linux host with eight dedicated CPUs, 16 GiB RAM, and a 600 GiB
+volume has been provisioned. The archive is being downloaded and extracted;
+checksum verification is still pending. No mainnet performance results are
+available yet.
+
 Record the actual node binary, snapshot checksum, network, and stable interval end
 hash when executing. Identify Zakura as the backend in any result; a result with
 this backend is not automatically a result with upstream Zebra or zcashd.
@@ -120,9 +124,76 @@ Measure these sessions separately rather than combining them with invented ratio
    fixture that actually has relevant transactions. An unused empty wallet cannot
    validate this path or the raw-hex optimization.
 
-First capture each session at one client and validate the sequence. Replay that
-sequence with its actual range sizes and timing against baseline and each candidate,
-then the bundle. Test sustained load and slow readers separately from the finite
-range driver. Report per-scenario results until there is evidence for a production
-traffic mix. The current synthetic percentages must not be presented as measured
-mainnet improvements.
+First capture each session at one client and validate the sequence. Run multiple
+independent wallet processes against baseline and each candidate, then the bundle.
+Keep wallet scanning and prefetch active so the clients apply their own
+backpressure. A fixed trace replay cannot establish wallet completion time or
+capacity by itself. Record client CPU and memory as well as server resources;
+client saturation can hide a server improvement.
+
+Report each session separately until there is evidence for a production traffic
+mix. The current synthetic percentages must not be presented as measured mainnet
+improvements. A PR whose path is absent from the captured sessions has no measured
+wallet speedup in those sessions.
+
+## Disposable Vizor fixture
+
+`fixtures/vizor_wallet.rs` calls the public `create_wallet` and
+`run_full_sync_blocking` APIs in Vizor revision
+`24258dcdc354b5b492bd8eb69fe92c026f55554f`. The blocking entry point uses the same
+sync implementation as the Flutter API. It preserves range selection, download
+prefetch, local scanning, subtree requests, and completion checks. It does not
+run the Flutter polling loop or its separately started mempool observer.
+
+Copy the fixture to `rust/examples/lwd_mainnet_wallet.rs` in an isolated checkout
+of that revision, then run `cargo build --locked --release --example
+lwd_mainnet_wallet` from its `rust` directory. This build and disposable database
+creation have passed on macOS arm64. Mainnet sync has not run yet.
+
+The binary takes four arguments. For example, with a private loopback connection
+to the isolated server:
+
+```sh
+lwd_mainnet_wallet create /private/lab/restore.db 3450000 1
+lwd_mainnet_wallet sync /private/lab/restore.db http://127.0.0.1:19068 1
+```
+
+Mode `1` runs foreground sync and `2` runs background sync. Creation refuses to
+replace an existing database and does not print the seed or addresses. Sync
+refuses a non-loopback endpoint and fails if the wallet reports incomplete sync.
+Use only newly created benchmark databases. Save the closed disposable database
+before syncing so each variant starts from the same state.
+
+This is an unfunded wallet. It can exercise scanning and transparent address
+discovery, but cannot establish the cost of fetching transactions belonging to
+a funded wallet. It also cannot validate `GetMempoolTx` if the wallet does not
+call that method. Those limitations must remain visible in any report.
+
+## Record wallet requests
+
+Run the recorder beside the isolated server or at the local end of an SSH tunnel:
+
+```sh
+go run ./contrib/bench/lwdlab record \
+  -listen 127.0.0.1:19068 -upstream 127.0.0.1:19067 \
+  -output /private/lab/wallet-rpcs.jsonl
+```
+
+It forwards single-request read RPCs, including server streams, and writes one
+JSON line when each RPC ends. Sort by `started` to inspect request order; lines
+are written in completion order. Records contain the method, selected chain
+bounds, pool filters, subtree indices, response message and byte counts, timing,
+status, and a SHA-256 over length-prefixed protobuf response messages. They omit
+wallet addresses, transaction filters, authentication metadata, and message
+bodies. The output file must be new and is created with owner-only permissions.
+
+Headers, trailers, error statuses, and cancellation are forwarded. The recorder
+does not forward authentication metadata and supports neither transaction
+submission nor client-streaming balance calls. It is a lab tool, not a general
+replacement for a wallet server. Its listener and upstream must use loopback IPs.
+
+Checksums let us compare stable chain responses between variants without keeping
+entire responses. Version metadata and live mempool contents can legitimately
+differ and need separate interpretation. Measure recorder overhead separately
+before using its timings as performance evidence. Discard runs with recorder
+errors, wallet errors, or incomplete syncs.
