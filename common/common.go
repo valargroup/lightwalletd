@@ -581,25 +581,60 @@ func FilterTxPool(tx *walletrpc.CompactTx, poolTypes []walletrpc.PoolType) *wall
 	return nil
 }
 
-// filterBlockPool takes a slice of transactions and a filter (BlockRange PoolType),
-// removes the transaction components that are not present in the filter, and
-// returns subset of the transactions that have one or more components (that is,
-// don't bother to return empty transactions).
+// filterBlockPool filters a freshly decoded block's transactions in place and
+// returns the subset with one or more requested components. GetBlock returns a
+// new protobuf object for each call, so the range path does not need to copy
+// every transaction before sending it.
 func filterBlockPool(vtx []*walletrpc.CompactTx, poolTypes []walletrpc.PoolType) []*walletrpc.CompactTx {
+	transparent := false
+	sapling := false
+	orchard := false
+	ironwood := false
 	if len(poolTypes) == 0 {
 		// Return all shielded pools when no explicit pool filter is requested.
-		poolTypes = []walletrpc.PoolType{
-			walletrpc.PoolType_SAPLING,
-			walletrpc.PoolType_ORCHARD,
-			walletrpc.PoolType_IRONWOOD,
+		sapling, orchard, ironwood = true, true, true
+	} else {
+		for _, poolType := range poolTypes {
+			switch poolType {
+			case walletrpc.PoolType_TRANSPARENT:
+				transparent = true
+			case walletrpc.PoolType_SAPLING:
+				sapling = true
+			case walletrpc.PoolType_ORCHARD:
+				orchard = true
+			case walletrpc.PoolType_IRONWOOD:
+				ironwood = true
+			}
 		}
 	}
-	trimmedVtx := []*walletrpc.CompactTx{}
+
+	trimmedVtx := vtx[:0]
 	for _, tx := range vtx {
-		if ftx := FilterTxPool(tx, poolTypes); ftx != nil {
-			trimmedVtx = append(trimmedVtx, ftx)
+		if !transparent {
+			tx.Vin, tx.Vout = nil, nil
+		}
+		if !sapling {
+			tx.Spends, tx.Outputs = nil, nil
+		}
+		if !orchard {
+			tx.Actions = nil
+		}
+		if !ironwood {
+			tx.IronwoodActions = nil
+		}
+		// The old copying implementation dropped unknown transaction fields.
+		// Preserve that behavior so a future pool cannot bypass filtering.
+		tx.ProtoReflect().SetUnknown(nil)
+		if len(tx.Vin) > 0 ||
+			len(tx.Vout) > 0 ||
+			len(tx.Spends) > 0 ||
+			len(tx.Outputs) > 0 ||
+			len(tx.Actions) > 0 ||
+			len(tx.IronwoodActions) > 0 {
+			trimmedVtx = append(trimmedVtx, tx)
 		}
 	}
+	clear(vtx[len(trimmedVtx):])
 	return trimmedVtx
 }
 

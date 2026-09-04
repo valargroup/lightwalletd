@@ -22,6 +22,7 @@ import (
 	"github.com/zcash/lightwalletd/walletrpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 // ------------------------------------------ Setup
@@ -1164,5 +1165,65 @@ func TestFilterTxPoolIronwood(t *testing.T) {
 	defaultFiltered := filterBlockPool([]*walletrpc.CompactTx{tx}, nil)
 	if len(defaultFiltered) != 1 || len(defaultFiltered[0].IronwoodActions) != 1 {
 		t.Fatal("default shielded filter should keep ironwood actions")
+	}
+}
+
+func TestFilterBlockPoolMatchesCopyingFilter(t *testing.T) {
+	poolFilters := [][]walletrpc.PoolType{
+		nil,
+		{walletrpc.PoolType_TRANSPARENT},
+		{walletrpc.PoolType_SAPLING},
+		{walletrpc.PoolType_ORCHARD},
+		{walletrpc.PoolType_IRONWOOD},
+		{
+			walletrpc.PoolType_TRANSPARENT,
+			walletrpc.PoolType_SAPLING,
+			walletrpc.PoolType_ORCHARD,
+			walletrpc.PoolType_IRONWOOD,
+		},
+	}
+	for _, poolTypes := range poolFilters {
+		allPools := &walletrpc.CompactTx{
+			Index:           1,
+			Txid:            []byte{1},
+			Fee:             2,
+			Vin:             []*walletrpc.CompactTxIn{{PrevoutTxid: []byte{3}}},
+			Vout:            []*walletrpc.TxOut{{Value: 4}},
+			Spends:          []*walletrpc.CompactSaplingSpend{{Nf: []byte{5}}},
+			Outputs:         []*walletrpc.CompactSaplingOutput{{Cmu: []byte{6}}},
+			Actions:         []*walletrpc.CompactOrchardAction{{Nullifier: []byte{7}}},
+			IronwoodActions: []*walletrpc.CompactOrchardAction{{Nullifier: []byte{8}}},
+		}
+		transparentOnly := &walletrpc.CompactTx{
+			Index: 2,
+			Txid:  []byte{9},
+			Vin:   []*walletrpc.CompactTxIn{{PrevoutTxid: []byte{10}}},
+		}
+		empty := &walletrpc.CompactTx{Index: 3, Txid: []byte{11}}
+		original := []*walletrpc.CompactTx{allPools, transparentOnly, empty}
+
+		effectivePoolTypes := poolTypes
+		if len(effectivePoolTypes) == 0 {
+			effectivePoolTypes = []walletrpc.PoolType{
+				walletrpc.PoolType_SAPLING,
+				walletrpc.PoolType_ORCHARD,
+				walletrpc.PoolType_IRONWOOD,
+			}
+		}
+		var want []*walletrpc.CompactTx
+		for _, tx := range original {
+			if filtered := FilterTxPool(tx, effectivePoolTypes); filtered != nil {
+				want = append(want, filtered)
+			}
+		}
+
+		input := make([]*walletrpc.CompactTx, len(original))
+		for i, tx := range original {
+			input[i] = proto.Clone(tx).(*walletrpc.CompactTx)
+		}
+		got := filterBlockPool(input, poolTypes)
+		if !proto.Equal(&walletrpc.CompactBlock{Vtx: got}, &walletrpc.CompactBlock{Vtx: want}) {
+			t.Fatalf("pool types %v: got %v, want %v", poolTypes, got, want)
+		}
 	}
 }
