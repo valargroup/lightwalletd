@@ -9,9 +9,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -54,6 +56,40 @@ func TestContextRawRequestSuccess(t *testing.T) {
 	}
 	if reply != "ok" {
 		t.Fatalf("unexpected result %q", reply)
+	}
+}
+
+func TestContextRawRequestReusesConnection(t *testing.T) {
+	var newConnections atomic.Int64
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"result":"ok","error":null}`))
+	}))
+	server.Config.ConnState = func(_ net.Conn, state http.ConnState) {
+		if state == http.StateNew {
+			newConnections.Add(1)
+		}
+	}
+	server.Start()
+	defer server.Close()
+
+	cfg := &rpcclient.ConnConfig{
+		Host:         server.Listener.Addr().String(),
+		HTTPPostMode: true,
+		DisableTLS:   true,
+	}
+	rawRequest, err := NewContextRawRequest(cfg)
+	if err != nil {
+		t.Fatalf("NewContextRawRequest failed: %v", err)
+	}
+
+	for range 20 {
+		if _, err := rawRequest(context.Background(), "getblockchaininfo", nil); err != nil {
+			t.Fatalf("RawRequest failed: %v", err)
+		}
+	}
+	if got := newConnections.Load(); got != 1 {
+		t.Fatalf("opened %d backend connections for 20 sequential requests, want 1", got)
 	}
 }
 
