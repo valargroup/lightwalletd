@@ -6,6 +6,20 @@ and this library adheres to Rust's notion of
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The most recent changes are listed first.
 
+## [Unreleased]
+
+### Changed
+
+- Reuse backend HTTP connections and reduce allocations when decoding large
+  hexadecimal RPC replies.
+- Reduce allocations for filtered block ranges and repeated decoding of subtree
+  completing-block metadata.
+
+### Fixed
+
+- Avoid concurrent mutation of published mempool snapshots while filtering
+  responses.
+
 ## [0.5.4] - 2026-08-27
 
 ### Changed
