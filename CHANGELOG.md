@@ -6,6 +6,12 @@ and this library adheres to Rust's notion of
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The most recent changes are listed first.
 
+## [Unreleased]
+
+### Changed
+
+- Reuse backend HTTP connections to reduce RPC connection churn.
+
 ## [0.5.4] - 2026-08-27
 
 ### Changed
