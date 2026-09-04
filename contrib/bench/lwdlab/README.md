@@ -24,6 +24,9 @@ comparison. `LWD_LAB_WORKLOADS` selects a comma-separated subset, and
 `LWD_LAB_COOLDOWN` inserts a delay after each run when intentionally testing
 large volumes of short-lived backend connections.
 
+The initial candidate comparison is recorded in
+[`results/2026-09-04-macos-arm64.md`](results/2026-09-04-macos-arm64.md).
+
 Example:
 
 ```sh
