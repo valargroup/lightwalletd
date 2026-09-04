@@ -84,7 +84,7 @@ if [[ "$ready" != true ]]; then
 fi
 
 "$lab" load -address "$grpc_addr" "$@" -concurrency 1 -iterations "$warm_iterations" >/dev/null
-curl -fsS -X POST "$backend_admin/reset" >/dev/null
+curl -fsS --retry 10 --retry-all-errors --retry-delay 1 -X POST "$backend_admin/reset" >/dev/null
 curl -fsS "$metrics_url" >"$start_metrics"
 read -r start_cpu start_rss < <(
   ps -p "$server_pid" -o utime= -o stime= -o rss= |
@@ -98,7 +98,7 @@ read -r end_cpu end_rss < <(
     awk '{ split($1, u, ":"); split($2, s, ":"); print u[1] * 60 + u[2] + s[1] * 60 + s[2], $3 * 1024 }'
 )
 curl -fsS --retry 5 --retry-all-errors --retry-delay 1 "$metrics_url" >"$end_metrics"
-backend_result=$(curl -fsS "$backend_admin/stats")
+backend_result=$(curl -fsS --retry 10 --retry-all-errors --retry-delay 1 "$backend_admin/stats")
 
 metric() {
   local file="$1"
