@@ -17,6 +17,11 @@ revision. The generated chain is structurally sufficient for the cache and RPC
 paths under test, but it is not a consensus-valid replacement for integration
 testing against Zebra or zcashd.
 
+`matrix.sh` runs the standard set of isolated candidates against the same
+baseline three times per side, alternating which binary runs first. Set
+`LWD_LAB_DURATION` or `LWD_LAB_REPEATS` to shorten a smoke run or extend a
+comparison.
+
 Example:
 
 ```sh
