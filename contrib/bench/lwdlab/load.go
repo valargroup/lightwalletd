@@ -18,7 +18,9 @@ import (
 
 	"github.com/zcash/lightwalletd/walletrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -148,7 +150,8 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 				messages, bytes, err := executeRequest(ctx, clients[worker], config, worker+iteration)
 				elapsed := time.Since(began)
 				if err != nil {
-					if ctx.Err() != nil {
+					code := status.Code(err)
+					if config.iterations <= 0 && (ctx.Err() != nil || code == codes.Canceled || code == codes.DeadlineExceeded) {
 						break
 					}
 					local.errors++
