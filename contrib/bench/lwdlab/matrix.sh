@@ -72,7 +72,7 @@ run_selected() {
 }
 
 run_selected backend-keepalive "$lab_dir/lightwalletd-backend-keepalive" "$lab_dir/cache-dense" 1 false \
-  -op tree -concurrency 64 -duration "$duration" -height 500
+  -op tree -concurrency 16 -duration "$duration" -height 500
 
 run_selected direct-hex "$lab_dir/lightwalletd-direct-hex" "$lab_dir/nocache" 1 true \
   -op block -concurrency 4 -duration "$duration" -height 380640
@@ -87,9 +87,9 @@ run_selected mempool-filter "$lab_dir/lightwalletd-mempool-filter" "$lab_dir/cac
   -op mempool -concurrency 16 -duration "$duration" -mempool 4000 -exclude 3900
 
 run_selected poll-cache "$lab_dir/lightwalletd-poll-cache" "$lab_dir/cache-dense" 3 false \
-  -op poll -concurrency 64 -duration "$duration"
+  -op poll -concurrency 16 -duration "$duration"
 
 run_selected subtree-cache "$lab_dir/lightwalletd-subtree-cache" "$lab_dir/cache-dense" 1 false \
-  -op subtree -concurrency 32 -duration "$duration" -subtrees 64
+  -op subtree -concurrency 8 -duration "$duration" -subtrees 64
 
 echo "$result_file"
