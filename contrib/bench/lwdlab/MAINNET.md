@@ -42,15 +42,18 @@ The public archive manifest at
 `https://zakura.valargroup.dev/mainnet/latest.json` was checked on 2026-09-04:
 
 - Node: Zakura 1.3.1, database format 28.1.5, archive mode.
-- Height: 3,471,422.
+- Publisher's advertised height: 3,471,422.
 - Archive: `zakura-mainnet-20260904T080905Z-3471422.tar.zst`.
 - Compressed bytes: 270,281,049,101 (about 252 GiB).
 - SHA-256: `65deeca1874a195e290a92f7096bab51ddfc2d14c86f966e6e7e6eed139fd5db`.
 
 An isolated Linux host with eight dedicated CPUs, 16 GiB RAM, and a 600 GiB
-volume has been provisioned. The archive is being downloaded and extracted;
-checksum verification is still pending. No mainnet performance results are
-available yet.
+volume has been provisioned. The archive was downloaded, extracted, and verified
+against the SHA-256 above. The opened archive contains finalized mainnet state at
+**3,470,422**, 1,000 blocks behind the advertised tip. Its tip hash is
+`000000000073dfbd7bf192181f1f0e060ef3c4f295504ca1c513fa49ce6b3723`.
+The node reported archive mode and zero peers. Use this observed height and hash
+for the fixed-state tests. Mainnet performance results are still pending.
 
 Record the actual node binary, snapshot checksum, network, and stable interval end
 hash when executing. Identify Zakura as the backend in any result; a result with
@@ -68,6 +71,33 @@ for each pair. Include ordinary recent blocks and a separate dense historical
 interval; report their actual transaction counts, pool contents, and byte sizes.
 Preserve the pools returned by the wallet's request, including other pools present
 in real mainnet blocks.
+
+## Cache preparation
+
+`import-cache` populates the ordinary lightwalletd cache from the isolated node.
+It uses the unchanged block parser and cache writer, fetching at most 16 blocks
+concurrently and writing them in height order. This parallelism speeds up fixture
+preparation only; it is not part of any PR or a measured server improvement.
+
+```sh
+go run ./contrib/bench/lwdlab import-cache \
+  -data-dir /private/lab/mainnet-cache -rpc-address 127.0.0.1:18232 \
+  -tip 3470422 \
+  -tip-hash 000000000073dfbd7bf192181f1f0e060ef3c4f295504ca1c513fa49ce6b3723 \
+  -workers 8
+```
+
+The command requires a loopback node matching the pinned chain, height and hash.
+It checks each block height and previous hash, and checks the node tip again when
+finished. Stop lightwalletd before using `-resume` on an existing cache; its cache
+writer does not share the importer's lock. An interrupted import leaves its lock
+file for inspection. Confirm the importer exited and the cache files are
+consistent before removing that lock and resuming.
+
+The first 1,001 imported mainnet blocks produced cache files byte-for-byte
+identical to the normal baseline ingestor. A separate 32-block import passed with
+Go's race detector. Full-history cache preparation is still required before
+cached-serving measurements.
 
 ## Sequential range driver
 
@@ -215,7 +245,7 @@ python3 contrib/bench/lwdlab/wallet_sessions.py run \
   --wallet-binary /private/lab/lwd_mainnet_wallet \
   --fixture-dir /private/lab/fixtures/restore \
   --output /private/lab/runs/baseline-32-1 --label baseline-32-1 \
-  --clients 32 --expected-tip 3471422 --url http://127.0.0.1:19068
+  --clients 32 --expected-tip 3470422 --url http://127.0.0.1:19068
 ```
 
 The build manifest records `binary_sha256`, the wallet source revision, toolchain,

@@ -24,12 +24,14 @@ func main() {
 		runLoad(os.Args[2:])
 	case "record":
 		runRecord(os.Args[2:])
+	case "import-cache":
+		importCache(os.Args[2:])
 	default:
 		usage()
 	}
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: lwdlab <generate-cache|backend|load|record> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: lwdlab <generate-cache|backend|load|record|import-cache> [flags]")
 	os.Exit(2)
 }
