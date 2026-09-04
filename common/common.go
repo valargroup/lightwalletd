@@ -397,13 +397,7 @@ func getBlockFromRPC(ctx context.Context, height int) (*walletrpc.CompactBlock, 
 		return nil, fmt.Errorf("error requesting block: %w", rpcErr)
 	}
 
-	var blockDataHex string
-	err = json.Unmarshal(result, &blockDataHex)
-	if err != nil {
-		return nil, fmt.Errorf("error reading JSON response: %w", err)
-	}
-
-	blockData, err := hex.DecodeString(blockDataHex)
+	blockData, err := DecodeHexJSON(result)
 	if err != nil {
 		return nil, fmt.Errorf("error decoding getblock output: %w", err)
 	}

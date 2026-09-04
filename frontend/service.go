@@ -800,16 +800,9 @@ func (s *lwdStreamer) GetMempoolTx(exclude *walletrpc.GetMempoolTxRequest, resp 
 				// Not an error; mempool transactions can disappear
 				continue
 			}
-			// strip the quotes
-			var txStr string
-			err = json.Unmarshal(result, &txStr)
-			if err != nil {
-				return status.Errorf(codes.Internal,
-					"GetMempoolTx: failed to unmarshal getrawtransaction reply, error: %s", err.Error())
-			}
-
-			// convert to binary
-			txBytes, err := hex.DecodeString(txStr)
+			// Decode directly from the quoted hex response instead of first
+			// allocating an equally large Go string.
+			txBytes, err := common.DecodeHexJSON(result)
 			if err != nil {
 				return status.Errorf(codes.Internal,
 					"GetMempoolTx: failed decode getrawtransaction reply, error: %s", err.Error())
