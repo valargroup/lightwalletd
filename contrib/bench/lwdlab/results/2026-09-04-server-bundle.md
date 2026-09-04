@@ -6,7 +6,7 @@ for node metadata queries and a large improvement for repeated subtree metadata.
 These are controlled server benchmarks, not measurements of wallet sync time or
 production capacity.
 
-## Three workloads, three different kinds of work
+## Workloads and results
 
 All results compare the full optimization bundle with upstream. A request means
 one completed gRPC call, including the entire response stream. Compare before and
