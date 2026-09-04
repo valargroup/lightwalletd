@@ -22,8 +22,9 @@ import (
 )
 
 const (
-	requestRetryInterval = 500 * time.Millisecond
-	defaultHTTPTimeout   = time.Minute
+	requestRetryInterval      = 500 * time.Millisecond
+	defaultHTTPTimeout        = time.Minute
+	backendRPCIdleConnections = 64
 )
 
 type jsonRPCResponse struct {
@@ -60,12 +61,16 @@ func newContextHTTPClient(cfg *rpcclient.ConnConfig) (*http.Client, error) {
 		tlsConfig = &tls.Config{RootCAs: pool}
 	}
 
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.Proxy = proxyFunc
+	transport.TLSClientConfig = tlsConfig
+	transport.MaxIdleConns = backendRPCIdleConnections
+	transport.MaxIdleConnsPerHost = backendRPCIdleConnections
+	transport.IdleConnTimeout = 90 * time.Second
+
 	return &http.Client{
-		Timeout: defaultHTTPTimeout,
-		Transport: &http.Transport{
-			Proxy:           proxyFunc,
-			TLSClientConfig: tlsConfig,
-		},
+		Timeout:   defaultHTTPTimeout,
+		Transport: transport,
 	}, nil
 }
 
@@ -118,7 +123,6 @@ func NewContextRawRequest(cfg *rpcclient.ConnConfig) (func(context.Context, stri
 			if err != nil {
 				return nil, err
 			}
-			httpReq.Close = true
 			httpReq.Header.Set("Content-Type", "application/json")
 			for key, value := range cfg.ExtraHeaders {
 				httpReq.Header.Set(key, value)
