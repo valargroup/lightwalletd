@@ -39,11 +39,12 @@ type loadConfig struct {
 }
 
 type workerResult struct {
-	requests uint64
-	messages uint64
-	bytes    uint64
-	errors   uint64
-	latency  []time.Duration
+	requests    uint64
+	messages    uint64
+	bytes       uint64
+	errors      uint64
+	errorSample []string
+	latency     []time.Duration
 }
 
 func runLoad(args []string) {
@@ -151,6 +152,9 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 						break
 					}
 					local.errors++
+					if len(local.errorSample) < 3 {
+						local.errorSample = append(local.errorSample, err.Error())
+					}
 					continue
 				}
 				local.requests++
@@ -175,6 +179,10 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 		total.messages += result.messages
 		total.bytes += result.bytes
 		total.errors += result.errors
+		if len(total.errorSample) < 10 {
+			remaining := 10 - len(total.errorSample)
+			total.errorSample = append(total.errorSample, result.errorSample[:min(remaining, len(result.errorSample))]...)
+		}
 		total.latency = append(total.latency, result.latency...)
 	}
 	slices.Sort(total.latency)
@@ -190,6 +198,7 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 		"response_bytes":      total.bytes,
 		"mib_per_second":      float64(total.bytes) / seconds / (1024 * 1024),
 		"errors":              total.errors,
+		"error_samples":       total.errorSample,
 		"latency_ms": map[string]float64{
 			"p50": percentileMillis(total.latency, 0.50),
 			"p95": percentileMillis(total.latency, 0.95),

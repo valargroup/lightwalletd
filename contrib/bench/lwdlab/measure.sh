@@ -97,7 +97,7 @@ read -r end_cpu end_rss < <(
   ps -p "$server_pid" -o utime= -o stime= -o rss= |
     awk '{ split($1, u, ":"); split($2, s, ":"); print u[1] * 60 + u[2] + s[1] * 60 + s[2], $3 * 1024 }'
 )
-curl -fsS "$metrics_url" >"$end_metrics"
+curl -fsS --retry 5 --retry-all-errors --retry-delay 1 "$metrics_url" >"$end_metrics"
 backend_result=$(curl -fsS "$backend_admin/stats")
 
 metric() {
