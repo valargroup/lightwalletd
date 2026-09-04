@@ -6,8 +6,10 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io"
 	"math"
 	"os"
@@ -30,6 +32,9 @@ type loadConfig struct {
 	iterations      int
 	startHeight     uint64
 	endHeight       uint64
+	rangeBatchSize  uint64
+	scanTimeout     time.Duration
+	requireMainnet  bool
 	blockHeight     uint64
 	pools           []walletrpc.PoolType
 	subtreeCount    uint32
@@ -40,12 +45,13 @@ type loadConfig struct {
 }
 
 type workerResult struct {
-	requests    uint64
-	messages    uint64
-	bytes       uint64
-	errors      uint64
-	errorSample []string
-	latency     []time.Duration
+	requests     uint64
+	messages     uint64
+	bytes        uint64
+	errors       uint64
+	errorSample  []string
+	latency      []time.Duration
+	scanComplete bool
 }
 
 func runLoad(args []string) {
@@ -57,6 +63,9 @@ func runLoad(args []string) {
 	iterations := flags.Int("iterations", 0, "requests per worker; overrides duration when positive")
 	startHeight := flags.Uint64("start", 100, "range start height")
 	endHeight := flags.Uint64("end", 131, "range end height")
+	rangeBatchSize := flags.Uint64("range-batch", 0, "when positive, download start..end once per client in consecutive batches; requires op=range and overrides duration")
+	scanTimeout := flags.Duration("scan-timeout", 30*time.Minute, "overall timeout for a finite range scan")
+	requireMainnet := flags.Bool("require-mainnet", false, "verify server network and range end block before loading")
 	blockHeight := flags.Uint64("height", 380640, "block or tree-state height")
 	poolNames := flags.String("pools", "", "comma-separated transparent,sapling,orchard,ironwood")
 	subtreePool := flags.String("subtree-pool", "sapling", "sapling, orchard, or ironwood")
@@ -64,7 +73,7 @@ func runLoad(args []string) {
 	mempoolCount := flags.Int("mempool", 4000, "backend mempool size")
 	mempoolExclude := flags.Int("exclude", 3900, "full txids to exclude from mempool response")
 	_ = flags.Parse(args)
-	if *concurrency < 1 || (*iterations <= 0 && *duration <= 0) {
+	if *concurrency < 1 || (*rangeBatchSize == 0 && *iterations <= 0 && *duration <= 0) {
 		flags.Usage()
 		os.Exit(2)
 	}
@@ -84,6 +93,9 @@ func runLoad(args []string) {
 		iterations:      *iterations,
 		startHeight:     *startHeight,
 		endHeight:       *endHeight,
+		rangeBatchSize:  *rangeBatchSize,
+		scanTimeout:     *scanTimeout,
+		requireMainnet:  *requireMainnet,
 		blockHeight:     *blockHeight,
 		pools:           pools,
 		subtreeCount:    uint32(*subtreeCount),
@@ -105,6 +117,12 @@ func runLoad(args []string) {
 }
 
 func executeLoad(config loadConfig) (map[string]any, error) {
+	if config.rangeBatchSize > 0 {
+		if config.operation != "range" || config.startHeight > config.endHeight || config.endHeight > math.MaxUint32 || config.iterations != 0 || config.scanTimeout <= 0 {
+			return nil, fmt.Errorf("range-batch requires op=range, ordered uint32 heights, no iterations, and a positive scan-timeout")
+		}
+		config.iterations = int(1 + (config.endHeight-config.startHeight)/config.rangeBatchSize)
+	}
 	connections := make([]*grpc.ClientConn, config.concurrency)
 	clients := make([]walletrpc.CompactTxStreamerClient, config.concurrency)
 	for i := range config.concurrency {
@@ -131,10 +149,45 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 		}
 	}()
 
+	var mainnetState map[string]any
+	if config.requireMainnet {
+		checkCtx, checkCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer checkCancel()
+		info, err := clients[0].GetLightdInfo(checkCtx, &walletrpc.Empty{})
+		if err != nil {
+			return nil, fmt.Errorf("mainnet preflight info: %w", err)
+		}
+		if info.ChainName != "main" {
+			return nil, fmt.Errorf("expected mainnet, server reports %q", info.ChainName)
+		}
+		tip, err := clients[0].GetLatestBlock(checkCtx, &walletrpc.ChainSpec{})
+		if err != nil {
+			return nil, fmt.Errorf("mainnet preflight tip: %w", err)
+		}
+		if tip.Height < config.endHeight {
+			return nil, fmt.Errorf("mainnet tip %d is below range end %d", tip.Height, config.endHeight)
+		}
+		block, err := clients[0].GetBlock(checkCtx, &walletrpc.BlockID{Height: config.endHeight})
+		if err != nil {
+			return nil, fmt.Errorf("mainnet preflight end block: %w", err)
+		}
+		if block.Height != config.endHeight || len(block.Hash) != 32 {
+			return nil, fmt.Errorf("mainnet preflight returned an invalid end block")
+		}
+		mainnetState = map[string]any{
+			"server_info":             info,
+			"observed_tip":            tip.Height,
+			"range_end_height":        block.Height,
+			"range_end_hash_wire_hex": hex.EncodeToString(block.Hash),
+		}
+	}
+
 	ctx := context.Background()
 	cancel := func() {}
 	if config.iterations <= 0 {
 		ctx, cancel = context.WithTimeout(ctx, config.duration+30*time.Second)
+	} else if config.rangeBatchSize > 0 {
+		ctx, cancel = context.WithTimeout(ctx, config.scanTimeout)
 	}
 	defer cancel()
 
@@ -156,12 +209,19 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 					break
 				}
 				began := time.Now()
-				messages, bytes, err := executeRequest(ctx, clients[worker], config, worker+iteration)
+				requestConfig := config
+				if config.rangeBatchSize > 0 {
+					requestConfig = scanRequestConfig(config, iteration)
+				}
+				messages, bytes, err := executeRequest(ctx, clients[worker], requestConfig, worker+iteration)
 				elapsed := time.Since(began)
 				if err != nil {
 					local.errors++
 					if len(local.errorSample) < 3 {
 						local.errorSample = append(local.errorSample, err.Error())
+					}
+					if config.rangeBatchSize > 0 {
+						break
 					}
 					continue
 				}
@@ -172,6 +232,7 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 					local.latency = append(local.latency, elapsed)
 				}
 			}
+			local.scanComplete = config.rangeBatchSize > 0 && local.requests == uint64(config.iterations)
 			results <- local
 		}(worker)
 	}
@@ -183,7 +244,11 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 	close(results)
 
 	total := workerResult{}
+	completedScans := 0
 	for result := range results {
+		if result.scanComplete {
+			completedScans++
+		}
 		total.requests += result.requests
 		total.messages += result.messages
 		total.bytes += result.bytes
@@ -196,7 +261,7 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 	}
 	slices.Sort(total.latency)
 	seconds := elapsed.Seconds()
-	return map[string]any{
+	result := map[string]any{
 		"operation":           config.operation,
 		"concurrency":         config.concurrency,
 		"elapsed_seconds":     seconds,
@@ -214,7 +279,30 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 			"p99": percentileMillis(total.latency, 0.99),
 			"max": percentileMillis(total.latency, 1.00),
 		},
-	}, nil
+	}
+	if config.rangeBatchSize > 0 {
+		result["range_scan"] = map[string]any{
+			"start_height":               config.startHeight,
+			"end_height":                 config.endHeight,
+			"batch_size":                 config.rangeBatchSize,
+			"expected_blocks_per_client": config.endHeight - config.startHeight + 1,
+			"completed_clients":          completedScans,
+			"complete":                   completedScans == config.concurrency,
+		}
+	}
+	if mainnetState != nil {
+		result["mainnet_state"] = mainnetState
+	}
+	return result, nil
+}
+
+// scanRequestConfig advances a client through the interval exactly once and
+// clips the last batch. iteration must be less than the configured batch count.
+func scanRequestConfig(config loadConfig, iteration int) loadConfig {
+	start := config.startHeight + uint64(iteration)*config.rangeBatchSize
+	count := min(config.rangeBatchSize, config.endHeight-start+1)
+	config.startHeight, config.endHeight = start, start+count-1
+	return config
 }
 
 func executeRequest(ctx context.Context, client walletrpc.CompactTxStreamerClient, config loadConfig, sequence int) (uint64, uint64, error) {
@@ -248,10 +336,16 @@ func executeRequest(ctx context.Context, client walletrpc.CompactTxStreamerClien
 		for {
 			response, err := stream.Recv()
 			if err == io.EOF {
+				if config.rangeBatchSize > 0 && messages != config.endHeight-config.startHeight+1 {
+					return messages, bytes, fmt.Errorf("range returned %d blocks, expected %d", messages, config.endHeight-config.startHeight+1)
+				}
 				return messages, bytes, nil
 			}
 			if err != nil {
 				return messages, bytes, err
+			}
+			if config.rangeBatchSize > 0 && (messages > config.endHeight-config.startHeight || response.Height != config.startHeight+messages) {
+				return messages, bytes, fmt.Errorf("unexpected range height %d after %d blocks", response.Height, messages)
 			}
 			messages++
 			bytes += uint64(proto.Size(response))

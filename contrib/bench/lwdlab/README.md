@@ -69,6 +69,13 @@ ordinary load failures.
 Follow-up measurements and decisions are in
 [`results/2026-09-04-followup.md`](results/2026-09-04-followup.md).
 
+## Mainnet preparation
+
+The existing results are synthetic. [Mainnet preparation](MAINNET.md) documents
+verified wallet batch sizes, an archive snapshot source, finite range scans, and
+the wallet session tests still needed. No mainnet performance results are available
+yet.
+
 ## Conservative server bundle
 
 `LWD_LAB_SUITE=server-bundle LWD_LAB_DURATION=10s followup.sh LAB_DIRECTORY`
