@@ -14,6 +14,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -1081,6 +1082,21 @@ func TestMempoolFilter(t *testing.T) {
 		}
 	}
 
+}
+
+func TestMempoolFilterSortedMatchesGeneralFilter(t *testing.T) {
+	items := []string{"ff00", "0011", "aa22", "aa11"}
+	exclude := []string{"aa", "0011"}
+
+	generalItems := append([]string(nil), items...)
+	generalExclude := append([]string(nil), exclude...)
+	want := MempoolFilter(generalItems, generalExclude)
+
+	slices.Sort(items)
+	got := mempoolFilterSorted(items, append([]string(nil), exclude...))
+	if !slices.Equal(got, want) {
+		t.Fatalf("sorted filter returned %v, want %v", got, want)
+	}
 }
 
 func TestPruneCompactBlockToNullifiers(t *testing.T) {
