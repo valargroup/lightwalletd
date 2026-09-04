@@ -23,19 +23,20 @@ import (
 )
 
 type loadConfig struct {
-	address        string
-	operation      string
-	concurrency    int
-	duration       time.Duration
-	iterations     int
-	startHeight    uint64
-	endHeight      uint64
-	blockHeight    uint64
-	pools          []walletrpc.PoolType
-	subtreeCount   uint32
-	mempoolCount   int
-	mempoolExclude int
-	mempoolTxIDs   [][]byte
+	address         string
+	operation       string
+	concurrency     int
+	duration        time.Duration
+	iterations      int
+	startHeight     uint64
+	endHeight       uint64
+	blockHeight     uint64
+	pools           []walletrpc.PoolType
+	subtreeCount    uint32
+	subtreeProtocol walletrpc.ShieldedProtocol
+	mempoolCount    int
+	mempoolExclude  int
+	mempoolTxIDs    [][]byte
 }
 
 type workerResult struct {
@@ -50,7 +51,7 @@ type workerResult struct {
 func runLoad(args []string) {
 	flags := flag.NewFlagSet("load", flag.ExitOnError)
 	address := flags.String("address", "127.0.0.1:19067", "lightwalletd gRPC address")
-	operation := flags.String("op", "poll", "block, range, tree, latest-tree, latest-block, info, poll, wallet-poll, subtree, or mempool")
+	operation := flags.String("op", "poll", "block, range, tree, latest-tree, latest-block, info, poll, wallet-poll, wallet-load, subtree, or mempool")
 	concurrency := flags.Int("concurrency", 32, "parallel clients and gRPC connections")
 	duration := flags.Duration("duration", 10*time.Second, "measurement duration")
 	iterations := flags.Int("iterations", 0, "requests per worker; overrides duration when positive")
@@ -58,6 +59,7 @@ func runLoad(args []string) {
 	endHeight := flags.Uint64("end", 131, "range end height")
 	blockHeight := flags.Uint64("height", 380640, "block or tree-state height")
 	poolNames := flags.String("pools", "", "comma-separated transparent,sapling,orchard,ironwood")
+	subtreePool := flags.String("subtree-pool", "sapling", "sapling, orchard, or ironwood")
 	subtreeCount := flags.Uint("subtrees", 64, "maximum subtree roots")
 	mempoolCount := flags.Int("mempool", 4000, "backend mempool size")
 	mempoolExclude := flags.Int("exclude", 3900, "full txids to exclude from mempool response")
@@ -70,19 +72,24 @@ func runLoad(args []string) {
 	if err != nil {
 		fatalf("parse pools: %v", err)
 	}
+	protocol, ok := walletrpc.ShieldedProtocol_value[*subtreePool]
+	if !ok || protocol < 0 || protocol > 2 {
+		fatalf("unknown subtree pool %q", *subtreePool)
+	}
 	config := loadConfig{
-		address:        *address,
-		operation:      *operation,
-		concurrency:    *concurrency,
-		duration:       *duration,
-		iterations:     *iterations,
-		startHeight:    *startHeight,
-		endHeight:      *endHeight,
-		blockHeight:    *blockHeight,
-		pools:          pools,
-		subtreeCount:   uint32(*subtreeCount),
-		mempoolCount:   *mempoolCount,
-		mempoolExclude: min(*mempoolExclude, *mempoolCount),
+		address:         *address,
+		operation:       *operation,
+		concurrency:     *concurrency,
+		duration:        *duration,
+		iterations:      *iterations,
+		startHeight:     *startHeight,
+		endHeight:       *endHeight,
+		blockHeight:     *blockHeight,
+		pools:           pools,
+		subtreeCount:    uint32(*subtreeCount),
+		subtreeProtocol: walletrpc.ShieldedProtocol(protocol),
+		mempoolCount:    *mempoolCount,
+		mempoolExclude:  min(*mempoolExclude, *mempoolCount),
 	}
 	config.mempoolTxIDs = make([][]byte, config.mempoolExclude)
 	for i := range config.mempoolTxIDs {
@@ -218,6 +225,9 @@ func executeRequest(ctx context.Context, client walletrpc.CompactTxStreamerClien
 	if operation == "wallet-poll" {
 		operation = []string{"latest-block", "tree", "info"}[sequence%3]
 	}
+	if operation == "wallet-load" {
+		operation = []string{"range", "range", "range", "range", "range", "range", "range", "range", "tree", "tree", "info", "subtree"}[sequence%12]
+	}
 	switch operation {
 	case "block":
 		response, err := client.GetBlock(ctx, &walletrpc.BlockID{Height: config.blockHeight})
@@ -272,7 +282,7 @@ func executeRequest(ctx context.Context, client walletrpc.CompactTxStreamerClien
 		return 1, uint64(proto.Size(response)), nil
 	case "subtree":
 		stream, err := client.GetSubtreeRoots(ctx, &walletrpc.GetSubtreeRootsArg{
-			ShieldedProtocol: walletrpc.ShieldedProtocol_sapling,
+			ShieldedProtocol: config.subtreeProtocol,
 			MaxEntries:       config.subtreeCount,
 		})
 		if err != nil {

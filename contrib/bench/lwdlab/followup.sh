@@ -22,7 +22,8 @@ run_one() {
   echo "Running $label" >&2
   "$measure" --label "$label" --server "$lab_dir/$binary" \
     --lab "$lab_dir/lwdlab" --data-dir "$lab_dir/$cache" \
-    --output-dir "$result_dir" -- -concurrency 8 -duration "$duration" "$@" \
+    --output-dir "$result_dir" --warm-iterations "${warm_iterations:-1}" \
+    -- -concurrency 8 -duration "$duration" "$@" \
     >>"$result_dir/results.jsonl"
 }
 
@@ -64,6 +65,25 @@ case "$suite" in
         esac
         run_one "wallet-poll-$variant-$repeat" "$binary" cache-dense \
           -op wallet-poll -height 2047
+      done
+    done
+    ;;
+  server-bundle)
+    for workload in orchard-range orchard-subtrees status orchard-mixed; do
+      case "$workload" in
+        orchard-range) args=(-op range -start 100 -end 131); warm_iterations=1;;
+        orchard-subtrees) args=(-op subtree -subtree-pool orchard -subtrees 64); warm_iterations=1;;
+        status) args=(-op wallet-poll -height 2047); warm_iterations=3;;
+        orchard-mixed)
+          args=(-op wallet-load -start 100 -end 131 -height 2047 -subtree-pool orchard -subtrees 64)
+          warm_iterations=12;;
+      esac
+      for ((repeat=1; repeat<=repeats; repeat++)); do
+        variants=(baseline bundle)
+        if ((repeat % 2 == 0)); then variants=(bundle baseline); fi
+        for variant in "${variants[@]}"; do
+          run_one "$workload-$variant-$repeat" "lightwalletd-$variant" cache-shielded "${args[@]}"
+        done
       done
     done
     ;;

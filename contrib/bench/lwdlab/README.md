@@ -69,6 +69,23 @@ ordinary load failures.
 Follow-up measurements and decisions are in
 [`results/2026-09-04-followup.md`](results/2026-09-04-followup.md).
 
+## Conservative server bundle
+
+`LWD_LAB_SUITE=server-bundle LWD_LAB_DURATION=10s followup.sh LAB_DIRECTORY`
+compares `lightwalletd-baseline` with `lightwalletd-bundle` using `cache-shielded`.
+Run the backend separately with `-delay-us 2000`. The suite covers default ranges
+containing only Orchard transactions, Orchard subtree roots, status requests,
+and a defined mixed load. The `wallet-load` operation repeats eight ranges,
+two explicit tree-state requests, one `GetLightdInfo`, and one subtree-root request
+per twelve operations. This is an illustrative mix, not measured wallet traffic.
+
+Use `-subtree-pool orchard` to select Orchard roots; the default remains Sapling
+so old benchmark commands retain their meaning. The bundle suite always selects
+Orchard explicitly and warms each operation before the measured interval.
+
+Results and the recommended change set are in
+[`results/2026-09-04-server-bundle.md`](results/2026-09-04-server-bundle.md).
+
 Example:
 
 ```sh
