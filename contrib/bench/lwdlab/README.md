@@ -20,7 +20,9 @@ testing against Zebra or zcashd.
 `matrix.sh` runs the standard set of isolated candidates against the same
 baseline three times per side, alternating which binary runs first. Set
 `LWD_LAB_DURATION` or `LWD_LAB_REPEATS` to shorten a smoke run or extend a
-comparison.
+comparison. `LWD_LAB_WORKLOADS` selects a comma-separated subset, and
+`LWD_LAB_COOLDOWN` inserts a delay after each run when intentionally testing
+large volumes of short-lived backend connections.
 
 Example:
 
