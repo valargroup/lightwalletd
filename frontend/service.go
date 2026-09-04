@@ -694,7 +694,7 @@ func (s *lwdStreamer) GetMempoolStream(_empty *walletrpc.Empty, resp walletrpc.C
 // txid. (We do need these entries in the map so we don't fetch the tx again.)
 var mempoolMap *map[string]*walletrpc.CompactTx
 
-// Txids in big-endian hex (from the backend)
+// Txids in big-endian hex (from the backend), sorted before publication.
 var mempoolList []string
 
 // Last time we pulled a copy of the mempool from zcashd.
@@ -777,6 +777,9 @@ func (s *lwdStreamer) GetMempoolTx(exclude *walletrpc.GetMempoolTxRequest, resp 
 			return status.Errorf(codes.Unknown,
 				"GetMempoolTx: failed to unmarshal getrawmempool reply, error: %s", err.Error())
 		}
+		// Sort while the new list is still private. All readers can then share
+		// the immutable ordering instead of sorting the same backing array.
+		slices.Sort(newmempoolList)
 		newmempoolMap := make(map[string]*walletrpc.CompactTx)
 		for _, txidstr := range newmempoolList {
 			if err := streamCtx.Err(); err != nil {
@@ -839,7 +842,7 @@ func (s *lwdStreamer) GetMempoolTx(exclude *walletrpc.GetMempoolTxRequest, resp 
 		s.mutex.Unlock()
 		cachedList, cachedMap = newmempoolList, newmempoolMap
 	}
-	for _, txid := range MempoolFilter(cachedList, excludeHex) {
+	for _, txid := range mempoolFilterSorted(cachedList, excludeHex) {
 		ctx, ok := cachedMap[txid]
 		if !ok {
 			// The transaction was in getrawmempool's reply but its
@@ -862,6 +865,11 @@ func (s *lwdStreamer) GetMempoolTx(exclude *walletrpc.GetMempoolTxRequest, resp 
 // all those items.
 func MempoolFilter(items, exclude []string) []string {
 	slices.Sort(items)
+	return mempoolFilterSorted(items, exclude)
+}
+
+// mempoolFilterSorted filters an immutable, sorted mempool snapshot.
+func mempoolFilterSorted(items, exclude []string) []string {
 	slices.Sort(exclude)
 	// Determine how many items match each exclude item.
 	nmatches := make([]int, len(exclude))
@@ -882,7 +890,10 @@ func MempoolFilter(items, exclude []string) []string {
 	}
 
 	// Add each item that isn't uniquely excluded to the results.
-	tosend := make([]string, 0)
+	// Each exclude entry can suppress at most one item. This lower bound avoids
+	// repeated slice growth without overallocating when the client has most of
+	// the mempool already.
+	tosend := make([]string, 0, max(0, len(items)-len(exclude)))
 	ei = 0
 	for _, item := range items {
 		for ei < len(exclude) && lessthan(exclude[ei], item) {
