@@ -18,9 +18,7 @@ import (
 
 	"github.com/zcash/lightwalletd/walletrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -52,7 +50,7 @@ type workerResult struct {
 func runLoad(args []string) {
 	flags := flag.NewFlagSet("load", flag.ExitOnError)
 	address := flags.String("address", "127.0.0.1:19067", "lightwalletd gRPC address")
-	operation := flags.String("op", "poll", "block, range, tree, latest-tree, latest-block, info, poll, subtree, or mempool")
+	operation := flags.String("op", "poll", "block, range, tree, latest-tree, latest-block, info, poll, wallet-poll, subtree, or mempool")
 	concurrency := flags.Int("concurrency", 32, "parallel clients and gRPC connections")
 	duration := flags.Duration("duration", 10*time.Second, "measurement duration")
 	iterations := flags.Int("iterations", 0, "requests per worker; overrides duration when positive")
@@ -129,10 +127,14 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 	ctx := context.Background()
 	cancel := func() {}
 	if config.iterations <= 0 {
-		ctx, cancel = context.WithTimeout(ctx, config.duration)
+		ctx, cancel = context.WithTimeout(ctx, config.duration+30*time.Second)
 	}
 	defer cancel()
 
+	// Stop issuing work at the measurement deadline, then drain in-flight RPCs.
+	// The extra 30 seconds bounds a stalled drain without treating deadline
+	// cancellation as a successful or silently ignored request.
+	var stopAt time.Time
 	start := make(chan struct{})
 	results := make(chan workerResult, config.concurrency)
 	var wg sync.WaitGroup
@@ -143,17 +145,13 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 			local := workerResult{latency: make([]time.Duration, 0, 8192)}
 			<-start
 			for iteration := 0; config.iterations <= 0 || iteration < config.iterations; iteration++ {
-				if ctx.Err() != nil {
+				if ctx.Err() != nil || (config.iterations <= 0 && !time.Now().Before(stopAt)) {
 					break
 				}
 				began := time.Now()
 				messages, bytes, err := executeRequest(ctx, clients[worker], config, worker+iteration)
 				elapsed := time.Since(began)
 				if err != nil {
-					code := status.Code(err)
-					if config.iterations <= 0 && (ctx.Err() != nil || code == codes.Canceled || code == codes.DeadlineExceeded) {
-						break
-					}
 					local.errors++
 					if len(local.errorSample) < 3 {
 						local.errorSample = append(local.errorSample, err.Error())
@@ -171,6 +169,7 @@ func executeLoad(config loadConfig) (map[string]any, error) {
 		}(worker)
 	}
 	started := time.Now()
+	stopAt = started.Add(config.duration)
 	close(start)
 	wg.Wait()
 	elapsed := time.Since(started)
@@ -215,6 +214,9 @@ func executeRequest(ctx context.Context, client walletrpc.CompactTxStreamerClien
 	operation := config.operation
 	if operation == "poll" {
 		operation = []string{"latest-block", "latest-tree", "info"}[sequence%3]
+	}
+	if operation == "wallet-poll" {
+		operation = []string{"latest-block", "tree", "info"}[sequence%3]
 	}
 	switch operation {
 	case "block":

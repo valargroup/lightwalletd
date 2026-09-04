@@ -27,6 +27,48 @@ large volumes of short-lived backend connections.
 The initial candidate comparison is recorded in
 [`results/2026-09-04-macos-arm64.md`](results/2026-09-04-macos-arm64.md).
 
+## Follow-up comparisons
+
+`followup.sh LAB_DIRECTORY` compares upstream, in-place filtering, and selective
+decoding across four range workloads. It expects `lightwalletd-baseline`,
+`lightwalletd-range-filter`, `lightwalletd-selective`, and `lwdlab` binaries in
+the lab directory. Generate its three disk caches with the same lab binary:
+
+```sh
+LAB=/tmp/lwd-followup
+"$LAB/lwdlab" generate-cache -data-dir "$LAB/cache-dense" -shape mixed
+"$LAB/lwdlab" generate-cache -data-dir "$LAB/cache-segregated" -shape segregated
+"$LAB/lwdlab" generate-cache -data-dir "$LAB/cache-shielded" -shape shielded
+```
+
+The mixed shape puts components from all four pools in every transaction.
+At the default 64 transactions per block, the segregated shape has 55 transparent,
+three Sapling, and six Orchard transactions. The shielded control has 64
+Orchard transactions. These proportions are illustrative, not mainnet estimates.
+Run the deterministic backend separately from the repository root before the
+matrix. The caches and backend must use the same tip (2047 by default).
+
+The follow-up runner sets `GOMAXPROCS=2` only on the server. This limits Go
+parallelism, not host CPU quota. Override it with `LWD_LAB_SERVER_PROCS`.
+`LWD_LAB_DURATION` and `LWD_LAB_REPEATS` default to five seconds and three repeats.
+Variant order reverses on alternating repeats.
+
+`LWD_LAB_SUITE=poll` runs the same three-way status mix using `GetTreeState`
+instead of `GetLatestTreeState`. Supply `lightwalletd-backend-keepalive`,
+`lightwalletd-poll-cache`, and `lightwalletd-poll-keepalive` alongside the baseline.
+For a controlled backend latency comparison, start the backend with
+`-delay-us 2000`. This is a status-path comparison, not a complete wallet sync
+replay or a measured public-server latency distribution.
+
+Duration-based loads stop issuing new requests at the target time and drain
+active requests, bounded by another 30 seconds. Throughput uses total elapsed
+time including the drain; all RPC errors are counted. This avoids silently
+discarding server cancellations or classifying shutdown deadline races as
+ordinary load failures.
+
+Follow-up measurements and decisions are in
+[`results/2026-09-04-followup.md`](results/2026-09-04-followup.md).
+
 Example:
 
 ```sh

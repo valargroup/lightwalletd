@@ -55,7 +55,11 @@ if [[ "$nocache" == true ]]; then
   server_args+=(--nocache)
 fi
 
-"$server" "${server_args[@]}" >"$console_log" 2>&1 &
+server_env=()
+if [[ -n "${LWD_LAB_SERVER_PROCS:-}" ]]; then
+  server_env=(env "GOMAXPROCS=$LWD_LAB_SERVER_PROCS")
+fi
+"${server_env[@]}" "$server" "${server_args[@]}" >"$console_log" 2>&1 &
 server_pid=$!
 cleanup() {
   if kill -0 "$server_pid" 2>/dev/null; then

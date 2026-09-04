@@ -23,6 +23,7 @@ func generateCache(args []string) {
 	dataDir := flags.String("data-dir", "", "new lightwalletd data directory")
 	blockCount := flags.Int("blocks", 2048, "number of compact blocks")
 	txPerBlock := flags.Int("tx-per-block", 64, "transactions in each compact block")
+	shape := flags.String("shape", "mixed", "mixed, segregated, or shielded transaction pools")
 	chain := flags.String("chain", "regtest", "cache chain name")
 	_ = flags.Parse(args)
 	if *dataDir == "" || *blockCount < 1 || *txPerBlock < 0 {
@@ -38,6 +39,28 @@ func generateCache(args []string) {
 	common.Log = logger.WithField("component", "lwdlab")
 
 	txs := compactTransactions(*txPerBlock)
+	for i, tx := range txs {
+		switch *shape {
+		case "mixed":
+		case "segregated":
+			// Deliberately illustrative, not a measured mainnet distribution.
+			if i%20 < 17 {
+				tx.Spends, tx.Outputs, tx.Actions, tx.IronwoodActions = nil, nil, nil, nil
+			} else {
+				tx.Vin, tx.Vout, tx.IronwoodActions = nil, nil, nil
+				if i%20 == 17 {
+					tx.Actions = nil
+				} else {
+					tx.Spends, tx.Outputs = nil, nil
+				}
+			}
+		case "shielded":
+			tx.Vin, tx.Vout, tx.IronwoodActions = nil, nil, nil
+			tx.Spends, tx.Outputs = nil, nil
+		default:
+			fatalf("unknown shape %q", *shape)
+		}
+	}
 	sample := &walletrpc.CompactBlock{Height: 1, Hash: repeatedBytes(32, 1), PrevHash: repeatedBytes(32, 2), Vtx: txs}
 	sampleBytes := proto.Size(sample)
 	cache := common.NewBlockCache(filepath.Join(*dataDir, "db"), *chain, 0, 0)
@@ -69,6 +92,7 @@ func generateCache(args []string) {
 	result := map[string]any{
 		"data_dir":           *dataDir,
 		"chain":              *chain,
+		"shape":              *shape,
 		"blocks":             *blockCount,
 		"tx_per_block":       *txPerBlock,
 		"sample_block_bytes": sampleBytes,
