@@ -197,3 +197,66 @@ entire responses. Version metadata and live mempool contents can legitimately
 differ and need separate interpretation. Measure recorder overhead separately
 before using its timings as performance evidence. Discard runs with recorder
 errors, wallet errors, or incomplete syncs.
+
+## Concurrent wallets
+
+`wallet_sessions.py prepare` creates distinct unfunded wallets through the fixture
+binary. Each wallet has its own keys and database. `run` copies their saved states
+into a new private run directory and starts one wallet process per client. It
+does not replace wallet scanning with a request replay.
+
+```sh
+python3 contrib/bench/lwdlab/wallet_sessions.py prepare \
+  --wallet-binary /private/lab/lwd_mainnet_wallet \
+  --build-manifest /private/lab/wallet-build.json \
+  --destination /private/lab/fixtures/restore --birthday 3450000 --count 32
+
+python3 contrib/bench/lwdlab/wallet_sessions.py run \
+  --wallet-binary /private/lab/lwd_mainnet_wallet \
+  --fixture-dir /private/lab/fixtures/restore \
+  --output /private/lab/runs/baseline-32-1 --label baseline-32-1 \
+  --clients 32 --expected-tip 3471422 --url http://127.0.0.1:19068
+```
+
+The build manifest records `binary_sha256`, the wallet source revision, toolchain,
+and fixture revision. The fixture manifest records each closed database's hash.
+The runner checks those hashes before copying. Keep the same saved inputs for
+each baseline/candidate pair. Output includes per-wallet completion time, CPU,
+peak RSS, completion state, and chain height, plus batch completion time. Failed,
+timed-out, or wrong-height wallets make the run fail. The p50/p95 fields describe
+successful wallets only; discard the comparison if `all_complete` is false.
+
+Start with one captured session, then compare 8, 16, and 32 simultaneous sessions.
+Use at least three paired repeats with alternating order. Keep server CPU limits,
+cache state, wallet mode, node height and hash, and client hardware fixed. Save
+the closed databases after a successful sync for the resume test, then advance
+the isolated node using actual mainnet blocks and pin its new tip. Record the
+absence as the actual height/time difference between those states.
+
+`sample_processes.py` runs on Linux and samples named server and node PIDs without
+making RPC requests. It records process CPU counters, RSS, threads, and I/O;
+process exit or PID reuse fails the capture. Use its samples to locate CPU or
+memory pressure during the wallet run. RSS peaks are sampled, not exact maxima.
+Also save lightwalletd `/metrics` and node metrics before and after each run for
+allocation counters and backend RPC counts. Keep setup and cache construction
+outside the cached-serving measurement window.
+
+## Report format
+
+Lead with a compact table containing one row per PR and one for the bundle.
+For the same wallet session and concurrency, show baseline → candidate wallet
+completion time, server CPU per completed wallet, and peak resident memory.
+Include absolute units and the percentage change. Identify the paired runs and
+show their spread so small changes are not presented as established wins.
+
+Plot wallet completion time against concurrent wallets, and show server CPU per
+wallet beside it. These answer different questions: does a wallet finish sooner,
+and does serving it cost less? Resource savings alone do not prove how many more
+wallets a production server can support. If the client, network, or node limits
+throughput, state that beside the result.
+
+Keep the recommendation for each PR short: measurable benefit in this session,
+no clear difference, or not exercised. A faster individual endpoint must remain
+an endpoint result unless the complete wallet session also improves. Put request
+traces, hashes, hardware, test conditions, and reproduction commands below the
+main results. Do not blend these mainnet measurements with the synthetic report.
