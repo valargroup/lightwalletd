@@ -27,6 +27,8 @@ type BlockCache struct {
 	nextBlock               int      // height of the first block not in the cache
 	latestHash              hash32.T // hash of the most recent (highest height) block, for detecting reorgs.
 	mutex                   sync.RWMutex
+	blockHashes             map[int]hash32.T
+	blockHashesMutex        sync.RWMutex
 }
 
 // GetNextHeight returns the height of the lowest unobtained block.
@@ -71,6 +73,9 @@ func (c *BlockCache) clearDbFiles() {
 	c.starts = c.starts[:1]
 	c.nextBlock = 0
 	c.latestHash = hash32.Nil
+	c.blockHashesMutex.Lock()
+	clear(c.blockHashes)
+	c.blockHashesMutex.Unlock()
 }
 
 // Caller should hold c.mutex.Lock().
@@ -317,6 +322,9 @@ func (c *BlockCache) Reorg(height int) {
 	c.nextBlock = height
 	newCacheLen := height - c.firstBlock
 	c.starts = c.starts[:newCacheLen+1]
+	c.blockHashesMutex.Lock()
+	clear(c.blockHashes)
+	c.blockHashesMutex.Unlock()
 
 	if err := c.lengthsFile.Truncate(int64(4 * newCacheLen)); err != nil {
 		Log.Fatal("truncate failed: ", err)
@@ -347,6 +355,49 @@ func (c *BlockCache) Get(height int) *walletrpc.CompactBlock {
 		return nil
 	}
 	return block
+}
+
+// GetBlockHash returns the hash of a cached compact block. Hashes are retained
+// after their first use so metadata-only callers do not repeatedly unmarshal
+// the block's transactions. The cached values are cleared by a reorg.
+func (c *BlockCache) GetBlockHash(height int) (hash32.T, bool) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	if height < c.firstBlock || height >= c.nextBlock {
+		return hash32.Nil, false
+	}
+
+	// Keep the cache read lock while consulting and filling blockHashes. This
+	// gives Reorg an atomic point at which it can invalidate every memoized hash.
+	c.blockHashesMutex.RLock()
+	if hash, ok := c.blockHashes[height]; ok {
+		c.blockHashesMutex.RUnlock()
+		return hash, true
+	}
+	c.blockHashesMutex.RUnlock()
+
+	c.blockHashesMutex.Lock()
+	defer c.blockHashesMutex.Unlock()
+	// Another caller may have filled this height while we waited.
+	if hash, ok := c.blockHashes[height]; ok {
+		return hash, true
+	}
+	block := c.readBlock(height)
+	if block == nil {
+		go func() {
+			c.mutex.Lock()
+			c.recoverFromCorruption()
+			c.mutex.Unlock()
+		}()
+		return hash32.Nil, false
+	}
+	if c.blockHashes == nil {
+		c.blockHashes = make(map[int]hash32.T)
+	}
+	hash := hash32.FromSlice(block.Hash)
+	c.blockHashes[height] = hash
+	return hash, true
 }
 
 // GetLatestHeight returns the height of the most recent block, or -1
