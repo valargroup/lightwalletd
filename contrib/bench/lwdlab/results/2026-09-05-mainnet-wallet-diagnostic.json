@@ -1,0 +1,70 @@
+{
+  "purpose": "Single diagnostic pair, not a repeated load benchmark",
+  "cache_mode": "nocache",
+  "baseline_source": "d79cd1100575ff909d70e00d5514a4092df94934",
+  "candidate_source": "bdc603c9176b468281a551490cff06f34b894a45",
+  "wallet_source": "24258dcdc354b5b492bd8eb69fe92c026f55554f",
+  "tip": 3470422,
+  "tip_hash": "000000000073dfbd7bf192181f1f0e060ef3c4f295504ca1c513fa49ce6b3723",
+  "same_response_transcript": true,
+  "runs": [
+    {
+      "label": "baseline",
+      "wallet": {
+        "wallet": "000",
+        "started": "2026-09-05T04:15:32.715195+00:00",
+        "elapsed_seconds": 2984.8465083750198,
+        "exit_code": 0,
+        "timed_out": false,
+        "success": true,
+        "progress": {
+          "chain_tip_height": 3470422,
+          "is_complete": true,
+          "scanned_height": 3470422
+        },
+        "user_cpu_seconds": 49.001928,
+        "system_cpu_seconds": 1.210845,
+        "peak_rss_bytes": 74874880
+      },
+      "subtree_rpc_seconds": {
+        "0": 1356.520819957,
+        "1": 1507.248944451,
+        "2": 0.031157036
+      },
+      "range_rpc_seconds": 90.353467069,
+      "range_blocks": 20423,
+      "range_bytes": 26261264,
+      "rpc_calls": 40,
+      "fixture_sha256": "0e442d4f12d632b854010e3c5d5c37bb7a22d398f77e72735bbffa9d5dbe6898"
+    },
+    {
+      "label": "direct-hash",
+      "wallet": {
+        "wallet": "000",
+        "started": "2026-09-05T05:45:12.284985+00:00",
+        "elapsed_seconds": 99.64862358290702,
+        "exit_code": 0,
+        "timed_out": false,
+        "success": true,
+        "progress": {
+          "chain_tip_height": 3470422,
+          "is_complete": true,
+          "scanned_height": 3470422
+        },
+        "user_cpu_seconds": 48.691878,
+        "system_cpu_seconds": 0.850872,
+        "peak_rss_bytes": 74727424
+      },
+      "subtree_rpc_seconds": {
+        "0": 1.134484137,
+        "1": 0.854627652,
+        "2": 0.003293308
+      },
+      "range_rpc_seconds": 66.85730246199999,
+      "range_blocks": 20423,
+      "range_bytes": 26261264,
+      "rpc_calls": 40,
+      "fixture_sha256": "0e442d4f12d632b854010e3c5d5c37bb7a22d398f77e72735bbffa9d5dbe6898"
+    }
+  ]
+}

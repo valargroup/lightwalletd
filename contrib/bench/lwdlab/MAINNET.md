@@ -1,8 +1,10 @@
 # Mainnet benchmark preparation
 
-The existing September 4 measurements use synthetic data. Mainnet measurements
-have not been run. This document records the source evidence and setup needed to
-replace those measurements with results relevant to wallet traffic.
+The September 4 measurements use synthetic data. A real mainnet wallet has now
+completed one diagnostic run each against the baseline and a direct-hash
+candidate, with matching recorded responses. See the
+[preliminary wallet results](results/2026-09-05-mainnet-wallet-diagnostic.md).
+Repeated load comparisons and cached-server measurements are still pending.
 
 ## Wallet request sizes
 
@@ -53,7 +55,7 @@ against the SHA-256 above. The opened archive contains finalized mainnet state a
 **3,470,422**, 1,000 blocks behind the advertised tip. Its tip hash is
 `000000000073dfbd7bf192181f1f0e060ef3c4f295504ca1c513fa49ce6b3723`.
 The node reported archive mode and zero peers. Use this observed height and hash
-for the fixed-state tests. Mainnet performance results are still pending.
+for the fixed-state tests. Mainnet load-test results are still pending.
 
 Record the actual node binary, snapshot checksum, network, and stable interval end
 hash when executing. Identify Zakura as the backend in any result; a result with
@@ -97,7 +99,10 @@ consistent before removing that lock and resuming.
 The first 1,001 imported mainnet blocks produced cache files byte-for-byte
 identical to the normal baseline ingestor. A separate 32-block import passed with
 Go's race detector. Full-history cache preparation is still required before
-cached-serving measurements.
+cached-serving measurements. It does not need to block wallet validation using
+the server's supported `--nocache` configuration. Such runs must use a separate
+data directory and pause the importer to avoid resource contention. Label them
+explicitly as uncached serving; they cannot establish cached-server performance.
 
 ## Sequential range driver
 
@@ -178,7 +183,8 @@ run the Flutter polling loop or its separately started mempool observer.
 Copy the fixture to `rust/examples/lwd_mainnet_wallet.rs` in an isolated checkout
 of that revision, then run `cargo build --locked --release --example
 lwd_mainnet_wallet` from its `rust` directory. This build and disposable database
-creation have passed on macOS arm64. Mainnet sync has not run yet.
+creation have passed on macOS arm64. A complete mainnet sync through height
+3,470,422 has now passed against both the baseline and direct-hash candidate.
 
 The binary takes four arguments. For example, with a private loopback connection
 to the isolated server:
