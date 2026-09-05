@@ -177,6 +177,23 @@ mix. The current synthetic percentages must not be presented as measured mainnet
 improvements. A PR whose path is absent from the captured sessions has no measured
 wallet speedup in those sessions.
 
+## Verify the completed cache
+
+Stop the importer and all servers that could write this cache, then run:
+
+```sh
+lwdlab verify-cache --data-dir /private/lab/cache --height 3470422 \
+  --tip-hash 000000000073dfbd7bf192181f1f0e060ef3c4f295504ca1c513fa49ce6b3723 \
+  --output /private/lab/cache-verified.json
+```
+
+The verifier requires a matching completed import manifest and no writer lock.
+It opens both cache files read only, checks every record checksum, height,
+previous-block hash and cumulative tree size, rejects trailing data, and hashes
+both complete files. It never repairs or truncates a corrupt cache. Keep the
+verification manifest with the benchmark evidence and prevent writers from
+changing the cache between verification and measurements.
+
 ## Faster cache preparation
 
 The optional `import-cache -summary-helper /absolute/path/to/lwd-block-summary

@@ -24,6 +24,8 @@ func main() {
 		runLoad(os.Args[2:])
 	case "record":
 		runRecord(os.Args[2:])
+	case "verify-cache":
+		verifyCache(os.Args[2:])
 	case "import-cache":
 		importCache(os.Args[2:])
 	default:
@@ -32,6 +34,6 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: lwdlab <generate-cache|backend|load|record|import-cache> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: lwdlab <generate-cache|backend|load|record|import-cache|verify-cache> [flags]")
 	os.Exit(2)
 }
