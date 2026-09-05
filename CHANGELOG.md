@@ -6,6 +6,13 @@ and this library adheres to Rust's notion of
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The most recent changes are listed first.
 
+## [Unreleased]
+
+### Changed
+
+- Fetch subtree completing block hashes directly from the backend when the
+  block is not cached, avoiding full block downloads during wallet sync.
+
 ## [0.5.4] - 2026-08-27
 
 ### Changed

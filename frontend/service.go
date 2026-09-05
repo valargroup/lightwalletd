@@ -1049,10 +1049,9 @@ func (s *lwdStreamer) GetSubtreeRoots(arg *walletrpc.GetSubtreeRootsArg, resp wa
 			return status.FromContextError(err).Err()
 		}
 		subtree := reply.Subtrees[i]
-		block, err := common.GetBlock(resp.Context(), s.cache, subtree.End_height)
-		if block == nil {
-			// It may be worth trying to determine a more specific error code
-			return status.Error(codes.Internal, err.Error())
+		blockHash, err := s.subtreeBlockHash(resp.Context(), subtree.End_height)
+		if err != nil {
+			return err
 		}
 		roothash, err := hex.DecodeString(subtree.Root)
 		if err != nil {
@@ -1061,8 +1060,8 @@ func (s *lwdStreamer) GetSubtreeRoots(arg *walletrpc.GetSubtreeRootsArg, resp wa
 		}
 		r := walletrpc.SubtreeRoot{
 			RootHash:              roothash,
-			CompletingBlockHash:   hash32.ReverseSlice(block.Hash),
-			CompletingBlockHeight: block.Height,
+			CompletingBlockHash:   blockHash,
+			CompletingBlockHeight: uint64(subtree.End_height),
 		}
 		err = resp.Send(&r)
 		if err != nil {
@@ -1070,6 +1069,38 @@ func (s *lwdStreamer) GetSubtreeRoots(arg *walletrpc.GetSubtreeRootsArg, resp wa
 		}
 	}
 	return nil // success
+}
+
+// subtreeBlockHash returns the completing block hash in RPC display order.
+// A cache miss needs only a hash, not a full block or its commitment trees.
+func (s *lwdStreamer) subtreeBlockHash(ctx context.Context, height int) ([]byte, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, status.FromContextError(err).Err()
+	}
+	if height < 0 {
+		return nil, status.Error(codes.Internal, "GetSubtreeRoots: negative completing block height")
+	}
+	if s.cache != nil {
+		if block := s.cache.Get(height); block != nil {
+			return hash32.ReverseSlice(block.Hash), nil
+		}
+	}
+	result, err := common.RawRequest(ctx, "getblockhash", []json.RawMessage{json.RawMessage(strconv.Itoa(height))})
+	if err != nil {
+		if ctx.Err() != nil {
+			return nil, status.FromContextError(ctx.Err()).Err()
+		}
+		return nil, status.Errorf(codes.Internal, "GetSubtreeRoots: getblockhash failed: %s", err)
+	}
+	var encoded string
+	if err := json.Unmarshal(result, &encoded); err != nil {
+		return nil, status.Errorf(codes.Internal, "GetSubtreeRoots: invalid block hash response: %s", err)
+	}
+	hash, err := hex.DecodeString(encoded)
+	if err != nil || len(hash) != 32 {
+		return nil, status.Error(codes.Internal, "GetSubtreeRoots: invalid completing block hash")
+	}
+	return hash, nil
 }
 
 func (s *lwdStreamer) GetAddressUtxosStream(arg *walletrpc.GetAddressUtxosArg, resp walletrpc.CompactTxStreamer_GetAddressUtxosStreamServer) error {
