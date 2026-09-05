@@ -1,0 +1,9 @@
+[package]
+name = "lwd-block-summary"
+version = "0.1.0"
+edition = "2021"
+[dependencies]
+zcash_primitives = { version = "=0.30.0", default-features = false, features = ["std"] }
+zcash_protocol = "=0.10.3"
+serde_json = "=1.0.150"
+hex = "=0.4.3"

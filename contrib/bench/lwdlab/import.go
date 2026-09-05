@@ -20,6 +20,7 @@ import (
 	"github.com/zcash/lightwalletd/frontend"
 	"github.com/zcash/lightwalletd/hash32"
 	"github.com/zcash/lightwalletd/walletrpc"
+	"google.golang.org/protobuf/proto"
 )
 
 // importCache prepares real cache bytes with the ordinary block parser and cache
@@ -34,7 +35,12 @@ func importCache(args []string) {
 	end := flags.Int("end", -1, "last cache height, default node tip")
 	workers := flags.Int("workers", 8, "parallel block fetches (1-16)")
 	resume := flags.Bool("resume", false, "resume an existing cache after stopping its server")
+	summaryPath := flags.String("summary-helper", "", "optional pinned raw-block preparation helper; requires a nonempty cache")
+	summarySHA := flags.String("summary-helper-sha256", "", "required SHA-256 of the preparation helper")
 	flags.Parse(args)
+	if (*summaryPath == "") != (*summarySHA == "") {
+		fatalf("summary helper path and checksum must be supplied together")
+	}
 	// Finish in-flight RPCs and cache writes before stopping for a benchmark.
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
@@ -105,18 +111,56 @@ func importCache(args []string) {
 		fatalf("existing cache extends beyond the requested end")
 	}
 	var previous []byte
+	var treeSizes *walletrpc.ChainMetadata
+	var helper *summaryProcess
+	if *summaryPath != "" {
+		if first == 0 {
+			fatalf("raw preparation requires a canonical cache prefix containing genesis")
+		}
+		helper, err = startSummaryProcess(*summaryPath, *summarySHA)
+		if err != nil {
+			fatalf("summary helper: %v", err)
+		}
+		defer helper.close()
+	}
+	fetchBlock := func(ctx context.Context, height int) (*walletrpc.CompactBlock, error) {
+		if helper != nil {
+			return helper.getBlock(ctx, height)
+		}
+		return common.GetBlock(ctx, nil, height)
+	}
+	checkCanonical := func(block *walletrpc.CompactBlock) error {
+		if helper == nil {
+			return nil
+		}
+		actual, err := common.GetBlock(context.Background(), nil, int(block.Height))
+		if err != nil {
+			return err
+		}
+		if !proto.Equal(block, actual) {
+			return fmt.Errorf("prepared compact block differs from canonical RPC at %d", block.Height)
+		}
+		return nil
+	}
 	if first > 0 {
 		last := cache.Get(first - 1)
 		actual, err := common.GetBlock(context.Background(), nil, first-1)
 		if err != nil || last == nil || actual == nil || !bytes.Equal(last.Hash, actual.Hash) {
 			fatalf("existing cache tip does not match node: %v", err)
 		}
+		if helper != nil && !proto.Equal(last, actual) {
+			fatalf("existing cache tip differs from canonical compact block")
+		}
 		previous = last.Hash
+		treeSizes = last.ChainMetadata
 	}
 	started := time.Now()
 	for next := first; next <= *end; {
 		select {
 		case <-stop:
+			if err := checkCanonical(cache.Get(cache.GetLatestHeight())); err != nil {
+				fatalf("checkpoint validation: %v", err)
+			}
 			cache.Sync()
 			fmt.Fprintf(os.Stderr, "checkpointed cache at %d; resume with -resume\n", cache.GetLatestHeight())
 			return
@@ -133,7 +177,7 @@ func importCache(args []string) {
 			go func(index, height int) {
 				defer group.Done()
 				defer func() { <-slots }()
-				blocks[index], errors[index] = common.GetBlock(context.Background(), nil, height)
+				blocks[index], errors[index] = fetchBlock(context.Background(), height)
 			}(index, next+index)
 		}
 		group.Wait()
@@ -144,6 +188,20 @@ func importCache(args []string) {
 			}
 			if block.Height != uint64(height) || (height > 0 && !bytes.Equal(block.PrevHash, previous)) {
 				fatalf("block %d does not extend the cached chain", height)
+			}
+			if helper != nil {
+				metadata, err := addTreeSizes(treeSizes, block.ChainMetadata)
+				if err != nil {
+					fatalf("block %d metadata: %v", height, err)
+				}
+				block.ChainMetadata = metadata
+				treeSizes = metadata
+				// Check every 10,000th height and the requested end before publishing it.
+				if height%10000 == 0 || height == *end {
+					if err := checkCanonical(block); err != nil {
+						fatalf("canonical validation: %v", err)
+					}
+				}
 			}
 			if err := cache.Add(height, block); err != nil {
 				fatalf("cache block %d: %v", height, err)
@@ -165,7 +223,7 @@ func importCache(args []string) {
 	cache.Sync()
 	manifest := map[string]interface{}{"chain": "main", "node_tip": *tip, "node_tip_hash": *tipHash,
 		"cache_start": 0, "cache_end": cache.GetLatestHeight(), "import_first": first, "seconds": time.Since(started).Seconds(),
-		"workers": *workers, "preparation_only": true}
+		"workers": *workers, "preparation_only": true, "summary_helper_sha256": *summarySHA}
 	body, err := json.MarshalIndent(manifest, "", "  ")
 	if err != nil {
 		fatalf("%v", err)

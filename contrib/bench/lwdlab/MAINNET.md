@@ -177,6 +177,30 @@ mix. The current synthetic percentages must not be presented as measured mainnet
 improvements. A PR whose path is absent from the captured sessions has no measured
 wallet speedup in those sessions.
 
+## Faster cache preparation
+
+The optional `import-cache -summary-helper /absolute/path/to/lwd-block-summary
+-summary-helper-sha256 <sha256>` path avoids verbose block RPCs during preparation.
+Build the helper with `cargo build --release --locked --manifest-path
+contrib/bench/lwdlab/fixtures/block-summary/Cargo.toml` and record its binary hash.
+Its locked transaction library matches the wallet fixture dependencies.
+
+This mode requires an existing canonical cache prefix containing genesis. It
+reads raw blocks from the isolated, fixed-tip node, obtains transaction IDs from
+`zcash_primitives`, and uses the ordinary Go parser and cache writer. Both parsers
+must agree on block identity, transaction count and each pool's new commitment
+count. The ordered writer accumulates tree sizes from the checked cache prefix
+and rejects overflow. It compares complete compact blocks with the ordinary
+verbose RPC path at every 10,000th height, at a graceful checkpoint and at the
+requested end. The final mainnet height and hash must still match the pinned tip.
+
+Validate an isolated continuation against canonical cache bytes before using
+this mode on a new snapshot or changing its dependencies. Stop its server before
+opening the cache, preserve the single-writer lock, and use the same graceful
+checkpoint procedure. The helper is used only to construct cache data; measured
+lightwalletd and node binaries remain unchanged. Cache-construction throughput
+is not a wallet-serving performance result.
+
 ## Disposable Vizor fixture
 
 `fixtures/vizor_wallet.rs` calls the public `create_wallet` and
