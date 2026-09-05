@@ -8,8 +8,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/btcsuite/btcd/rpcclient"
@@ -33,6 +35,10 @@ func importCache(args []string) {
 	workers := flags.Int("workers", 8, "parallel block fetches (1-16)")
 	resume := flags.Bool("resume", false, "resume an existing cache after stopping its server")
 	flags.Parse(args)
+	// Finish in-flight RPCs and cache writes before stopping for a benchmark.
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
+	defer signal.Stop(stop)
 	if *dataDir == "" || *tip < 1 || *workers < 1 || *workers > 16 {
 		fatalf("invalid import arguments")
 	}
@@ -109,6 +115,13 @@ func importCache(args []string) {
 	}
 	started := time.Now()
 	for next := first; next <= *end; {
+		select {
+		case <-stop:
+			cache.Sync()
+			fmt.Fprintf(os.Stderr, "checkpointed cache at %d; resume with -resume\n", cache.GetLatestHeight())
+			return
+		default:
+		}
 		size := min(32, *end-next+1)
 		blocks := make([]*walletrpc.CompactBlock, size)
 		errors := make([]error, size)

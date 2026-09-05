@@ -96,6 +96,12 @@ writer does not share the importer's lock. An interrupted import leaves its lock
 file for inspection. Confirm the importer exited and the cache files are
 consistent before removing that lock and resuming.
 
+For a planned measurement window, send `SIGUSR1` to the importer and wait for
+it to exit. It finishes its current batch, flushes the cache and releases its
+lock without writing a completion manifest. Restart with `-resume` afterward.
+`SIGINT` and `SIGTERM` use the same checkpoint behavior. Avoid suspending an
+importer with `SIGSTOP`; pending HTTP request deadlines continue while suspended.
+
 The first 1,001 imported mainnet blocks produced cache files byte-for-byte
 identical to the normal baseline ingestor. A separate 32-block import passed with
 Go's race detector. Full-history cache preparation is still required before
