@@ -120,7 +120,7 @@ func verifyCacheFiles(directory string, height int, tipHash []byte) (map[string]
 	if afterL.Size() != li.Size() || afterB.Size() != bi.Size() || !afterL.ModTime().Equal(li.ModTime()) || !afterB.ModTime().Equal(bi.ModTime()) {
 		return nil, fmt.Errorf("cache changed during verification")
 	}
-	return map[string]interface{}{"height": height, "tip_hash": hex.EncodeToString(tipHash), "records": height + 1, "lengths_bytes": li.Size(), "blocks_bytes": bi.Size(), "lengths_sha256": hex.EncodeToString(ls.Sum(nil)), "blocks_sha256": hex.EncodeToString(bs.Sum(nil)), "all_record_checksums_valid": true, "all_height_links_valid": true, "all_tree_sizes_valid": true}, nil
+	return map[string]interface{}{"height": height, "tip_hash": hex.EncodeToString(tipHash), "records": height + 1, "lengths_bytes": li.Size(), "blocks_bytes": bi.Size(), "lengths_mtime_ns": li.ModTime().UnixNano(), "blocks_mtime_ns": bi.ModTime().UnixNano(), "lengths_sha256": hex.EncodeToString(ls.Sum(nil)), "blocks_sha256": hex.EncodeToString(bs.Sum(nil)), "all_record_checksums_valid": true, "all_height_links_valid": true, "all_tree_sizes_valid": true}, nil
 }
 
 func verifyCache(args []string) {
