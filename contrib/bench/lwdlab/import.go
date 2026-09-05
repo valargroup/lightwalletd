@@ -37,7 +37,11 @@ func importCache(args []string) {
 	resume := flags.Bool("resume", false, "resume an existing cache after stopping its server")
 	summaryPath := flags.String("summary-helper", "", "optional pinned raw-block preparation helper; requires a nonempty cache")
 	summarySHA := flags.String("summary-helper-sha256", "", "required SHA-256 of the preparation helper")
+	summaryWorkers := flags.Int("summary-workers", 1, "independent preparation helpers (1-8)")
 	flags.Parse(args)
+	if *summaryWorkers < 1 || *summaryWorkers > 8 || (*summaryPath == "" && *summaryWorkers != 1) {
+		fatalf("invalid summary worker count")
+	}
 	if (*summaryPath == "") != (*summarySHA == "") {
 		fatalf("summary helper path and checksum must be supplied together")
 	}
@@ -113,19 +117,25 @@ func importCache(args []string) {
 	var previous []byte
 	var treeSizes *walletrpc.ChainMetadata
 	var helper *summaryProcess
+	helpers := make(chan *summaryProcess, *summaryWorkers)
 	if *summaryPath != "" {
 		if first == 0 {
 			fatalf("raw preparation requires a canonical cache prefix containing genesis")
 		}
-		helper, err = startSummaryProcess(*summaryPath, *summarySHA)
-		if err != nil {
-			fatalf("summary helper: %v", err)
+		for range *summaryWorkers {
+			helper, err = startSummaryProcess(*summaryPath, *summarySHA)
+			if err != nil {
+				fatalf("summary helper: %v", err)
+			}
+			defer helper.close()
+			helpers <- helper
 		}
-		defer helper.close()
 	}
 	fetchBlock := func(ctx context.Context, height int) (*walletrpc.CompactBlock, error) {
 		if helper != nil {
-			return helper.getBlock(ctx, height)
+			process := <-helpers
+			defer func() { helpers <- process }()
+			return process.getBlock(ctx, height)
 		}
 		return common.GetBlock(ctx, nil, height)
 	}
@@ -223,7 +233,7 @@ func importCache(args []string) {
 	cache.Sync()
 	manifest := map[string]interface{}{"chain": "main", "node_tip": *tip, "node_tip_hash": *tipHash,
 		"cache_start": 0, "cache_end": cache.GetLatestHeight(), "import_first": first, "seconds": time.Since(started).Seconds(),
-		"workers": *workers, "preparation_only": true, "summary_helper_sha256": *summarySHA}
+		"workers": *workers, "preparation_only": true, "summary_helper_sha256": *summarySHA, "summary_workers": *summaryWorkers}
 	body, err := json.MarshalIndent(manifest, "", "  ")
 	if err != nil {
 		fatalf("%v", err)

@@ -201,6 +201,10 @@ The optional `import-cache -summary-helper /absolute/path/to/lwd-block-summary
 Build the helper with `cargo build --release --locked --manifest-path
 contrib/bench/lwdlab/fixtures/block-summary/Cargo.toml` and record its binary hash.
 Its locked transaction library matches the wallet fixture dependencies.
+Use `-summary-workers N` (1–8, default 1) to run independent parser processes
+when preparation has spare CPU cores. Raw fetches remain bounded and cache
+writes remain ordered. Record the helper count and CPU affinity separately
+from the measured server settings.
 
 This mode requires an existing canonical cache prefix containing genesis. It
 reads raw blocks from the isolated, fixed-tip node, obtains transaction IDs from
