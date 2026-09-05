@@ -196,8 +196,11 @@ requested end. The final mainnet height and hash must still match the pinned tip
 
 Validate an isolated continuation against canonical cache bytes before using
 this mode on a new snapshot or changing its dependencies. Stop its server before
-opening the cache, preserve the single-writer lock, and use the same graceful
-checkpoint procedure. The helper is used only to construct cache data; measured
+opening the cache and preserve the single-writer lock. Send checkpoint signals
+to the importer process only (`systemctl kill --kill-whom=main --signal=USR1`).
+For a systemd importer unit, set `KillMode=mixed` so a normal stop lets the parent
+finish its batch before closing the helper. Signaling the entire service group
+would terminate the helper before the checkpoint completes. The helper is used only to construct cache data; measured
 lightwalletd and node binaries remain unchanged. Cache-construction throughput
 is not a wallet-serving performance result.
 
