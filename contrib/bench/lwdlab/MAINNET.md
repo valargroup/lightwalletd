@@ -1,10 +1,10 @@
 # Mainnet benchmark preparation
 
 The September 4 measurements use synthetic data. A real mainnet wallet has now
-completed one diagnostic run each against the baseline and a direct-hash
-candidate, with matching recorded responses. See the
-[preliminary wallet results](results/2026-09-05-mainnet-wallet-diagnostic.md).
-Repeated load comparisons and cached-server measurements are still pending.
+completed three paired baseline/direct-hash comparisons, with matching recorded
+responses and complete resource measurements. See the
+[repeated wallet results](results/2026-09-05-mainnet-wallet-repeats.md).
+Concurrent-wallet comparisons and cached-server measurements are still pending.
 
 ## Wallet request sizes
 

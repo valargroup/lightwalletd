@@ -1,5 +1,9 @@
 # Wallet restore with uncached blocks
 
+The later [three-pair comparison](2026-09-05-mainnet-wallet-repeats.md) includes
+resource measurements and recorder-overhead checks. This page preserves the
+initial diagnostic.
+
 A real Vizor wallet restored from mainnet height 3,450,000 through 3,470,422
 using the unchanged baseline and then the direct-hash change in
 [draft PR 11](https://github.com/valargroup/lightwalletd/pull/11).
