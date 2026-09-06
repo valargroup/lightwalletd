@@ -69,14 +69,19 @@ ordinary load failures.
 Follow-up measurements and decisions are in
 [`results/2026-09-04-followup.md`](results/2026-09-04-followup.md).
 
-## Mainnet preparation
+## Mainnet wallet results
 
-The existing results are synthetic. [Mainnet preparation](MAINNET.md) documents
-verified wallet batch sizes, an archive snapshot source, finite range scans, and
-the wallet session tests still needed. No mainnet performance results are available
-yet.
+The [32-wallet cached-server report](results/2026-09-05-cached-wallet-repeats.md)
+compares individual PRs using actual wallet syncs and real mainnet blocks. It
+includes three paired repeats per PR, a chart, raw measurements and the limits
+of each result. Start there for the measured change recommendation.
 
-## Conservative server bundle
+A separate [uncached wallet report](results/2026-09-05-mainnet-wallet-repeats.md)
+measures direct hash lookup when completing blocks are absent from the cache.
+[Mainnet preparation](MAINNET.md) documents the pinned fixture, wallet request
+sizes and reproduction steps. The September 4 results below remain synthetic.
+
+## Synthetic server bundle
 
 `LWD_LAB_SUITE=server-bundle LWD_LAB_DURATION=10s followup.sh LAB_DIRECTORY`
 compares `lightwalletd-baseline` with `lightwalletd-bundle` using `cache-shielded`.
@@ -90,7 +95,7 @@ Use `-subtree-pool orchard` to select Orchard roots; the default remains Sapling
 so old benchmark commands retain their meaning. The bundle suite always selects
 Orchard explicitly and warms each operation before the measured interval.
 
-Results and the recommended change set are in
+Synthetic results and the original bundle recommendation are in
 [`results/2026-09-04-server-bundle.md`](results/2026-09-04-server-bundle.md).
 
 Example:

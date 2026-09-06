@@ -90,7 +90,8 @@ The archive contains no wallet databases or wallet secrets.
 ## Remaining work
 
 This establishes a repeatable improvement for this one-wallet, uncached restore
-on Zakura. Concurrent-wallet comparisons and cached-server measurements remain
-pending. PRs 6–9 have not yet been compared using the completed cache. PR 10's
-mempool path and relevant-transaction retrieval were not exercised by this
-unfunded sync fixture. No upstream PR has been opened.
+on Zakura. The [32-wallet cached-server report](2026-09-05-cached-wallet-repeats.md) now
+compares PRs 6, 7 and 9 using the completed cache. Those results apply to a
+different serving configuration. PR 8's raw-hex path, PR 10's mempool path and
+funded relevant-transaction retrieval were not exercised by that cached restore
+fixture. No upstream PR has been opened.

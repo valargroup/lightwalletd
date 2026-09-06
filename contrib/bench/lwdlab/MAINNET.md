@@ -1,10 +1,14 @@
 # Mainnet benchmark preparation
 
-The September 4 measurements use synthetic data. A real mainnet wallet has now
-completed three paired baseline/direct-hash comparisons, with matching recorded
-responses and complete resource measurements. See the
-[repeated wallet results](results/2026-09-05-mainnet-wallet-repeats.md).
-Concurrent-wallet comparisons and cached-server measurements are still pending.
+The [32-wallet cached-server report](results/2026-09-05-cached-wallet-repeats.md)
+contains three paired repeats for each of the subtree-hash, range-filtering and
+HTTP-connection PRs, plus response validation and recorder checks. The complete
+mainnet cache passed verification before these measurements.
+
+A separate [uncached wallet report](results/2026-09-05-mainnet-wallet-repeats.md)
+measures direct hash lookup without a block cache. The September 4 measurements
+remain synthetic. Caught-up wallet polling, mempool observation and funded
+transaction retrieval have not been measured by these restore fixtures.
 
 ## Wallet request sizes
 
@@ -55,16 +59,18 @@ against the SHA-256 above. The opened archive contains finalized mainnet state a
 **3,470,422**, 1,000 blocks behind the advertised tip. Its tip hash is
 `000000000073dfbd7bf192181f1f0e060ef3c4f295504ca1c513fa49ce6b3723`.
 The node reported archive mode and zero peers. Use this observed height and hash
-for the fixed-state tests. Mainnet load-test results are still pending.
+for the fixed-state tests. Completed restore measurements are linked above.
 
 Record the actual node binary, snapshot checksum, network, and stable interval end
 hash when executing. Identify Zakura as the backend in any result; a result with
 this backend is not automatically a result with upstream Zebra or zcashd.
 
 Allow space for the restored archive, lightwalletd cache, and any retained
-compressed download. Keep independent cache directories for baseline and candidate.
-Populate them from the same node before comparing cached serving. Measure cache
-construction separately. Do not mix ingestion time with cached download throughput.
+compressed download. Independent directories are useful if tests write cache data.
+The completed fixed-tip comparisons instead used one verified cache sequentially, with an
+exclusive measurement lock and checks that file sizes and modification times
+remained unchanged. Keep the importer stopped. Measure cache construction
+separately; do not mix ingestion time with cached serving.
 
 Use Linux CPU limits or CPU affinity and record the hardware. Give the backend and
 load generator CPU headroom so they do not silently limit lightwalletd. Keep the
@@ -104,8 +110,9 @@ importer with `SIGSTOP`; pending HTTP request deadlines continue while suspended
 
 The first 1,001 imported mainnet blocks produced cache files byte-for-byte
 identical to the normal baseline ingestor. A separate 32-block import passed with
-Go's race detector. Full-history cache preparation is still required before
-cached-serving measurements. It does not need to block wallet validation using
+Go's race detector. Full-history cache preparation and verification have since
+completed. They were required before cached-serving measurements. They did not
+block wallet validation using
 the server's supported `--nocache` configuration. Such runs must use a separate
 data directory and pause the importer to avoid resource contention. Label them
 explicitly as uncached serving; they cannot establish cached-server performance.
@@ -149,13 +156,15 @@ around each run. Include p95/p99 and errors rather than throughput alone.
 These scans reproduce the download sizes and progression only. They do not yet
 reproduce wallet scan delays, prefetch, connection backpressure, or other endpoints.
 
-## Wallet session tests still required
+## Wallet session coverage
 
 Use a fresh disposable wallet or an explicitly provided benchmark fixture, with
 an exact wallet build pinned to the test. Direct it at the isolated server and
 record its request sequence in the lab. Do not collect production wallet logs.
 
-Measure these sessions separately rather than combining them with invented ratios:
+The completed reports cover the first session below. The other two remain
+unmeasured. Keep these sessions separate rather than combining them with invented
+ratios:
 
 1. Restore from a historical birthday. Include startup metadata, missing subtree
    roots, progressive block ranges, and tree-state requests at scan boundaries.

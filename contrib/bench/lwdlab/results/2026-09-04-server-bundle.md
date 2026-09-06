@@ -3,8 +3,8 @@
 These tests use generated blocks and a simulated node. They do not measure mainnet
 state or a captured wallet workload. The repeated 32-block range was chosen for
 the benchmark, not derived from wallet request sizes. See the
-[mainnet benchmark preparation](../MAINNET.md) for the replacement workload and
-validation requirements.
+[32-wallet mainnet report](2026-09-05-cached-wallet-repeats.md) for completed
+comparisons using actual wallet requests and the measured per-PR recommendation.
 
 Within this synthetic fixture, the clearest bulk-serving result is **12% more cached block downloads per second**,
 with **23% fewer allocated bytes per download**. Separate tests show lower overhead

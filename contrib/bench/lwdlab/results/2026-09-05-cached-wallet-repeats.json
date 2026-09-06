@@ -1,0 +1,3713 @@
+{
+  "schema": 1,
+  "concurrency": 32,
+  "primary_transport": "direct SSH tunnel without RPC recorder",
+  "comparison_order": [
+    "candidate/baseline",
+    "baseline/candidate",
+    "candidate/baseline"
+  ],
+  "comparisons": {
+    "subtrees": {
+      "pr": 9,
+      "runs": [
+        {
+          "label": "cached-i-subtrees-1-subtrees-direct",
+          "binary": "subtrees",
+          "clients": 32,
+          "recorded": false,
+          "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+          "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+          "batch_seconds": 73.89394450001419,
+          "wallet_elapsed_seconds": [
+            73.88305845798459,
+            73.88667674991302,
+            70.87221075000707,
+            71.9642204589909,
+            73.78614287509117,
+            73.82827720802743,
+            73.89319824997801,
+            73.88582929095719,
+            70.62862887501251,
+            70.3542428339133,
+            71.91310258407611,
+            73.84204545791727,
+            70.17550308408681,
+            70.8163245000178,
+            73.84535429195967,
+            73.83079245791305,
+            70.62809941696469,
+            71.90202770801261,
+            70.63769804197364,
+            70.63696483289823,
+            73.85703966603614,
+            73.84277524997015,
+            73.81000604096334,
+            70.6781407080125,
+            70.6251318330178,
+            73.83179545798339,
+            70.18820887501352,
+            70.35413570795208,
+            73.83138666697778,
+            73.87615779100452,
+            73.83324149996042,
+            70.68430679209996
+          ],
+          "wallet_median_seconds": 72.87518166704103,
+          "wallet_p95_seconds": 73.88667674991302,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 19.04,
+              "cpu_seconds_per_wallet": 0.595,
+              "mean_cores": 0.25145596804078857,
+              "sampled_peak_rss_bytes": 125173760,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.52999999999065,
+              "cpu_seconds_per_wallet": 0.23531249999970782,
+              "mean_cores": 0.09944660920928503,
+              "sampled_peak_rss_bytes": 699392000,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 251338416.25,
+          "mallocs_per_wallet": 2925970.9375,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 38.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1717.53421,
+          "wallet_process_mean_cores": 23.243233550750162,
+          "wallet_process_peak_rss_bytes": 77316096
+        },
+        {
+          "label": "cached-i-subtrees-2-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 98.30684408394154,
+          "wallet_elapsed_seconds": [
+            98.25285299995448,
+            86.76302233303431,
+            86.80453745904379,
+            97.72751779097598,
+            89.319299457944,
+            98.2888516249368,
+            89.64683133305516,
+            86.76667566702235,
+            98.3064022079343,
+            86.72665908304043,
+            98.30335874995217,
+            89.68594274995849,
+            98.30452041595709,
+            89.34609579097014,
+            96.906416333979,
+            98.29848637501709,
+            97.12259666703176,
+            98.30250387499109,
+            98.26743662497029,
+            98.30321466701571,
+            98.25215349998325,
+            97.3797514999751,
+            86.634194833925,
+            96.85068237502128,
+            98.27838183403946,
+            96.83647212490905,
+            98.30324020807166,
+            98.30599833396263,
+            97.25261079205666,
+            98.30294387508184,
+            97.67431862500962,
+            98.30373212497216
+          ],
+          "wallet_median_seconds": 97.7009182079928,
+          "wallet_p95_seconds": 98.30599833396263,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 59.92,
+              "cpu_seconds_per_wallet": 1.8725,
+              "mean_cores": 0.5991156034656412,
+              "sampled_peak_rss_bytes": 160161792,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.30000000000291,
+              "cpu_seconds_per_wallet": 0.22812500000009095,
+              "mean_cores": 0.07298971804574307,
+              "sampled_peak_rss_bytes": 699392000,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068835404.75,
+          "mallocs_per_wallet": 11457764.15625,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 48.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1714.527771,
+          "wallet_process_mean_cores": 17.440573817383573,
+          "wallet_process_peak_rss_bytes": 79364096
+        },
+        {
+          "label": "cached-i-subtrees-3-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 94.32126183295622,
+          "wallet_elapsed_seconds": [
+            89.88248024997301,
+            94.18348570889793,
+            94.32103329093661,
+            94.29345941694919,
+            94.31439033406787,
+            88.21906150004361,
+            88.35399945802055,
+            89.90329549997114,
+            89.90321016602684,
+            89.88026837492362,
+            89.89412483305205,
+            92.79000962502323,
+            89.94228750001639,
+            88.1842629169114,
+            88.27315616700798,
+            88.94620300002862,
+            91.33665670803748,
+            88.30584162508603,
+            89.89395016699564,
+            94.26510791596957,
+            94.31386704207398,
+            94.20840812497772,
+            94.26498112501577,
+            89.89223458408378,
+            89.89178229100071,
+            94.29768887499813,
+            88.19107858405914,
+            94.04388541704975,
+            94.3039965829812,
+            89.87977916700765,
+            94.03322724997997,
+            89.90657124994323
+          ],
+          "wallet_median_seconds": 89.90493337495718,
+          "wallet_p95_seconds": 94.31439033406787,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 61.58,
+              "cpu_seconds_per_wallet": 1.924375,
+              "mean_cores": 0.6431195874507414,
+              "sampled_peak_rss_bytes": 163942400,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.199999999997544,
+              "cpu_seconds_per_wallet": 0.22499999999992326,
+              "mean_cores": 0.07519423562266578,
+              "sampled_peak_rss_bytes": 698691584,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068481416.5,
+          "mallocs_per_wallet": 11458099.75,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 45.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1705.792874,
+          "wallet_process_mean_cores": 18.084924235014732,
+          "wallet_process_peak_rss_bytes": 78069760
+        },
+        {
+          "label": "cached-i-subtrees-4-subtrees-direct",
+          "binary": "subtrees",
+          "clients": 32,
+          "recorded": false,
+          "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+          "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+          "batch_seconds": 78.9310693750158,
+          "wallet_elapsed_seconds": [
+            78.89883925009053,
+            78.92931308306288,
+            75.37394187506288,
+            75.34892291703727,
+            75.00605045806151,
+            75.3489317089552,
+            78.91251654108055,
+            62.47528158396017,
+            78.91663354204502,
+            78.93071237497497,
+            78.36256725003477,
+            78.89172933402006,
+            77.30201041710097,
+            78.89175258297473,
+            75.29817891702987,
+            66.35196345904842,
+            75.38405629200861,
+            75.34622237505391,
+            62.3840799999889,
+            78.89161145791877,
+            78.21054504089989,
+            71.17327791708522,
+            66.42713766696397,
+            78.93036162503995,
+            78.92098858300596,
+            78.60940274992026,
+            73.85840749996714,
+            75.11290825007018,
+            78.89147616596892,
+            78.67870641709305,
+            78.88151450001169,
+            75.40210112498607
+          ],
+          "wallet_median_seconds": 77.75627772900043,
+          "wallet_p95_seconds": 78.93036162503995,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 19.61,
+              "cpu_seconds_per_wallet": 0.6128125,
+              "mean_cores": 0.24296081592086793,
+              "sampled_peak_rss_bytes": 153223168,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.25,
+              "cpu_seconds_per_wallet": 0.2265625,
+              "mean_cores": 0.08982488094983644,
+              "sampled_peak_rss_bytes": 699084800,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 251355081.0,
+          "mallocs_per_wallet": 2926473.78125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 41.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1715.75745,
+          "wallet_process_mean_cores": 21.737415489053188,
+          "wallet_process_peak_rss_bytes": 76890112
+        },
+        {
+          "label": "cached-i-subtrees-5-subtrees-direct",
+          "binary": "subtrees",
+          "clients": 32,
+          "recorded": false,
+          "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+          "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+          "batch_seconds": 74.10718354198616,
+          "wallet_elapsed_seconds": [
+            74.06784583302215,
+            69.64095666597132,
+            73.6887679999927,
+            73.26131037494633,
+            73.61748587503098,
+            73.68979458301328,
+            66.72859070799313,
+            66.7360142080579,
+            74.05978929204866,
+            74.05967887490988,
+            73.68907908292022,
+            73.71329183399212,
+            74.1066839999985,
+            73.713250999921,
+            73.73165562492795,
+            74.08059779193718,
+            74.08063358301297,
+            66.73509462503716,
+            73.71896558394656,
+            73.6888582080137,
+            74.10413600003812,
+            74.07900320796762,
+            66.72774629096966,
+            74.0981442919001,
+            73.68868979206309,
+            74.10634212498553,
+            73.72571233403869,
+            74.08788529201411,
+            73.67203962500207,
+            69.29963383392897,
+            74.09802233392838,
+            73.65567649994045
+          ],
+          "wallet_median_seconds": 73.71327141695656,
+          "wallet_p95_seconds": 74.10634212498553,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 20.02,
+              "cpu_seconds_per_wallet": 0.625625,
+              "mean_cores": 0.2644531066400918,
+              "sampled_peak_rss_bytes": 154009600,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.319999999994707,
+              "cpu_seconds_per_wallet": 0.22874999999983459,
+              "mean_cores": 0.0966931438863173,
+              "sampled_peak_rss_bytes": 699084800,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 251254220.5,
+          "mallocs_per_wallet": 2926400.75,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 38.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1722.569486,
+          "wallet_process_mean_cores": 23.244298375258875,
+          "wallet_process_peak_rss_bytes": 77512704
+        },
+        {
+          "label": "cached-i-subtrees-6-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 92.79642549995333,
+          "wallet_elapsed_seconds": [
+            84.97215395898093,
+            90.89222533407155,
+            92.42439975007437,
+            90.1424859999679,
+            90.13402433309238,
+            92.76093724998645,
+            90.14321937493514,
+            92.76840312499553,
+            92.76511579193175,
+            90.10804783296771,
+            89.61669408297166,
+            90.13692883402109,
+            85.04135520895943,
+            90.12142479198519,
+            90.1172465410782,
+            90.13337716599926,
+            92.76066570891999,
+            90.11640083405655,
+            84.89692416694015,
+            85.65778425009921,
+            90.14199020795058,
+            90.14115641708486,
+            90.10312191606499,
+            92.7737095420016,
+            90.1364010409452,
+            92.72433791705407,
+            92.70823504205327,
+            89.37334475002717,
+            90.12112999998499,
+            92.79205758299213,
+            92.79561491694767,
+            92.7659999160096
+          ],
+          "wallet_median_seconds": 90.13904262555297,
+          "wallet_p95_seconds": 92.79205758299213,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 59.91,
+              "cpu_seconds_per_wallet": 1.8721875,
+              "mean_cores": 0.6339537735650876,
+              "sampled_peak_rss_bytes": 171638784,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.2199999999916145,
+              "cpu_seconds_per_wallet": 0.22562499999973795,
+              "mean_cores": 0.07640037130920743,
+              "sampled_peak_rss_bytes": 699084800,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068485520.75,
+          "mallocs_per_wallet": 11457457.65625,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 45.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1713.410894,
+          "wallet_process_mean_cores": 18.46419067080188,
+          "wallet_process_peak_rss_bytes": 78823424
+        }
+      ],
+      "summaries": {
+        "wallet_median_seconds": {
+          "baseline": {
+            "median": 90.13904262555297,
+            "min": 89.90493337495718,
+            "max": 97.7009182079928
+          },
+          "candidate": {
+            "median": 73.71327141695656,
+            "min": 72.87518166704103,
+            "max": 77.75627772900043
+          },
+          "change_percent": -18.22270431341365
+        },
+        "wallet_p95_seconds": {
+          "baseline": {
+            "median": 94.31439033406787,
+            "min": 92.79205758299213,
+            "max": 98.30599833396263
+          },
+          "candidate": {
+            "median": 74.10634212498553,
+            "min": 73.88667674991302,
+            "max": 78.93036162503995
+          },
+          "change_percent": -21.426261822298887
+        },
+        "batch_seconds": {
+          "baseline": {
+            "median": 94.32126183295622,
+            "min": 92.79642549995333,
+            "max": 98.30684408394154
+          },
+          "candidate": {
+            "median": 74.10718354198616,
+            "min": 73.89394450001419,
+            "max": 78.9310693750158
+          },
+          "change_percent": -21.43109400589802
+        },
+        "lwd_cpu_seconds_per_wallet": {
+          "baseline": {
+            "median": 1.8725,
+            "min": 1.8721875,
+            "max": 1.924375
+          },
+          "candidate": {
+            "median": 0.6128125,
+            "min": 0.595,
+            "max": 0.625625
+          },
+          "change_percent": -67.27303070761015
+        },
+        "node_cpu_seconds_per_wallet": {
+          "baseline": {
+            "median": 0.22562499999973795,
+            "min": 0.22499999999992326,
+            "max": 0.22812500000009095
+          },
+          "candidate": {
+            "median": 0.22874999999983459,
+            "min": 0.2265625,
+            "max": 0.23531249999970782
+          },
+          "change_percent": 1.3850415512909775
+        },
+        "allocation_bytes_per_wallet": {
+          "baseline": {
+            "median": 1068485520.75,
+            "min": 1068481416.5,
+            "max": 1068835404.75
+          },
+          "candidate": {
+            "median": 251338416.25,
+            "min": 251254220.5,
+            "max": 251355081.0
+          },
+          "change_percent": -76.47713409596992
+        },
+        "lwd_peak_rss_bytes": {
+          "baseline": {
+            "median": 163942400,
+            "min": 160161792,
+            "max": 171638784
+          },
+          "candidate": {
+            "median": 153223168,
+            "min": 125173760,
+            "max": 154009600
+          },
+          "change_percent": -6.538413491567773
+        }
+      },
+      "pairs": [
+        {
+          "order": [
+            "subtrees",
+            "baseline"
+          ],
+          "baseline_label": "cached-i-subtrees-2-baseline-direct",
+          "candidate_label": "cached-i-subtrees-1-subtrees-direct",
+          "change_percent": {
+            "wallet_median_seconds": -25.409931652946128,
+            "wallet_p95_seconds": -24.84011352093991,
+            "batch_seconds": -24.83336720999999,
+            "lwd_cpu_seconds_per_wallet": -68.22429906542055,
+            "node_cpu_seconds_per_wallet": 3.150684931337655,
+            "allocation_bytes_per_wallet": -76.48483432219501,
+            "lwd_peak_rss_bytes": -21.84542990128382
+          }
+        },
+        {
+          "order": [
+            "baseline",
+            "subtrees"
+          ],
+          "baseline_label": "cached-i-subtrees-3-baseline-direct",
+          "candidate_label": "cached-i-subtrees-4-subtrees-direct",
+          "change_percent": {
+            "wallet_median_seconds": -13.512779766255555,
+            "wallet_p95_seconds": -16.311433127581765,
+            "batch_seconds": -16.31677965165118,
+            "lwd_cpu_seconds_per_wallet": -68.1552452094836,
+            "node_cpu_seconds_per_wallet": 0.6944444444787923,
+            "allocation_bytes_per_wallet": -76.47548407314765,
+            "lwd_peak_rss_bytes": -6.538413491567773
+          }
+        },
+        {
+          "order": [
+            "subtrees",
+            "baseline"
+          ],
+          "baseline_label": "cached-i-subtrees-6-baseline-direct",
+          "candidate_label": "cached-i-subtrees-5-subtrees-direct",
+          "change_percent": {
+            "wallet_median_seconds": -18.22270431341365,
+            "wallet_p95_seconds": -20.13719271317409,
+            "batch_seconds": -20.140045111949455,
+            "lwd_cpu_seconds_per_wallet": -66.58320814555165,
+            "node_cpu_seconds_per_wallet": 1.3850415512909775,
+            "allocation_bytes_per_wallet": -76.48501401089295,
+            "lwd_peak_rss_bytes": -10.271095838106149
+          }
+        }
+      ]
+    },
+    "ranges": {
+      "pr": 7,
+      "runs": [
+        {
+          "label": "cached-i-ranges-1-ranges-direct",
+          "binary": "ranges",
+          "clients": 32,
+          "recorded": false,
+          "source": "42a2f6526e89c7fac24a3388b8f73487b7bc8db9",
+          "binary_sha256": "3f93410e7615e6cab9c2647c992a0246de4cfe909e80b0126a4adaac265872cc",
+          "batch_seconds": 92.02884850010742,
+          "wallet_elapsed_seconds": [
+            88.92657683300786,
+            88.9188210000284,
+            91.98212325002532,
+            92.01492283400148,
+            92.02863350010011,
+            88.92003541707527,
+            91.57558262499515,
+            83.36660041706637,
+            88.91817520803306,
+            91.4185061249882,
+            91.98131341708358,
+            88.91807941696607,
+            91.98909241706133,
+            91.97653858293779,
+            91.98803074995521,
+            88.86379937501624,
+            91.98419837502297,
+            88.91955533402506,
+            91.59848666691687,
+            91.46470312506426,
+            88.90278645907529,
+            88.926312583033,
+            88.9191474999534,
+            92.01447604200803,
+            91.97805345908273,
+            88.8715297919698,
+            91.98887116706464,
+            91.56578066607472,
+            91.98799179203343,
+            92.01438666705508,
+            88.91873379203025,
+            88.86697695800103
+          ],
+          "wallet_median_seconds": 91.51524189556949,
+          "wallet_p95_seconds": 92.01492283400148,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 59.489999999999995,
+              "cpu_seconds_per_wallet": 1.8590624999999998,
+              "mean_cores": 0.6344876399095902,
+              "sampled_peak_rss_bytes": 170160128,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.239999999995689,
+              "cpu_seconds_per_wallet": 0.22624999999986528,
+              "mean_cores": 0.07721786036212301,
+              "sampled_peak_rss_bytes": 698658816,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1041976247.5,
+          "mallocs_per_wallet": 11310601.03125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 45.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1722.307276,
+          "wallet_process_mean_cores": 18.714862829105048,
+          "wallet_process_peak_rss_bytes": 78168064
+        },
+        {
+          "label": "cached-i-ranges-2-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 90.96920758404303,
+          "wallet_elapsed_seconds": [
+            88.23615079198498,
+            90.968909624964,
+            90.44627683295403,
+            90.9483940830687,
+            90.95562229200732,
+            85.80200458306354,
+            84.51769695803523,
+            84.52874545904342,
+            84.46984408295248,
+            85.37995062500704,
+            90.45422995800618,
+            84.53803658299148,
+            90.96866600005887,
+            90.85285349993501,
+            84.53366175002884,
+            84.5084011250874,
+            90.61793329194188,
+            89.32621941599064,
+            90.8232973330887,
+            90.94801970897242,
+            87.72720449999906,
+            90.93038649996743,
+            90.94761116697919,
+            84.40731433406472,
+            90.43374820798635,
+            87.7274778749561,
+            90.94776770810131,
+            90.96858941705432,
+            90.89043829205912,
+            85.391170124989,
+            85.3201216669986,
+            90.9563736669952
+          ],
+          "wallet_median_seconds": 90.44001252047019,
+          "wallet_p95_seconds": 90.96866600005887,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 60.39,
+              "cpu_seconds_per_wallet": 1.8871875,
+              "mean_cores": 0.6510771005780006,
+              "sampled_peak_rss_bytes": 165113856,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.429999999988013,
+              "cpu_seconds_per_wallet": 0.2321874999996254,
+              "mean_cores": 0.08010436922150588,
+              "sampled_peak_rss_bytes": 699445248,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068624769.0,
+          "mallocs_per_wallet": 11457708.78125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 44.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1717.230537,
+          "wallet_process_mean_cores": 18.87705282486401,
+          "wallet_process_peak_rss_bytes": 77512704
+        },
+        {
+          "label": "cached-i-ranges-3-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 93.72893108404242,
+          "wallet_elapsed_seconds": [
+            86.16374199988786,
+            89.99179920798633,
+            87.29857483308297,
+            93.7074462500168,
+            86.3817217919277,
+            87.27810904197395,
+            89.98109012492932,
+            93.12601170793641,
+            92.90040179202333,
+            93.70873208309058,
+            89.78498279105406,
+            93.70442304108292,
+            87.27188329200726,
+            92.78245695796795,
+            93.70565262495074,
+            87.3206627080217,
+            93.65190508402884,
+            93.6518090829486,
+            93.49216724990401,
+            93.72787337494083,
+            93.17975370807108,
+            93.70385054103099,
+            93.47625758301001,
+            87.27771241706796,
+            93.70536820800044,
+            87.28596054203808,
+            93.68871429201681,
+            93.7281712089898,
+            93.64858975005336,
+            93.69445399998222,
+            89.99764791596681,
+            93.44148170901462
+          ],
+          "wallet_median_seconds": 93.31061770854285,
+          "wallet_p95_seconds": 93.72787337494083,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 60.3,
+              "cpu_seconds_per_wallet": 1.884375,
+              "mean_cores": 0.6330038793718378,
+              "sampled_peak_rss_bytes": 169664512,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.3300000000012915,
+              "cpu_seconds_per_wallet": 0.22906250000004036,
+              "mean_cores": 0.07694723774123365,
+              "sampled_peak_rss_bytes": 698851328,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068599120.25,
+          "mallocs_per_wallet": 11457780.4375,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 45.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1713.834807,
+          "wallet_process_mean_cores": 18.285013892490497,
+          "wallet_process_peak_rss_bytes": 77168640
+        },
+        {
+          "label": "cached-i-ranges-4-ranges-direct",
+          "binary": "ranges",
+          "clients": 32,
+          "recorded": false,
+          "source": "42a2f6526e89c7fac24a3388b8f73487b7bc8db9",
+          "binary_sha256": "3f93410e7615e6cab9c2647c992a0246de4cfe909e80b0126a4adaac265872cc",
+          "batch_seconds": 96.86174850002863,
+          "wallet_elapsed_seconds": [
+            96.86156079208013,
+            96.82335945905652,
+            86.06710391701199,
+            96.13879033294506,
+            95.77839579095598,
+            96.8263012500247,
+            93.90602804196533,
+            94.59628987498581,
+            96.40862708294298,
+            90.75969529198483,
+            96.80831212492194,
+            96.81770487502217,
+            90.20956529199611,
+            96.81786879198626,
+            96.4224164589541,
+            86.12368041696027,
+            94.43208837509155,
+            96.82680487493053,
+            93.9368265409721,
+            93.81815970805474,
+            96.6697821249254,
+            90.18257904204074,
+            90.18926604103763,
+            86.07813420903403,
+            93.83804812491871,
+            96.82667462504469,
+            96.8184567920398,
+            96.86025687493384,
+            96.81839191704057,
+            96.81864733400289,
+            96.81864270800725,
+            96.86055662494618
+          ],
+          "wallet_median_seconds": 96.41552177094854,
+          "wallet_p95_seconds": 96.86055662494618,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 58.629999999999995,
+              "cpu_seconds_per_wallet": 1.8321874999999999,
+              "mean_cores": 0.5951292876264774,
+              "sampled_peak_rss_bytes": 165724160,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.409999999993943,
+              "cpu_seconds_per_wallet": 0.2315624999998107,
+              "mean_cores": 0.07521589666226494,
+              "sampled_peak_rss_bytes": 698839040,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1041887477.0,
+          "mallocs_per_wallet": 11310536.46875,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 47.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1720.048865,
+          "wallet_process_mean_cores": 17.757772202506665,
+          "wallet_process_peak_rss_bytes": 76857344
+        },
+        {
+          "label": "cached-i-ranges-5-ranges-direct",
+          "binary": "ranges",
+          "clients": 32,
+          "recorded": false,
+          "source": "42a2f6526e89c7fac24a3388b8f73487b7bc8db9",
+          "binary_sha256": "3f93410e7615e6cab9c2647c992a0246de4cfe909e80b0126a4adaac265872cc",
+          "batch_seconds": 108.41787012503482,
+          "wallet_elapsed_seconds": [
+            107.87047058297321,
+            108.41243524989113,
+            108.37730933295097,
+            97.41440437501296,
+            99.54993170895614,
+            99.11758179205935,
+            108.38138837506995,
+            108.38633429200854,
+            101.28883058310021,
+            98.49486554192845,
+            99.61101195798256,
+            108.38709395797923,
+            108.38643379195128,
+            97.39597183302976,
+            108.37728845898528,
+            107.99387362494599,
+            108.384634832968,
+            101.49476487503853,
+            107.92919641605113,
+            108.38600754190702,
+            106.51189162489027,
+            99.1871282090433,
+            101.25771204091143,
+            108.38093712495174,
+            108.38616862497292,
+            108.38510987500194,
+            99.15242754202336,
+            108.38595645793248,
+            108.29866470792331,
+            108.41701425006613,
+            108.37684325000737,
+            108.3866252079606
+          ],
+          "wallet_median_seconds": 108.33775397896534,
+          "wallet_p95_seconds": 108.41243524989113,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 59.709999999999994,
+              "cpu_seconds_per_wallet": 1.8659374999999998,
+              "mean_cores": 0.5426349234921655,
+              "sampled_peak_rss_bytes": 165142528,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.330000000009477,
+              "cpu_seconds_per_wallet": 0.22906250000029615,
+              "mean_cores": 0.06661386684312035,
+              "sampled_peak_rss_bytes": 698970112,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1041912873.75,
+          "mallocs_per_wallet": 11310769.03125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 53.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1706.863843,
+          "wallet_process_mean_cores": 15.74338105915131,
+          "wallet_process_peak_rss_bytes": 78381056
+        },
+        {
+          "label": "cached-i-ranges-6-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 89.6023312920006,
+          "wallet_elapsed_seconds": [
+            86.87855120806489,
+            84.32508779107593,
+            89.57554025005084,
+            86.87883774994407,
+            84.36084412492346,
+            89.1284008329967,
+            86.88760104204994,
+            89.57345508295111,
+            89.52232999994885,
+            89.58268441702239,
+            89.57526924996637,
+            89.58316804096103,
+            89.57536691694986,
+            89.60171458404511,
+            86.8793260420207,
+            86.87802445795387,
+            83.84618016600143,
+            89.58272258308716,
+            89.58260566694662,
+            89.58235254196916,
+            89.52200300002005,
+            83.86176562507171,
+            83.76659904106054,
+            84.35617216606624,
+            89.12793370801955,
+            86.86171283398289,
+            89.57480604189914,
+            87.63512695790268,
+            89.58269804203883,
+            83.90377041709144,
+            87.66834629199002,
+            83.91856383299455
+          ],
+          "wallet_median_seconds": 88.39814000000479,
+          "wallet_p95_seconds": 89.58316804096103,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 60.85,
+              "cpu_seconds_per_wallet": 1.9015625,
+              "mean_cores": 0.666877769584504,
+              "sampled_peak_rss_bytes": 162664448,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.139999999993961,
+              "cpu_seconds_per_wallet": 0.22312499999981128,
+              "mean_cores": 0.07824991413030946,
+              "sampled_peak_rss_bytes": 698564608,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068234612.0,
+          "mallocs_per_wallet": 11458003.21875,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 43.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1720.828355,
+          "wallet_process_mean_cores": 19.205173907719853,
+          "wallet_process_peak_rss_bytes": 77725696
+        }
+      ],
+      "summaries": {
+        "wallet_median_seconds": {
+          "baseline": {
+            "median": 90.44001252047019,
+            "min": 88.39814000000479,
+            "max": 93.31061770854285
+          },
+          "candidate": {
+            "median": 96.41552177094854,
+            "min": 91.51524189556949,
+            "max": 108.33775397896534
+          },
+          "change_percent": 6.607152170756114
+        },
+        "wallet_p95_seconds": {
+          "baseline": {
+            "median": 90.96866600005887,
+            "min": 89.58316804096103,
+            "max": 93.72787337494083
+          },
+          "candidate": {
+            "median": 96.86055662494618,
+            "min": 92.01492283400148,
+            "max": 108.41243524989113
+          },
+          "change_percent": 6.476835248835577
+        },
+        "batch_seconds": {
+          "baseline": {
+            "median": 90.96920758404303,
+            "min": 89.6023312920006,
+            "max": 93.72893108404242
+          },
+          "candidate": {
+            "median": 96.86174850002863,
+            "min": 92.02884850010742,
+            "max": 108.41787012503482
+          },
+          "change_percent": 6.477511536573188
+        },
+        "lwd_cpu_seconds_per_wallet": {
+          "baseline": {
+            "median": 1.8871875,
+            "min": 1.884375,
+            "max": 1.9015625
+          },
+          "candidate": {
+            "median": 1.8590624999999998,
+            "min": 1.8321874999999999,
+            "max": 1.8659374999999998
+          },
+          "change_percent": -1.4903129657228065
+        },
+        "node_cpu_seconds_per_wallet": {
+          "baseline": {
+            "median": 0.22906250000004036,
+            "min": 0.22312499999981128,
+            "max": 0.2321874999996254
+          },
+          "candidate": {
+            "median": 0.22906250000029615,
+            "min": 0.22624999999986528,
+            "max": 0.2315624999998107
+          },
+          "change_percent": 1.1166623181679824e-10
+        },
+        "allocation_bytes_per_wallet": {
+          "baseline": {
+            "median": 1068599120.25,
+            "min": 1068234612.0,
+            "max": 1068624769.0
+          },
+          "candidate": {
+            "median": 1041912873.75,
+            "min": 1041887477.0,
+            "max": 1041976247.5
+          },
+          "change_percent": -2.4973112923541207
+        },
+        "lwd_peak_rss_bytes": {
+          "baseline": {
+            "median": 165113856,
+            "min": 162664448,
+            "max": 169664512
+          },
+          "candidate": {
+            "median": 165724160,
+            "min": 165142528,
+            "max": 170160128
+          },
+          "change_percent": 0.3696261566321857
+        }
+      },
+      "pairs": [
+        {
+          "order": [
+            "ranges",
+            "baseline"
+          ],
+          "baseline_label": "cached-i-ranges-2-baseline-direct",
+          "candidate_label": "cached-i-ranges-1-ranges-direct",
+          "change_percent": {
+            "wallet_median_seconds": 1.1888868047822632,
+            "wallet_p95_seconds": 1.150128808024875,
+            "batch_seconds": 1.1648347217770638,
+            "lwd_cpu_seconds_per_wallet": -1.4903129657228065,
+            "node_cpu_seconds_per_wallet": -2.557200538258819,
+            "allocation_bytes_per_wallet": -2.493721114562708,
+            "lwd_peak_rss_bytes": 3.056237751482227
+          }
+        },
+        {
+          "order": [
+            "baseline",
+            "ranges"
+          ],
+          "baseline_label": "cached-i-ranges-3-baseline-direct",
+          "candidate_label": "cached-i-ranges-4-ranges-direct",
+          "change_percent": {
+            "wallet_median_seconds": 3.327492774835017,
+            "wallet_p95_seconds": 3.3423176449055347,
+            "batch_seconds": 3.3424230701800672,
+            "lwd_cpu_seconds_per_wallet": -2.7694859038142616,
+            "node_cpu_seconds_per_wallet": 1.091405184074179,
+            "allocation_bytes_per_wallet": -2.499687931967487,
+            "lwd_peak_rss_bytes": -2.322437352131712
+          }
+        },
+        {
+          "order": [
+            "ranges",
+            "baseline"
+          ],
+          "baseline_label": "cached-i-ranges-6-baseline-direct",
+          "candidate_label": "cached-i-ranges-5-ranges-direct",
+          "change_percent": {
+            "wallet_median_seconds": 22.55659901776155,
+            "wallet_p95_seconds": 21.018755666600896,
+            "batch_seconds": 20.99893893577076,
+            "lwd_cpu_seconds_per_wallet": -1.8734593262120125,
+            "node_cpu_seconds_per_wallet": 2.6610644259898786,
+            "allocation_bytes_per_wallet": -2.4640409470274682,
+            "lwd_peak_rss_bytes": 1.5234306146601817
+          }
+        }
+      ]
+    },
+    "keepalive": {
+      "pr": 6,
+      "runs": [
+        {
+          "label": "cached-i-keepalive-1-keepalive-direct",
+          "binary": "keepalive",
+          "clients": 32,
+          "recorded": false,
+          "source": "cd4c0be79c06426169622b11aa6125daa1e3e761",
+          "binary_sha256": "79b99ef0679017a4523dc5d70b3cf0ddee5d82616e77567768a8057de12810ec",
+          "batch_seconds": 92.23562354198657,
+          "wallet_elapsed_seconds": [
+            91.73841429199092,
+            89.26441862503998,
+            92.22271662496496,
+            92.17309766693506,
+            92.22719249990769,
+            88.24849679192994,
+            91.53683062503114,
+            91.73718054196797,
+            85.78938337508589,
+            92.23261620802805,
+            92.22612300002947,
+            89.27425825002138,
+            89.28579587501008,
+            89.25938691699412,
+            85.80121549998876,
+            91.8136364169186,
+            85.82275662501343,
+            91.526074333,
+            92.23517570900731,
+            91.74796654097736,
+            89.27348979201633,
+            85.79628841707017,
+            85.82426895806566,
+            92.22798441699706,
+            89.26717508397996,
+            85.78957937506493,
+            84.72465279093012,
+            91.74779233301524,
+            91.73786675010342,
+            91.7972237499198,
+            85.79854487499688,
+            91.5265534579521
+          ],
+          "wallet_median_seconds": 91.52631389547605,
+          "wallet_p95_seconds": 92.23261620802805,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 60.059999999999995,
+              "cpu_seconds_per_wallet": 1.8768749999999998,
+              "mean_cores": 0.6389202644423434,
+              "sampled_peak_rss_bytes": 167067648,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.099999999994452,
+              "cpu_seconds_per_wallet": 0.22187499999982663,
+              "mean_cores": 0.07553003459102721,
+              "sampled_peak_rss_bytes": 698695680,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068272216.0,
+          "mallocs_per_wallet": 11456518.25,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 46.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1713.387301,
+          "wallet_process_mean_cores": 18.57619903463925,
+          "wallet_process_peak_rss_bytes": 77676544
+        },
+        {
+          "label": "cached-i-keepalive-2-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 89.57026520802174,
+          "wallet_elapsed_seconds": [
+            87.96992183302063,
+            89.57006041705608,
+            84.2437181250425,
+            87.98366141703445,
+            84.915981041966,
+            84.18599704094231,
+            84.23243812494911,
+            81.72472141706385,
+            88.62601904198527,
+            81.75694733299315,
+            84.94461670902092,
+            84.8697948330082,
+            89.03294129204005,
+            89.56674074998591,
+            88.38534416607581,
+            89.03799916699063,
+            86.76534241705667,
+            84.21732412499841,
+            89.39366341696586,
+            89.03549866692629,
+            84.868898042012,
+            89.01087887503672,
+            88.5255475420272,
+            87.21139183302876,
+            89.51578670798335,
+            88.16347545897588,
+            89.03547079197597,
+            89.0235818750225,
+            89.39429058402311,
+            84.06430866708979,
+            89.03538841602858,
+            78.2254362499807
+          ],
+          "wallet_median_seconds": 88.07356843800517,
+          "wallet_p95_seconds": 89.56674074998591,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 61.37,
+              "cpu_seconds_per_wallet": 1.9178125,
+              "mean_cores": 0.6708063147373863,
+              "sampled_peak_rss_bytes": 169512960,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.299999999997453,
+              "cpu_seconds_per_wallet": 0.22812499999992042,
+              "mean_cores": 0.07979283196319394,
+              "sampled_peak_rss_bytes": 698695680,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068374123.5,
+          "mallocs_per_wallet": 11458326.03125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 44.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1720.326044,
+          "wallet_process_mean_cores": 19.20644133412626,
+          "wallet_process_peak_rss_bytes": 78282752
+        },
+        {
+          "label": "cached-i-keepalive-3-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 90.22601745906286,
+          "wallet_elapsed_seconds": [
+            90.21500870911404,
+            87.54116374999285,
+            80.35023454099428,
+            87.52536445797887,
+            88.74071512499359,
+            88.99029420805164,
+            90.21122325002216,
+            87.540138958022,
+            90.21883091609925,
+            87.53968070796691,
+            89.03235820797272,
+            90.22562949999701,
+            90.21682545903604,
+            87.484154707985,
+            90.20016137498897,
+            90.20586554193869,
+            87.48360295791645,
+            90.21486958290916,
+            90.2105989169795,
+            90.21470654092263,
+            87.17162058397662,
+            87.46079749998171,
+            87.52880075003486,
+            87.54079975001514,
+            87.19504458305892,
+            87.49989616696257,
+            88.9937091669999,
+            87.4692962920526,
+            90.21060966700315,
+            87.49096999992616,
+            89.01431254204363,
+            87.1627964170184
+          ],
+          "wallet_median_seconds": 88.14093943749322,
+          "wallet_p95_seconds": 90.21883091609925,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 60.35000000000001,
+              "cpu_seconds_per_wallet": 1.8859375000000003,
+              "mean_cores": 0.6577496280545404,
+              "sampled_peak_rss_bytes": 168460288,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.2700000000040745,
+              "cpu_seconds_per_wallet": 0.22718750000012733,
+              "mean_cores": 0.07923512503660626,
+              "sampled_peak_rss_bytes": 698810368,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068554483.5,
+          "mallocs_per_wallet": 11457498.6875,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 44.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1721.237014,
+          "wallet_process_mean_cores": 19.076947675108855,
+          "wallet_process_peak_rss_bytes": 77332480
+        },
+        {
+          "label": "cached-i-keepalive-4-keepalive-direct",
+          "binary": "keepalive",
+          "clients": 32,
+          "recorded": false,
+          "source": "cd4c0be79c06426169622b11aa6125daa1e3e761",
+          "binary_sha256": "79b99ef0679017a4523dc5d70b3cf0ddee5d82616e77567768a8057de12810ec",
+          "batch_seconds": 89.24872979102656,
+          "wallet_elapsed_seconds": [
+            84.96079562499654,
+            84.77310683298856,
+            84.76021258404944,
+            84.72291216708254,
+            87.48048229201231,
+            80.77109654108062,
+            89.21540154190734,
+            86.13116612494923,
+            84.47908633295447,
+            84.7480906250421,
+            84.74811649997719,
+            89.18187216704246,
+            89.21528433298226,
+            89.13060808298178,
+            84.75557429192122,
+            84.77853687491734,
+            85.53998891706578,
+            84.4785869170446,
+            87.64558116707485,
+            86.14229791599791,
+            89.24140558403451,
+            88.96061104093678,
+            88.24895316699985,
+            88.99356491700746,
+            88.12220016703941,
+            88.90420849993825,
+            88.07378691597842,
+            89.20843529200647,
+            89.2411340419203,
+            85.05344308295753,
+            89.24775079102255,
+            84.72145199996885
+          ],
+          "wallet_median_seconds": 86.81139010400511,
+          "wallet_p95_seconds": 89.24140558403451,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 61.41,
+              "cpu_seconds_per_wallet": 1.9190625,
+              "mean_cores": 0.6767706570502082,
+              "sampled_peak_rss_bytes": 168325120,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.099999999992178,
+              "cpu_seconds_per_wallet": 0.22187499999975557,
+              "mean_cores": 0.07824575256556238,
+              "sampled_peak_rss_bytes": 698810368,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1067989390.0,
+          "mallocs_per_wallet": 11457113.375,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 45.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1719.203824,
+          "wallet_process_mean_cores": 19.263062096519114,
+          "wallet_process_peak_rss_bytes": 76169216
+        },
+        {
+          "label": "cached-i-keepalive-5-keepalive-direct",
+          "binary": "keepalive",
+          "clients": 32,
+          "recorded": false,
+          "source": "cd4c0be79c06426169622b11aa6125daa1e3e761",
+          "binary_sha256": "79b99ef0679017a4523dc5d70b3cf0ddee5d82616e77567768a8057de12810ec",
+          "batch_seconds": 98.89955820899922,
+          "wallet_elapsed_seconds": [
+            96.1187587500317,
+            92.71307620895095,
+            88.29050783393905,
+            97.24024458299391,
+            95.94934116594959,
+            95.97686783398967,
+            98.2220293750288,
+            98.84718008397613,
+            96.24158895795699,
+            88.29115370800719,
+            94.6556770830648,
+            98.87571012508124,
+            96.13449095899705,
+            98.83950449991971,
+            88.28915375005454,
+            98.87884004204534,
+            95.78049999999348,
+            98.02073524997104,
+            98.86574529111385,
+            92.69414583395701,
+            98.82784187502693,
+            88.29284766700584,
+            98.8461851660395,
+            98.89868970902171,
+            96.1339465000201,
+            96.11122458300088,
+            89.00105254095979,
+            97.24039820802864,
+            97.38132191705517,
+            88.30174170900136,
+            88.30924899992533,
+            96.17322779190727
+          ],
+          "wallet_median_seconds": 96.13421872950858,
+          "wallet_p95_seconds": 98.87884004204534,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 60.37,
+              "cpu_seconds_per_wallet": 1.8865625,
+              "mean_cores": 0.600571086533973,
+              "sampled_peak_rss_bytes": 163704832,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.2199999999998,
+              "cpu_seconds_per_wallet": 0.22562499999999375,
+              "mean_cores": 0.07182579501035556,
+              "sampled_peak_rss_bytes": 698675200,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068613852.25,
+          "mallocs_per_wallet": 11456996.03125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 50.0,
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1709.102184,
+          "wallet_process_mean_cores": 17.28119129094838,
+          "wallet_process_peak_rss_bytes": 76824576
+        },
+        {
+          "label": "cached-i-keepalive-6-baseline-direct",
+          "binary": "baseline",
+          "clients": 32,
+          "recorded": false,
+          "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+          "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+          "batch_seconds": 91.42069691605866,
+          "wallet_elapsed_seconds": [
+            91.37701629195362,
+            88.57693499990273,
+            88.38428016705438,
+            91.37470866704825,
+            84.12256929196883,
+            84.21740695892368,
+            88.46888887509704,
+            88.45312449999619,
+            88.44415458396543,
+            88.43459533294663,
+            91.35064245807007,
+            88.43327804200817,
+            91.38401533302385,
+            88.21537195902783,
+            91.39052316593006,
+            88.44161799992435,
+            91.38435045909137,
+            88.144151333021,
+            88.66830208397005,
+            91.3908005830599,
+            86.0259071670007,
+            86.00354420801159,
+            91.36396266601514,
+            85.66836624999996,
+            91.3751330000814,
+            90.9763847090071,
+            91.37639104190748,
+            88.43613345909398,
+            90.44186975003686,
+            88.61094725003932,
+            91.41969350003637,
+            88.4843827500008
+          ],
+          "wallet_median_seconds": 88.53065887495177,
+          "wallet_p95_seconds": 91.3908005830599,
+          "process": {
+            "lwd": {
+              "cpu_seconds": 61.050000000000004,
+              "cpu_seconds_per_wallet": 1.9078125000000001,
+              "mean_cores": 0.6582471810712669,
+              "sampled_peak_rss_bytes": 161771520,
+              "storage_read_bytes": 0
+            },
+            "node": {
+              "cpu_seconds": 7.25000000000955,
+              "cpu_seconds_per_wallet": 0.22656250000029843,
+              "mean_cores": 0.07817022215844341,
+              "sampled_peak_rss_bytes": 698675200,
+              "storage_read_bytes": 0
+            }
+          },
+          "allocation_bytes_per_wallet": 1068411290.25,
+          "mallocs_per_wallet": 11457913.78125,
+          "rpc_durations": {},
+          "backend_rpc_deltas": {
+            "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+            "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+            "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 44.0,
+            "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0
+          },
+          "client_host": {
+            "platform": "darwin",
+            "machine": "arm64",
+            "logical_cpus": 28
+          },
+          "wallet_process_cpu_seconds": 1708.471219,
+          "wallet_process_mean_cores": 18.688013509333636,
+          "wallet_process_peak_rss_bytes": 76693504
+        }
+      ],
+      "summaries": {
+        "wallet_median_seconds": {
+          "baseline": {
+            "median": 88.14093943749322,
+            "min": 88.07356843800517,
+            "max": 88.53065887495177
+          },
+          "candidate": {
+            "median": 91.52631389547605,
+            "min": 86.81139010400511,
+            "max": 96.13421872950858
+          },
+          "change_percent": 3.8408649596747724
+        },
+        "wallet_p95_seconds": {
+          "baseline": {
+            "median": 90.21883091609925,
+            "min": 89.56674074998591,
+            "max": 91.3908005830599
+          },
+          "candidate": {
+            "median": 92.23261620802805,
+            "min": 89.24140558403451,
+            "max": 98.87884004204534
+          },
+          "change_percent": 2.2321119343716056
+        },
+        "batch_seconds": {
+          "baseline": {
+            "median": 90.22601745906286,
+            "min": 89.57026520802174,
+            "max": 91.42069691605866
+          },
+          "candidate": {
+            "median": 92.23562354198657,
+            "min": 89.24872979102656,
+            "max": 98.89955820899922
+          },
+          "change_percent": 2.2273022122865083
+        },
+        "lwd_cpu_seconds_per_wallet": {
+          "baseline": {
+            "median": 1.9078125000000001,
+            "min": 1.8859375000000003,
+            "max": 1.9178125
+          },
+          "candidate": {
+            "median": 1.8865625,
+            "min": 1.8768749999999998,
+            "max": 1.9190625
+          },
+          "change_percent": -1.1138411138411297
+        },
+        "node_cpu_seconds_per_wallet": {
+          "baseline": {
+            "median": 0.22718750000012733,
+            "min": 0.22656250000029843,
+            "max": 0.22812499999992042
+          },
+          "candidate": {
+            "median": 0.22187499999982663,
+            "min": 0.22187499999975557,
+            "max": 0.22562499999999375
+          },
+          "change_percent": -2.338376891465299
+        },
+        "allocation_bytes_per_wallet": {
+          "baseline": {
+            "median": 1068411290.25,
+            "min": 1068374123.5,
+            "max": 1068554483.5
+          },
+          "candidate": {
+            "median": 1068272216.0,
+            "min": 1067989390.0,
+            "max": 1068613852.25
+          },
+          "change_percent": -0.0130169206624009
+        },
+        "lwd_peak_rss_bytes": {
+          "baseline": {
+            "median": 168460288,
+            "min": 161771520,
+            "max": 169512960
+          },
+          "candidate": {
+            "median": 167067648,
+            "min": 163704832,
+            "max": 168325120
+          },
+          "change_percent": -0.8266874148998293
+        }
+      },
+      "pairs": [
+        {
+          "order": [
+            "keepalive",
+            "baseline"
+          ],
+          "baseline_label": "cached-i-keepalive-2-baseline-direct",
+          "candidate_label": "cached-i-keepalive-1-keepalive-direct",
+          "change_percent": {
+            "wallet_median_seconds": 3.9202969956886324,
+            "wallet_p95_seconds": 2.976412266115158,
+            "batch_seconds": 2.975717809671208,
+            "lwd_cpu_seconds_per_wallet": -2.1345934495682006,
+            "node_cpu_seconds_per_wallet": -2.7397260274393265,
+            "allocation_bytes_per_wallet": -0.009538559364030696,
+            "lwd_peak_rss_bytes": -1.4425516491482382
+          }
+        },
+        {
+          "order": [
+            "baseline",
+            "keepalive"
+          ],
+          "baseline_label": "cached-i-keepalive-3-baseline-direct",
+          "candidate_label": "cached-i-keepalive-4-keepalive-direct",
+          "change_percent": {
+            "wallet_median_seconds": -1.508435628180449,
+            "wallet_p95_seconds": -1.0833939235742385,
+            "batch_seconds": -1.0831550538953016,
+            "lwd_cpu_seconds_per_wallet": 1.7564208782104185,
+            "node_cpu_seconds_per_wallet": -2.338376891496574,
+            "allocation_bytes_per_wallet": -0.05288392016746801,
+            "lwd_peak_rss_bytes": -0.08023730791675288
+          }
+        },
+        {
+          "order": [
+            "keepalive",
+            "baseline"
+          ],
+          "baseline_label": "cached-i-keepalive-6-baseline-direct",
+          "candidate_label": "cached-i-keepalive-5-keepalive-direct",
+          "change_percent": {
+            "wallet_median_seconds": 8.588617718633174,
+            "wallet_p95_seconds": 8.193428015963145,
+            "batch_seconds": 8.18070912302009,
+            "lwd_cpu_seconds_per_wallet": -1.1138411138411297,
+            "node_cpu_seconds_per_wallet": -0.4137931035822051,
+            "allocation_bytes_per_wallet": 0.01895917815999404,
+            "lwd_peak_rss_bytes": 1.1950879858209973
+          }
+        }
+      ]
+    }
+  },
+  "screening": {
+    "cached-eight-20260905g": [
+      {
+        "label": "cached-g-n8-1-baseline",
+        "binary": "baseline",
+        "clients": 8,
+        "recorded": true,
+        "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+        "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+        "batch_seconds": 46.16616562497802,
+        "wallet_elapsed_seconds": [
+          46.164863541023806,
+          46.146886875038035,
+          46.09703670802992,
+          46.09735695901327,
+          46.15723245800473,
+          45.930420791963115,
+          46.1659372090362,
+          45.93057395797223
+        ],
+        "wallet_median_seconds": 46.12212191702565,
+        "wallet_p95_seconds": 46.1659372090362,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 14.86,
+            "cpu_seconds_per_wallet": 1.8575,
+            "mean_cores": 0.3118767590402082,
+            "sampled_peak_rss_bytes": 154140672,
+            "storage_read_bytes": 819200
+          },
+          "node": {
+            "cpu_seconds": 1.829999999994925,
+            "cpu_seconds_per_wallet": 0.22874999999936563,
+            "mean_cores": 0.03840743398667552,
+            "sampled_peak_rss_bytes": 712970240,
+            "storage_read_bytes": 3174400
+          },
+          "recorder": {
+            "cpu_seconds": 2.7199999999999998,
+            "cpu_seconds_per_wallet": 0.33999999999999997,
+            "mean_cores": 0.05708645925904214,
+            "sampled_peak_rss_bytes": 30408704,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1068078435.0,
+        "mallocs_per_wallet": 11458649.625,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 96,
+            "median_seconds": 0.018006048,
+            "p95_seconds": 0.030946875,
+            "sum_seconds": 1.922799896
+          },
+          "GetAddressUtxosStream": {
+            "count": 16,
+            "median_seconds": 0.011467831,
+            "p95_seconds": 0.07842071,
+            "sum_seconds": 0.446871089
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 8,
+            "median_seconds": 3.660769346,
+            "p95_seconds": 3.999854841,
+            "sum_seconds": 29.528194673
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 8,
+            "median_seconds": 1.21443495,
+            "p95_seconds": 1.397038929,
+            "sum_seconds": 9.675292388
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 8,
+            "median_seconds": 0.0047825425000000005,
+            "p95_seconds": 0.147087894,
+            "sum_seconds": 0.404170145
+          },
+          "GetBlockRange": {
+            "count": 88,
+            "median_seconds": 0.183020145,
+            "p95_seconds": 0.508553235,
+            "sum_seconds": 20.228433816
+          },
+          "GetTreeState": {
+            "count": 96,
+            "median_seconds": 0.0026767225,
+            "p95_seconds": 0.014989363,
+            "sum_seconds": 0.40341309200000003
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 24.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 24.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 16.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 391.533564,
+        "wallet_process_mean_cores": 8.480963465334066,
+        "wallet_process_peak_rss_bytes": 77152256
+      },
+      {
+        "label": "cached-g-n8-2-ranges",
+        "binary": "ranges",
+        "clients": 8,
+        "recorded": true,
+        "source": "42a2f6526e89c7fac24a3388b8f73487b7bc8db9",
+        "binary_sha256": "3f93410e7615e6cab9c2647c992a0246de4cfe909e80b0126a4adaac265872cc",
+        "batch_seconds": 44.5117555410834,
+        "wallet_elapsed_seconds": [
+          44.46498079097364,
+          44.45730312494561,
+          44.457270374987274,
+          44.464789082994685,
+          44.51151687500533,
+          44.17916941700969,
+          44.280321458005346,
+          44.4865259580547
+        ],
+        "wallet_median_seconds": 44.46104610397015,
+        "wallet_p95_seconds": 44.51151687500533,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 14.71,
+            "cpu_seconds_per_wallet": 1.83875,
+            "mean_cores": 0.3187190227248207,
+            "sampled_peak_rss_bytes": 127963136,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 1.7800000000065666,
+            "cpu_seconds_per_wallet": 0.22250000000082082,
+            "mean_cores": 0.03856695176426062,
+            "sampled_peak_rss_bytes": 698343424,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 2.78,
+            "cpu_seconds_per_wallet": 0.3475,
+            "mean_cores": 0.060233778597892695,
+            "sampled_peak_rss_bytes": 35012608,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1041133983.0,
+        "mallocs_per_wallet": 11311118.5,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 96,
+            "median_seconds": 0.0163365005,
+            "p95_seconds": 0.035374251,
+            "sum_seconds": 1.885243321
+          },
+          "GetAddressUtxosStream": {
+            "count": 16,
+            "median_seconds": 0.0020830695,
+            "p95_seconds": 0.049950345,
+            "sum_seconds": 0.245143423
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 8,
+            "median_seconds": 3.800991381,
+            "p95_seconds": 4.073646942,
+            "sum_seconds": 30.27254476
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 8,
+            "median_seconds": 1.169194709,
+            "p95_seconds": 1.381919393,
+            "sum_seconds": 9.480971504
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 8,
+            "median_seconds": 0.001623577,
+            "p95_seconds": 0.207757128,
+            "sum_seconds": 0.21890827000000002
+          },
+          "GetBlockRange": {
+            "count": 88,
+            "median_seconds": 0.1642224505,
+            "p95_seconds": 0.366701939,
+            "sum_seconds": 16.492603992
+          },
+          "GetTreeState": {
+            "count": 96,
+            "median_seconds": 0.0022791285,
+            "p95_seconds": 0.010211802,
+            "sum_seconds": 0.304142002
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 16.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 24.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 23.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 389.143069,
+        "wallet_process_mean_cores": 8.742478571550144,
+        "wallet_process_peak_rss_bytes": 76988416
+      },
+      {
+        "label": "cached-g-n8-3-subtrees",
+        "binary": "subtrees",
+        "clients": 8,
+        "recorded": true,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 43.8243832080625,
+        "wallet_elapsed_seconds": [
+          43.51933458307758,
+          43.816702250042,
+          43.81683691602666,
+          43.816258291946724,
+          43.81673325004522,
+          43.824127207975835,
+          43.8163184580626,
+          43.81656145805027
+        ],
+        "wallet_median_seconds": 43.816631854046136,
+        "wallet_p95_seconds": 43.824127207975835,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 5.94,
+            "cpu_seconds_per_wallet": 0.7425,
+            "mean_cores": 0.13083468083324512,
+            "sampled_peak_rss_bytes": 138805248,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 1.8400000000042382,
+            "cpu_seconds_per_wallet": 0.23000000000052978,
+            "mean_cores": 0.040527914601637294,
+            "sampled_peak_rss_bytes": 698605568,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 3.01,
+            "cpu_seconds_per_wallet": 0.37625,
+            "mean_cores": 0.06629838203839525,
+            "sampled_peak_rss_bytes": 42209280,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 329726074.0,
+        "mallocs_per_wallet": 3752284.25,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 96,
+            "median_seconds": 0.0200376035,
+            "p95_seconds": 0.0374213,
+            "sum_seconds": 2.2078508119999998
+          },
+          "GetAddressUtxosStream": {
+            "count": 16,
+            "median_seconds": 0.0019696785,
+            "p95_seconds": 0.002561438,
+            "sum_seconds": 0.032279716
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 8,
+            "median_seconds": 0.7970932215,
+            "p95_seconds": 0.929228881,
+            "sum_seconds": 6.370640311
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 8,
+            "median_seconds": 0.310940797,
+            "p95_seconds": 0.313551239,
+            "sum_seconds": 2.461464546
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 8,
+            "median_seconds": 0.0025623685000000004,
+            "p95_seconds": 0.004015736,
+            "sum_seconds": 0.020017412000000002
+          },
+          "GetBlockRange": {
+            "count": 88,
+            "median_seconds": 0.2764599605,
+            "p95_seconds": 0.772350682,
+            "sum_seconds": 31.250724130000002
+          },
+          "GetTreeState": {
+            "count": 96,
+            "median_seconds": 0.0023369280000000003,
+            "p95_seconds": 0.005174199,
+            "sum_seconds": 0.271011324
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 23.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 16.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 24.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 392.697792,
+        "wallet_process_mean_cores": 8.96071463540311,
+        "wallet_process_peak_rss_bytes": 75792384
+      },
+      {
+        "label": "cached-g-n8-4-bundle",
+        "binary": "bundle",
+        "clients": 8,
+        "recorded": true,
+        "source": "ca3067ac538f44ba4995dbf6ccd9cf92845e88b5",
+        "binary_sha256": "c6edfdd584a728374faabc04dfcaf14459c0fd8927bab2892e5c42f5a2c8f194",
+        "batch_seconds": 42.32032320799772,
+        "wallet_elapsed_seconds": [
+          42.30223983305041,
+          42.12003745790571,
+          42.0708416668931,
+          42.30338454199955,
+          42.320084500010125,
+          42.28773824998643,
+          42.309685749933124,
+          42.30236283305567
+        ],
+        "wallet_median_seconds": 42.30230133305304,
+        "wallet_p95_seconds": 42.320084500010125,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 5.83,
+            "cpu_seconds_per_wallet": 0.72875,
+            "mean_cores": 0.1328404350890182,
+            "sampled_peak_rss_bytes": 146145280,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 1.789999999995871,
+            "cpu_seconds_per_wallet": 0.22374999999948386,
+            "mean_cores": 0.04078634284884975,
+            "sampled_peak_rss_bytes": 698605568,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 2.8,
+            "cpu_seconds_per_wallet": 0.35,
+            "mean_cores": 0.06379986590896242,
+            "sampled_peak_rss_bytes": 32272384,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 302839736.0,
+        "mallocs_per_wallet": 3604191.25,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 96,
+            "median_seconds": 0.016114914,
+            "p95_seconds": 0.030969978,
+            "sum_seconds": 1.801109123
+          },
+          "GetAddressUtxosStream": {
+            "count": 16,
+            "median_seconds": 0.0014184294999999999,
+            "p95_seconds": 0.002367503,
+            "sum_seconds": 0.024053077
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 8,
+            "median_seconds": 0.776316088,
+            "p95_seconds": 0.91375465,
+            "sum_seconds": 6.473833468
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 8,
+            "median_seconds": 0.3164569045,
+            "p95_seconds": 0.317339183,
+            "sum_seconds": 2.5275554700000002
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 8,
+            "median_seconds": 0.004223882,
+            "p95_seconds": 0.005611775,
+            "sum_seconds": 0.028699608
+          },
+          "GetBlockRange": {
+            "count": 88,
+            "median_seconds": 0.1796567235,
+            "p95_seconds": 0.650503378,
+            "sum_seconds": 22.372802194000002
+          },
+          "GetTreeState": {
+            "count": 96,
+            "median_seconds": 0.0023669545,
+            "p95_seconds": 0.009878267,
+            "sum_seconds": 0.31978687
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 22.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 24.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 16.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 391.28034,
+        "wallet_process_mean_cores": 9.245684114389174,
+        "wallet_process_peak_rss_bytes": 77004800
+      },
+      {
+        "label": "cached-g-n8-5-baseline-direct",
+        "binary": "baseline",
+        "clients": 8,
+        "recorded": false,
+        "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+        "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+        "batch_seconds": 45.45269983296748,
+        "wallet_elapsed_seconds": [
+          45.448466125060804,
+          45.438768542022444,
+          45.4269096669741,
+          45.097083750064485,
+          45.438381124986336,
+          45.45244479191024,
+          45.45244799996726,
+          45.42708345805295
+        ],
+        "wallet_median_seconds": 45.43857483350439,
+        "wallet_p95_seconds": 45.45244799996726,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 14.64,
+            "cpu_seconds_per_wallet": 1.83,
+            "mean_cores": 0.31398655956765703,
+            "sampled_peak_rss_bytes": 139067392,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 1.8799999999973807,
+            "cpu_seconds_per_wallet": 0.23499999999967258,
+            "mean_cores": 0.04032067841436972,
+            "sampled_peak_rss_bytes": 698605568,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1068297201.0,
+        "mallocs_per_wallet": 11457380.5,
+        "rpc_durations": {},
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 16.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 24.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 24.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 390.979007,
+        "wallet_process_mean_cores": 8.601887422238832,
+        "wallet_process_peak_rss_bytes": 77791232
+      }
+    ],
+    "cached-16-20260905h": [
+      {
+        "label": "cached-h-n16-1-baseline",
+        "binary": "baseline",
+        "clients": 16,
+        "recorded": true,
+        "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+        "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+        "batch_seconds": 57.26969316601753,
+        "wallet_elapsed_seconds": [
+          57.213304540957324,
+          57.25160187506117,
+          57.26239608298056,
+          57.26947400008794,
+          57.23985937493853,
+          57.26357133302372,
+          57.24740629189182,
+          56.91232662496623,
+          57.25209370802622,
+          57.20915795909241,
+          57.262159208068624,
+          56.86963979108259,
+          57.1705833330052,
+          56.92961416603066,
+          57.26341912499629,
+          57.26257695793174
+        ],
+        "wallet_median_seconds": 57.249504083476495,
+        "wallet_p95_seconds": 57.26947400008794,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 29.949999999999996,
+            "cpu_seconds_per_wallet": 1.8718749999999997,
+            "mean_cores": 0.5081571597382673,
+            "sampled_peak_rss_bytes": 153616384,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 3.6800000000052933,
+            "cpu_seconds_per_wallet": 0.23000000000033083,
+            "mean_cores": 0.06243800827510897,
+            "sampled_peak_rss_bytes": 699117568,
+            "storage_read_bytes": 483328
+          },
+          "recorder": {
+            "cpu_seconds": 5.5,
+            "cpu_seconds_per_wallet": 0.34375,
+            "mean_cores": 0.09331767541103406,
+            "sampled_peak_rss_bytes": 56258560,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1068219518.5,
+        "mallocs_per_wallet": 11458531.375,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 192,
+            "median_seconds": 0.0203058355,
+            "p95_seconds": 0.058860932,
+            "sum_seconds": 5.498065957
+          },
+          "GetAddressUtxosStream": {
+            "count": 32,
+            "median_seconds": 0.0019454275,
+            "p95_seconds": 0.039806753,
+            "sum_seconds": 0.356747311
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 16,
+            "median_seconds": 7.955521279,
+            "p95_seconds": 9.720768558,
+            "sum_seconds": 125.82809979
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 16,
+            "median_seconds": 2.1380385075,
+            "p95_seconds": 3.310491315,
+            "sum_seconds": 34.284261478
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 16,
+            "median_seconds": 0.0588491875,
+            "p95_seconds": 0.11424809,
+            "sum_seconds": 0.901829445
+          },
+          "GetBlockRange": {
+            "count": 176,
+            "median_seconds": 0.26334150599999995,
+            "p95_seconds": 0.617860872,
+            "sum_seconds": 48.482341214
+          },
+          "GetTreeState": {
+            "count": 192,
+            "median_seconds": 0.0026535245,
+            "p95_seconds": 0.020472986,
+            "sum_seconds": 0.948130607
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 192.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 29.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 32.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 48.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 192.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 790.798081,
+        "wallet_process_mean_cores": 13.808317057113914,
+        "wallet_process_peak_rss_bytes": 77152256
+      },
+      {
+        "label": "cached-h-n16-2-subtrees",
+        "binary": "subtrees",
+        "clients": 16,
+        "recorded": true,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 50.97761937498581,
+        "wallet_elapsed_seconds": [
+          50.86953683302272,
+          50.96976549993269,
+          50.977299249963835,
+          50.951712833950296,
+          48.604725124896504,
+          49.57750508398749,
+          50.97110550000798,
+          50.969589167041704,
+          50.97699949995149,
+          50.97689145896584,
+          49.466497124987654,
+          50.977039083023556,
+          50.96100600005593,
+          48.771632999996655,
+          50.96387108403724,
+          50.97755579196382
+        ],
+        "wallet_median_seconds": 50.96673012553947,
+        "wallet_p95_seconds": 50.97755579196382,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 11.23,
+            "cpu_seconds_per_wallet": 0.701875,
+            "mean_cores": 0.21325006274091707,
+            "sampled_peak_rss_bytes": 138543104,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 3.790000000004511,
+            "cpu_seconds_per_wallet": 0.23687500000028194,
+            "mean_cores": 0.07196952251015473,
+            "sampled_peak_rss_bytes": 699375616,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 5.91,
+            "cpu_seconds_per_wallet": 0.369375,
+            "mean_cores": 0.11222688074789135,
+            "sampled_peak_rss_bytes": 53612544,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 278080481.5,
+        "mallocs_per_wallet": 3202735.25,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 192,
+            "median_seconds": 0.026332880000000003,
+            "p95_seconds": 0.064620559,
+            "sum_seconds": 5.741411585
+          },
+          "GetAddressUtxosStream": {
+            "count": 32,
+            "median_seconds": 0.001537771,
+            "p95_seconds": 0.003847561,
+            "sum_seconds": 0.055634109
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 16,
+            "median_seconds": 0.733188708,
+            "p95_seconds": 0.965175783,
+            "sum_seconds": 11.581421662
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 16,
+            "median_seconds": 0.3429543235,
+            "p95_seconds": 0.346709769,
+            "sum_seconds": 5.423780371
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 16,
+            "median_seconds": 0.001228971,
+            "p95_seconds": 0.001912813,
+            "sum_seconds": 0.02135848
+          },
+          "GetBlockRange": {
+            "count": 176,
+            "median_seconds": 0.2796738995,
+            "p95_seconds": 0.773328775,
+            "sum_seconds": 59.242099506
+          },
+          "GetTreeState": {
+            "count": 192,
+            "median_seconds": 0.002548066,
+            "p95_seconds": 0.009573074,
+            "sum_seconds": 0.672291354
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 32.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 192.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 192.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 48.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 27.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 798.488999,
+        "wallet_process_mean_cores": 15.663520752634643,
+        "wallet_process_peak_rss_bytes": 78086144
+      }
+    ],
+    "cached-32-20260905h": [
+      {
+        "label": "cached-h-n32-1-baseline",
+        "binary": "baseline",
+        "clients": 32,
+        "recorded": true,
+        "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+        "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+        "batch_seconds": 92.01975924998987,
+        "wallet_elapsed_seconds": [
+          86.56426470901351,
+          83.04603083292022,
+          83.25536579196341,
+          86.55179091694299,
+          92.00984570803121,
+          90.18390200007707,
+          92.00535370805301,
+          92.00099162501283,
+          91.9898482079152,
+          83.24538099998608,
+          92.00531529192813,
+          91.63211758399848,
+          90.19725354097318,
+          91.99307508405764,
+          90.81326600001194,
+          92.01929125003517,
+          90.19720312498976,
+          90.17216666601598,
+          90.22151225002017,
+          92.01577270799316,
+          90.22927041701041,
+          92.00510012498125,
+          91.73321345890872,
+          90.19095412502065,
+          91.41781070805155,
+          91.08346054097638,
+          86.58071595791262,
+          92.01856487500481,
+          90.18969533301424,
+          91.99373470793944,
+          90.2281901249662,
+          92.00557812501211
+        ],
+        "wallet_median_seconds": 90.94836327049416,
+        "wallet_p95_seconds": 92.01856487500481,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 60.85,
+            "cpu_seconds_per_wallet": 1.9015625,
+            "mean_cores": 0.6486051425693653,
+            "sampled_peak_rss_bytes": 171773952,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.509999999990669,
+            "cpu_seconds_per_wallet": 0.2346874999997084,
+            "mean_cores": 0.08004970617403256,
+            "sampled_peak_rss_bytes": 699232256,
+            "storage_read_bytes": 28672
+          },
+          "recorder": {
+            "cpu_seconds": 11.94,
+            "cpu_seconds_per_wallet": 0.373125,
+            "mean_cores": 0.12726943964302748,
+            "sampled_peak_rss_bytes": 82944000,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1068170350.5,
+        "mallocs_per_wallet": 11458725.125,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 384,
+            "median_seconds": 0.021124591999999998,
+            "p95_seconds": 0.071619703,
+            "sum_seconds": 11.297245199
+          },
+          "GetAddressUtxosStream": {
+            "count": 64,
+            "median_seconds": 0.18112892149999998,
+            "p95_seconds": 0.461938494,
+            "sum_seconds": 12.290786627
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 32,
+            "median_seconds": 16.06581946,
+            "p95_seconds": 17.583210029,
+            "sum_seconds": 490.643979601
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 32,
+            "median_seconds": 4.2872540325,
+            "p95_seconds": 8.69521749,
+            "sum_seconds": 155.803131106
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 32,
+            "median_seconds": 0.0016013575,
+            "p95_seconds": 0.86582827,
+            "sum_seconds": 2.594928805
+          },
+          "GetBlockRange": {
+            "count": 352,
+            "median_seconds": 0.25699814,
+            "p95_seconds": 1.022317924,
+            "sum_seconds": 123.098401713
+          },
+          "GetTreeState": {
+            "count": 384,
+            "median_seconds": 0.002871464,
+            "p95_seconds": 0.013219047,
+            "sum_seconds": 1.839966493
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 45.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1722.173382,
+        "wallet_process_mean_cores": 18.715256332298974,
+        "wallet_process_peak_rss_bytes": 77922304
+      },
+      {
+        "label": "cached-h-n32-2-subtrees",
+        "binary": "subtrees",
+        "clients": 32,
+        "recorded": true,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 77.78699004196096,
+        "wallet_elapsed_seconds": [
+          77.786825667019,
+          75.61040875001345,
+          76.62189304200001,
+          77.77761341701262,
+          65.78913425002247,
+          77.7775147909997,
+          74.11603024997748,
+          75.8060125829652,
+          77.73280324996449,
+          66.80871295800898,
+          75.05151841696352,
+          75.86030058295,
+          75.03247145900968,
+          77.45457637507934,
+          77.27534054103307,
+          76.8088130839169,
+          65.64196645794436,
+          65.69836295896675,
+          73.51367616700009,
+          77.39695483294781,
+          77.7768784170039,
+          77.71805004205089,
+          65.77288241602946,
+          77.44568325008731,
+          75.8516751669813,
+          77.78564504196402,
+          76.62780987506267,
+          76.80829150008503,
+          77.7771239579888,
+          75.00404150004033,
+          75.86518225003965,
+          77.73311583290342
+        ],
+        "wallet_median_seconds": 76.62485145853134,
+        "wallet_p95_seconds": 77.78564504196402,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 19.87,
+            "cpu_seconds_per_wallet": 0.6209375,
+            "mean_cores": 0.2499000620128478,
+            "sampled_peak_rss_bytes": 153747456,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.5100000000052205,
+            "cpu_seconds_per_wallet": 0.23468750000016314,
+            "mean_cores": 0.09445140743421196,
+            "sampled_peak_rss_bytes": 699441152,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 11.45,
+            "cpu_seconds_per_wallet": 0.3578125,
+            "mean_cores": 0.14400381026910455,
+            "sampled_peak_rss_bytes": 162529280,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 251636928.5,
+        "mallocs_per_wallet": 2927110.28125,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 384,
+            "median_seconds": 0.0229022875,
+            "p95_seconds": 0.099866766,
+            "sum_seconds": 13.712716991
+          },
+          "GetAddressUtxosStream": {
+            "count": 64,
+            "median_seconds": 0.001452975,
+            "p95_seconds": 0.004581634,
+            "sum_seconds": 0.131049659
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 32,
+            "median_seconds": 0.21503276500000001,
+            "p95_seconds": 0.714000442,
+            "sum_seconds": 8.819976835
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 32,
+            "median_seconds": 0.398483704,
+            "p95_seconds": 0.405288407,
+            "sum_seconds": 10.492457932
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 32,
+            "median_seconds": 0.0032639575000000002,
+            "p95_seconds": 0.003970732,
+            "sum_seconds": 0.086805683
+          },
+          "GetBlockRange": {
+            "count": 352,
+            "median_seconds": 0.376547689,
+            "p95_seconds": 1.4152500510000001,
+            "sum_seconds": 185.294890528
+          },
+          "GetTreeState": {
+            "count": 384,
+            "median_seconds": 0.0027134135,
+            "p95_seconds": 0.010610949,
+            "sum_seconds": 1.596254022
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 40.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1719.297064,
+        "wallet_process_mean_cores": 22.102630055135858,
+        "wallet_process_peak_rss_bytes": 79347712
+      },
+      {
+        "label": "cached-h-n32-3-subtrees-direct",
+        "binary": "subtrees",
+        "clients": 32,
+        "recorded": false,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 75.49975874996744,
+        "wallet_elapsed_seconds": [
+          75.40562545810826,
+          75.49955737497658,
+          73.11299799999688,
+          68.25339512492064,
+          72.78807295800652,
+          64.44465916708577,
+          75.08512191602495,
+          72.40896458399948,
+          75.47424608306028,
+          68.18132566695567,
+          72.44586729200091,
+          68.21505483298097,
+          75.45791345799807,
+          75.49045258294791,
+          74.84585220797453,
+          75.03068545798305,
+          75.4825568330707,
+          75.48709508299362,
+          75.43698012502864,
+          75.4751179170562,
+          75.465492874966,
+          75.48764816706534,
+          75.48727133404464,
+          64.14560666703619,
+          75.499158333987,
+          64.15196033299435,
+          75.42165070795454,
+          75.12231408304069,
+          74.6654407089809,
+          75.45265070802998,
+          75.00228633300867,
+          75.43193587497808
+        ],
+        "wallet_median_seconds": 75.26396977057448,
+        "wallet_p95_seconds": 75.499158333987,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 19.56,
+            "cpu_seconds_per_wallet": 0.61125,
+            "mean_cores": 0.2541276344527848,
+            "sampled_peak_rss_bytes": 126353408,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.170000000003256,
+            "cpu_seconds_per_wallet": 0.22406250000010175,
+            "mean_cores": 0.09315414821202937,
+            "sampled_peak_rss_bytes": 699035648,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 251176775.5,
+        "mallocs_per_wallet": 2926496.90625,
+        "rpc_durations": {},
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 39.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1723.876229,
+        "wallet_process_mean_cores": 22.83287069444766,
+        "wallet_process_peak_rss_bytes": 78020608
+      },
+      {
+        "label": "cached-h-n32-4-baseline-direct",
+        "binary": "baseline",
+        "clients": 32,
+        "recorded": false,
+        "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+        "binary_sha256": "0db0f41c36debaeda99bdd58b499338d3d10c4b3ee624c67e3dc47221d6fd818",
+        "batch_seconds": 94.3611431249883,
+        "wallet_elapsed_seconds": [
+          92.22993550007232,
+          93.3616666670423,
+          83.26229250000324,
+          83.16127979196608,
+          93.12941208295524,
+          93.9003202910535,
+          92.84112908295356,
+          92.46612275007647,
+          88.1288267079508,
+          90.00383145804517,
+          94.36079062498175,
+          94.35072604205925,
+          94.35072704206686,
+          87.35922179103363,
+          94.34596250008326,
+          90.99727799999528,
+          87.3451877500629,
+          90.8820142080076,
+          83.22236899996642,
+          94.33784225001,
+          94.34583045798354,
+          94.35286662494764,
+          93.07019120804034,
+          83.519156916067,
+          93.92857849993743,
+          94.35580362495966,
+          94.3554139159387,
+          94.31773091701325,
+          87.8807619579602,
+          94.3175424579531,
+          93.12082829198334,
+          91.49384404195007
+        ],
+        "wallet_median_seconds": 93.09550975001184,
+        "wallet_p95_seconds": 94.35580362495966,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 61.24,
+            "cpu_seconds_per_wallet": 1.91375,
+            "mean_cores": 0.6378679145481634,
+            "sampled_peak_rss_bytes": 162635776,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.309999999993579,
+            "cpu_seconds_per_wallet": 0.22843749999979934,
+            "mean_cores": 0.07614001396706366,
+            "sampled_peak_rss_bytes": 699035648,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1068643537.0,
+        "mallocs_per_wallet": 11457857.125,
+        "rpc_durations": {},
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 46.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1718.6774070000001,
+        "wallet_process_mean_cores": 18.213825628664598,
+        "wallet_process_peak_rss_bytes": 79364096
+      }
+    ],
+    "cached-content-20260905i": [
+      {
+        "label": "cached-i-content-1-ranges",
+        "binary": "ranges",
+        "clients": 32,
+        "recorded": true,
+        "source": "42a2f6526e89c7fac24a3388b8f73487b7bc8db9",
+        "binary_sha256": "3f93410e7615e6cab9c2647c992a0246de4cfe909e80b0126a4adaac265872cc",
+        "batch_seconds": 97.46256479097065,
+        "wallet_elapsed_seconds": [
+          97.1443507920485,
+          91.23811862489674,
+          97.46234508301131,
+          97.04211283300538,
+          94.23126712499652,
+          94.23199804103933,
+          96.08234912494663,
+          95.70729670790024,
+          97.40140229207464,
+          97.43859512498602,
+          95.48535604192875,
+          90.85213024995755,
+          91.13572691695299,
+          97.45458216697443,
+          91.17735949996859,
+          96.74890837504063,
+          97.43617204204202,
+          97.40202666691039,
+          94.70781729207374,
+          97.4542437500786,
+          97.40235579200089,
+          96.47136529209092,
+          86.43445641698781,
+          94.65053666604217,
+          97.43831849994604,
+          90.90619237499777,
+          86.22523287497461,
+          86.42508687498048,
+          94.53217149991542,
+          96.3951050840551,
+          97.45354408293497,
+          86.5059210829204
+        ],
+        "wallet_median_seconds": 95.89482291642344,
+        "wallet_p95_seconds": 97.45458216697443,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 62.169999999999995,
+            "cpu_seconds_per_wallet": 1.9428124999999998,
+            "mean_cores": 0.627503516903059,
+            "sampled_peak_rss_bytes": 165539840,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.6100000000069485,
+            "cpu_seconds_per_wallet": 0.23781250000021714,
+            "mean_cores": 0.07681038706187293,
+            "sampled_peak_rss_bytes": 698613760,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 12.120000000000001,
+            "cpu_seconds_per_wallet": 0.37875000000000003,
+            "mean_cores": 0.1223313917462615,
+            "sampled_peak_rss_bytes": 84090880,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1041611557.75,
+        "mallocs_per_wallet": 11312078.375,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 384,
+            "median_seconds": 0.023405301500000003,
+            "p95_seconds": 0.074181794,
+            "sum_seconds": 12.130568103
+          },
+          "GetAddressUtxosStream": {
+            "count": 64,
+            "median_seconds": 0.0924402335,
+            "p95_seconds": 0.280161106,
+            "sum_seconds": 7.918604127
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 32,
+            "median_seconds": 16.564850989,
+            "p95_seconds": 19.262365853,
+            "sum_seconds": 528.859833087
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 32,
+            "median_seconds": 4.9283310700000005,
+            "p95_seconds": 7.227301347,
+            "sum_seconds": 149.417426562
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 32,
+            "median_seconds": 0.0039807035,
+            "p95_seconds": 0.008609921,
+            "sum_seconds": 0.7084802139999999
+          },
+          "GetBlockRange": {
+            "count": 352,
+            "median_seconds": 0.27833819049999997,
+            "p95_seconds": 1.091423232,
+            "sum_seconds": 162.366496322
+          },
+          "GetTreeState": {
+            "count": 384,
+            "median_seconds": 0.002836712,
+            "p95_seconds": 0.012119692,
+            "sum_seconds": 1.749487329
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 48.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1712.1502110000001,
+        "wallet_process_mean_cores": 17.567259949213046,
+        "wallet_process_peak_rss_bytes": 80379904
+      },
+      {
+        "label": "cached-i-content-2-keepalive",
+        "binary": "keepalive",
+        "clients": 32,
+        "recorded": true,
+        "source": "cd4c0be79c06426169622b11aa6125daa1e3e761",
+        "binary_sha256": "79b99ef0679017a4523dc5d70b3cf0ddee5d82616e77567768a8057de12810ec",
+        "batch_seconds": 94.0905318330042,
+        "wallet_elapsed_seconds": [
+          93.11424295802135,
+          88.79822620900813,
+          94.05460895795841,
+          86.57723516691476,
+          93.138885458,
+          90.66769308305811,
+          90.66877412504982,
+          84.4761177500477,
+          94.04323658405337,
+          94.05010275007226,
+          84.17789233406074,
+          90.68579420889728,
+          90.66743995796423,
+          93.44704979099333,
+          94.0244050839683,
+          86.60022491693962,
+          94.08999654196668,
+          86.5443922909908,
+          94.05436816695146,
+          94.02426958398428,
+          93.68131037498824,
+          94.08979004097637,
+          94.04291862493847,
+          94.03512708295602,
+          94.05407862504944,
+          94.04307133401744,
+          94.0511592499679,
+          94.05119833303615,
+          90.54634991590865,
+          94.03458708396647,
+          94.07705358392559,
+          93.68614720797632
+        ],
+        "wallet_median_seconds": 93.8552083959803,
+        "wallet_p95_seconds": 94.08979004097637,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 59.879999999999995,
+            "cpu_seconds_per_wallet": 1.8712499999999999,
+            "mean_cores": 0.6249772436671098,
+            "sampled_peak_rss_bytes": 174686208,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.389999999997144,
+            "cpu_seconds_per_wallet": 0.23093749999991076,
+            "mean_cores": 0.0771306250951596,
+            "sampled_peak_rss_bytes": 698613760,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 11.27,
+            "cpu_seconds_per_wallet": 0.3521875,
+            "mean_cores": 0.11762681256059332,
+            "sampled_peak_rss_bytes": 74330112,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 1068163253.0,
+        "mallocs_per_wallet": 11457277.96875,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 384,
+            "median_seconds": 0.024515693,
+            "p95_seconds": 0.075155672,
+            "sum_seconds": 12.264437626
+          },
+          "GetAddressUtxosStream": {
+            "count": 64,
+            "median_seconds": 0.120355877,
+            "p95_seconds": 0.384906862,
+            "sum_seconds": 9.185298798
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 32,
+            "median_seconds": 16.3418288335,
+            "p95_seconds": 18.450321623,
+            "sum_seconds": 499.416959719
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 32,
+            "median_seconds": 4.214151392,
+            "p95_seconds": 7.73711269,
+            "sum_seconds": 145.689661149
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 32,
+            "median_seconds": 0.0034736695,
+            "p95_seconds": 0.795263139,
+            "sum_seconds": 3.100256499
+          },
+          "GetBlockRange": {
+            "count": 352,
+            "median_seconds": 0.4330260425,
+            "p95_seconds": 0.994233884,
+            "sum_seconds": 156.468880523
+          },
+          "GetTreeState": {
+            "count": 384,
+            "median_seconds": 0.0023159815,
+            "p95_seconds": 0.012072511,
+            "sum_seconds": 1.510555629
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 47.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1724.343456,
+        "wallet_process_mean_cores": 18.326429050910633,
+        "wallet_process_peak_rss_bytes": 79282176
+      }
+    ],
+    "cached-overhead-20260905i": [
+      {
+        "label": "cached-i-overhead-1-subtrees-direct",
+        "binary": "subtrees",
+        "clients": 32,
+        "recorded": false,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 77.30329549999442,
+        "wallet_elapsed_seconds": [
+          77.26001316600014,
+          74.51348404097371,
+          77.26553137495648,
+          77.30039612494875,
+          75.44924795802217,
+          66.1242522499524,
+          74.50746629107744,
+          77.25971670798026,
+          77.2282029580092,
+          77.26562145899516,
+          76.92394808295649,
+          74.4047544170171,
+          77.29759433295112,
+          74.5086761249695,
+          77.30273770797066,
+          77.27276800002437,
+          75.05302537500393,
+          66.15944283397403,
+          73.69265287497547,
+          77.2739025419578,
+          76.98315166693646,
+          62.073256958974525,
+          77.27341945900116,
+          72.08955970790703,
+          73.69166441704147,
+          74.50499241705984,
+          77.26473258400802,
+          75.59691683400888,
+          76.88352899998426,
+          75.2638340840349,
+          77.27240495802835,
+          77.30060824996326
+        ],
+        "wallet_median_seconds": 76.90373854147037,
+        "wallet_p95_seconds": 77.30060824996326,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 19.77,
+            "cpu_seconds_per_wallet": 0.6178125,
+            "mean_cores": 0.2503549569049489,
+            "sampled_peak_rss_bytes": 158072832,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.410000000005766,
+            "cpu_seconds_per_wallet": 0.2315625000001802,
+            "mean_cores": 0.09383562117688998,
+            "sampled_peak_rss_bytes": 699195392,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 251360249.75,
+        "mallocs_per_wallet": 2926299.9375,
+        "rpc_durations": {},
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 40.0,
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1726.225889,
+        "wallet_process_mean_cores": 22.33056013763507,
+        "wallet_process_peak_rss_bytes": 76742656
+      },
+      {
+        "label": "cached-i-overhead-2-subtrees",
+        "binary": "subtrees",
+        "clients": 32,
+        "recorded": true,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 77.29695275006816,
+        "wallet_elapsed_seconds": [
+          77.27392291696742,
+          76.61125799990259,
+          77.29471054207534,
+          77.27675887499936,
+          73.57612254098058,
+          77.24131679197308,
+          69.42649683298077,
+          69.43545808293857,
+          73.58484220900573,
+          75.0799709999701,
+          64.70060241699684,
+          77.25558304204606,
+          69.73678337491583,
+          77.25239220808726,
+          77.27367895795032,
+          77.25174899992999,
+          77.27584083296824,
+          77.25575745804235,
+          77.27341837494168,
+          64.3571200419683,
+          77.27629562502261,
+          73.57068854209501,
+          77.22228541702498,
+          77.25597083300818,
+          77.27640858304221,
+          77.27620133396704,
+          77.25202533300035,
+          77.29600516706705,
+          69.75036775006447,
+          73.62510537495837,
+          77.25198941701092,
+          76.6466117920354
+        ],
+        "wallet_median_seconds": 77.25186920847045,
+        "wallet_p95_seconds": 77.29471054207534,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 20.490000000000002,
+            "cpu_seconds_per_wallet": 0.6403125000000001,
+            "mean_cores": 0.2601583126580803,
+            "sampled_peak_rss_bytes": 115867648,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.479999999990923,
+            "cpu_seconds_per_wallet": 0.23374999999971635,
+            "mean_cores": 0.09497238548951094,
+            "sampled_peak_rss_bytes": 699326464,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 13.06,
+            "cpu_seconds_per_wallet": 0.408125,
+            "mean_cores": 0.16582076931744893,
+            "sampled_peak_rss_bytes": 50040832,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 251923748.75,
+        "mallocs_per_wallet": 2928687.34375,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 384,
+            "median_seconds": 0.0261817905,
+            "p95_seconds": 0.103257342,
+            "sum_seconds": 14.277739853
+          },
+          "GetAddressUtxosStream": {
+            "count": 64,
+            "median_seconds": 0.0018403575,
+            "p95_seconds": 0.006070961,
+            "sum_seconds": 0.153265394
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 32,
+            "median_seconds": 0.367226917,
+            "p95_seconds": 0.859820735,
+            "sum_seconds": 12.385583353
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 32,
+            "median_seconds": 0.304983596,
+            "p95_seconds": 0.373925435,
+            "sum_seconds": 10.038017131
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 32,
+            "median_seconds": 0.004179797,
+            "p95_seconds": 0.005113591,
+            "sum_seconds": 0.121717332
+          },
+          "GetBlockRange": {
+            "count": 352,
+            "median_seconds": 0.513841767,
+            "p95_seconds": 1.216605825,
+            "sum_seconds": 199.253903972
+          },
+          "GetTreeState": {
+            "count": 384,
+            "median_seconds": 0.0029069285,
+            "p95_seconds": 0.010452155,
+            "sum_seconds": 1.612586456
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 40.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1722.988736,
+        "wallet_process_mean_cores": 22.290513075866123,
+        "wallet_process_peak_rss_bytes": 77692928
+      },
+      {
+        "label": "cached-i-overhead-3-subtrees",
+        "binary": "subtrees",
+        "clients": 32,
+        "recorded": true,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 79.69474079203792,
+        "wallet_elapsed_seconds": [
+          79.65159987495281,
+          66.93492312496528,
+          79.65907545795199,
+          79.64973983401433,
+          75.55653150007129,
+          79.65152025001589,
+          79.68531779199839,
+          78.73927920800634,
+          71.63832237501629,
+          77.30592225003056,
+          71.57735020807013,
+          79.65633266593795,
+          66.93309083301574,
+          71.688667083974,
+          79.69421999994665,
+          79.68449504196178,
+          79.6672038329998,
+          79.66584179201163,
+          78.09070450009312,
+          79.68066116701812,
+          78.90095020807348,
+          79.66558229201473,
+          79.12275616603438,
+          77.3512887499528,
+          79.68088083306793,
+          79.68529400008265,
+          75.53911341598723,
+          66.95767308305949,
+          79.1961400420405,
+          79.65332454210147,
+          79.63693670905195,
+          79.6700718330685
+        ],
+        "wallet_median_seconds": 79.64333827153314,
+        "wallet_p95_seconds": 79.68531779199839,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 19.960000000000004,
+            "cpu_seconds_per_wallet": 0.6237500000000001,
+            "mean_cores": 0.24485279210309355,
+            "sampled_peak_rss_bytes": 153616384,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.5000000000009095,
+            "cpu_seconds_per_wallet": 0.23437500000002842,
+            "mean_cores": 0.09200380464796713,
+            "sampled_peak_rss_bytes": 699449344,
+            "storage_read_bytes": 0
+          },
+          "recorder": {
+            "cpu_seconds": 11.86,
+            "cpu_seconds_per_wallet": 0.370625,
+            "mean_cores": 0.14548868308330104,
+            "sampled_peak_rss_bytes": 88035328,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 251647915.0,
+        "mallocs_per_wallet": 2927564.09375,
+        "rpc_durations": {
+          "GetLatestBlock": {
+            "count": 384,
+            "median_seconds": 0.030166891,
+            "p95_seconds": 0.090230426,
+            "sum_seconds": 14.953671445
+          },
+          "GetAddressUtxosStream": {
+            "count": 64,
+            "median_seconds": 0.0015911509999999999,
+            "p95_seconds": 0.005942108,
+            "sum_seconds": 0.160417519
+          },
+          "GetSubtreeRoots pool 0": {
+            "count": 32,
+            "median_seconds": 0.274959665,
+            "p95_seconds": 0.784032326,
+            "sum_seconds": 10.179211947999999
+          },
+          "GetSubtreeRoots pool 1": {
+            "count": 32,
+            "median_seconds": 0.25932808399999996,
+            "p95_seconds": 0.356177211,
+            "sum_seconds": 7.446882508
+          },
+          "GetSubtreeRoots pool 2": {
+            "count": 32,
+            "median_seconds": 0.0024250664999999998,
+            "p95_seconds": 0.006611825,
+            "sum_seconds": 0.080198585
+          },
+          "GetBlockRange": {
+            "count": 352,
+            "median_seconds": 0.514612249,
+            "p95_seconds": 1.218482531,
+            "sum_seconds": 189.785115332
+          },
+          "GetTreeState": {
+            "count": 384,
+            "median_seconds": 0.0028739775000000004,
+            "p95_seconds": 0.008380425,
+            "sum_seconds": 1.472863214
+          }
+        },
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 41.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1725.016412,
+        "wallet_process_mean_cores": 21.645297981474098,
+        "wallet_process_peak_rss_bytes": 75382784
+      },
+      {
+        "label": "cached-i-overhead-4-subtrees-direct",
+        "binary": "subtrees",
+        "clients": 32,
+        "recorded": false,
+        "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+        "binary_sha256": "9500c506979337fcff4e0821ff07d999fba8d7177015442e353e8bf7925e12d1",
+        "batch_seconds": 71.94042962510139,
+        "wallet_elapsed_seconds": [
+          71.89651787502225,
+          71.5322238750523,
+          71.93261804094072,
+          71.08216649992391,
+          67.9459500410594,
+          68.65865841705818,
+          71.09279829193838,
+          71.92945012496784,
+          71.05384495900944,
+          67.93663191609085,
+          71.92059491702821,
+          71.90261016599834,
+          71.92549741605762,
+          71.0713152079843,
+          71.932199709001,
+          64.71280641609337,
+          71.05357062502299,
+          67.9629897091072,
+          71.92543558299076,
+          71.92906312493142,
+          71.92796341702342,
+          68.7177819579374,
+          71.93201754195616,
+          71.89792054099962,
+          67.94356675003655,
+          67.5151035420131,
+          71.9248344169464,
+          71.06805329199415,
+          71.93942112498917,
+          64.68407833296806,
+          71.90284454100765,
+          71.92961012502201
+        ],
+        "wallet_median_seconds": 71.71437087503728,
+        "wallet_p95_seconds": 71.93261804094072,
+        "process": {
+          "lwd": {
+            "cpu_seconds": 19.87,
+            "cpu_seconds_per_wallet": 0.6209375,
+            "mean_cores": 0.2695959039364407,
+            "sampled_peak_rss_bytes": 154009600,
+            "storage_read_bytes": 0
+          },
+          "node": {
+            "cpu_seconds": 7.370000000009895,
+            "cpu_seconds_per_wallet": 0.23031250000030923,
+            "mean_cores": 0.09999606502336363,
+            "sampled_peak_rss_bytes": 699301888,
+            "storage_read_bytes": 0
+          }
+        },
+        "allocation_bytes_per_wallet": 251223971.25,
+        "mallocs_per_wallet": 2926440.375,
+        "rpc_durations": {},
+        "backend_rpc_deltas": {
+          "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 37.0,
+          "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 384.0,
+          "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 96.0,
+          "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 64.0
+        },
+        "client_host": {
+          "platform": "darwin",
+          "machine": "arm64",
+          "logical_cpus": 28
+        },
+        "wallet_process_cpu_seconds": 1729.767778,
+        "wallet_process_mean_cores": 24.044446037009084,
+        "wallet_process_peak_rss_bytes": 77004800
+      }
+    ]
+  },
+  "overhead": [
+    {
+      "direct_label": "cached-h-n32-3-subtrees-direct",
+      "recorded_label": "cached-h-n32-2-subtrees",
+      "direct_wallet_median_seconds": 75.26396977057448,
+      "recorded_wallet_median_seconds": 76.62485145853134,
+      "change_percent": 1.8081449757503032
+    },
+    {
+      "direct_label": "cached-i-overhead-1-subtrees-direct",
+      "recorded_label": "cached-i-overhead-2-subtrees",
+      "direct_wallet_median_seconds": 76.90373854147037,
+      "recorded_wallet_median_seconds": 77.25186920847045,
+      "change_percent": 0.4526836713046656
+    },
+    {
+      "direct_label": "cached-i-overhead-4-subtrees-direct",
+      "recorded_label": "cached-i-overhead-3-subtrees",
+      "direct_wallet_median_seconds": 71.71437087503728,
+      "recorded_wallet_median_seconds": 79.64333827153314,
+      "change_percent": 11.056315909557558
+    }
+  ]
+}
