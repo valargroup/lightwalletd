@@ -5,6 +5,10 @@ contains three paired repeats for each of the subtree-hash, range-filtering and
 HTTP-connection PRs, plus response validation and recorder checks. The complete
 mainnet cache passed verification before these measurements.
 
+The [sequential wallet comparison](results/2026-09-05-single-wallet-cache.md)
+adds three paired repeats for PR 9's first wallet after restart and its next
+fresh wallet on the same process. The full disk cache remains enabled.
+
 A separate [uncached wallet report](results/2026-09-05-mainnet-wallet-repeats.md)
 measures direct hash lookup without a block cache. The September 4 measurements
 remain synthetic. Caught-up wallet polling, mempool observation and funded

@@ -1,0 +1,660 @@
+{
+  "schema": 1,
+  "method": {
+    "status": "complete",
+    "plan": [
+      "baseline",
+      "subtrees",
+      "subtrees",
+      "baseline",
+      "baseline",
+      "subtrees",
+      "baseline",
+      "subtrees"
+    ],
+    "primary_runs": 6,
+    "validation_runs": 2,
+    "phases": [
+      "cold",
+      "warm"
+    ],
+    "clients_per_phase": 1,
+    "cold_definition": "new LWD process with full disk cache retained; no OS cache drop",
+    "warm_definition": "same LWD process after one complete wallet; fresh untouched wallet DB copy"
+  },
+  "summary": {
+    "cold": {
+      "lwd_cpu_seconds": {
+        "baseline_median": 2.02,
+        "pr9_median": 1.97,
+        "change_percent": -2.4752475247524774,
+        "baseline_values": [
+          1.93,
+          2.02,
+          2.0300000000000002
+        ],
+        "pr9_values": [
+          1.97,
+          2.0,
+          1.96
+        ]
+      },
+      "allocated_bytes": {
+        "baseline_median": 1068544152.0,
+        "pr9_median": 1067353792.0,
+        "change_percent": -0.11140016982658096,
+        "baseline_values": [
+          1068810480.0,
+          1067655136.0,
+          1068544152.0
+        ],
+        "pr9_values": [
+          1067801352.0,
+          1067353792.0,
+          1067270664.0
+        ]
+      },
+      "wallet_seconds": {
+        "baseline_median": 35.97125441697426,
+        "pr9_median": 36.0004389580572,
+        "change_percent": 0.08113295339839954,
+        "baseline_values": [
+          35.83889462496154,
+          35.9875552499434,
+          35.97125441697426
+        ],
+        "pr9_values": [
+          36.68574270803947,
+          36.0004389580572,
+          35.91157108405605
+        ]
+      },
+      "node_cpu_seconds": {
+        "baseline_median": 0.2799999999947431,
+        "pr9_median": 0.2799999999897409,
+        "change_percent": -1.7865042778453244e-09,
+        "baseline_values": [
+          0.2799999999947431,
+          0.2799999999947431,
+          0.2699999999999818
+        ],
+        "pr9_values": [
+          0.2699999999999818,
+          0.2799999999897409,
+          0.2799999999947431
+        ]
+      },
+      "client_cpu_seconds": {
+        "baseline_median": 48.884698,
+        "pr9_median": 49.717047,
+        "change_percent": 1.702678003656688,
+        "baseline_values": [
+          45.437729999999995,
+          49.725875,
+          48.884698
+        ],
+        "pr9_values": [
+          49.944165000000005,
+          49.663767,
+          49.717047
+        ]
+      }
+    },
+    "warm": {
+      "lwd_cpu_seconds": {
+        "baseline_median": 2.01,
+        "pr9_median": 0.7400000000000001,
+        "change_percent": -63.18407960199004,
+        "baseline_values": [
+          1.9300000000000002,
+          2.01,
+          2.08
+        ],
+        "pr9_values": [
+          0.7399999999999999,
+          0.7400000000000001,
+          0.7799999999999999
+        ]
+      },
+      "allocated_bytes": {
+        "baseline_median": 1068290984.0,
+        "pr9_median": 224722176.0,
+        "change_percent": -78.96432906710743,
+        "baseline_values": [
+          1068482800.0,
+          1068290984.0,
+          1068103592.0
+        ],
+        "pr9_values": [
+          224722176.0,
+          224758952.0,
+          224689280.0
+        ]
+      },
+      "wallet_seconds": {
+        "baseline_median": 35.94161191594321,
+        "pr9_median": 34.85502970800735,
+        "change_percent": -3.0231871917070885,
+        "baseline_values": [
+          35.85325954097789,
+          35.99672054103576,
+          35.94161191594321
+        ],
+        "pr9_values": [
+          35.826298083993606,
+          34.85502970800735,
+          34.834912959020585
+        ]
+      },
+      "node_cpu_seconds": {
+        "baseline_median": 0.2699999999949796,
+        "pr9_median": 0.28000000000383807,
+        "change_percent": 3.703703707053485,
+        "baseline_values": [
+          0.28000000000929504,
+          0.26999999999452484,
+          0.2699999999949796
+        ],
+        "pr9_values": [
+          0.28000000000383807,
+          0.25999999999976353,
+          0.2899999999985994
+        ]
+      },
+      "client_cpu_seconds": {
+        "baseline_median": 49.571227,
+        "pr9_median": 49.287557,
+        "change_percent": -0.5722472836914072,
+        "baseline_values": [
+          45.454648,
+          49.571227,
+          49.667522000000005
+        ],
+        "pr9_values": [
+          49.078218,
+          49.287557,
+          49.442381
+        ]
+      }
+    }
+  },
+  "runs": [
+    {
+      "label": "single-j-1-baseline",
+      "binary": "baseline",
+      "phase": "cold",
+      "recorded": false,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.83889462496154,
+      "client_cpu_seconds": 45.437729999999995,
+      "process_cpu_seconds": {
+        "lwd": 1.93,
+        "node": 0.2799999999947431
+      },
+      "allocated_bytes": 1068810480.0,
+      "mallocs": 11466040.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0
+      },
+      "measurement_window_seconds": 37.62101483345032,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-1-baseline",
+      "binary": "baseline",
+      "phase": "warm",
+      "recorded": false,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.85325954097789,
+      "client_cpu_seconds": 45.454648,
+      "process_cpu_seconds": {
+        "lwd": 1.9300000000000002,
+        "node": 0.28000000000929504
+      },
+      "allocated_bytes": 1068482800.0,
+      "mallocs": 11467047.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0
+      },
+      "measurement_window_seconds": 37.89177751541138,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-2-subtrees",
+      "binary": "subtrees",
+      "phase": "cold",
+      "recorded": false,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 36.68574270803947,
+      "client_cpu_seconds": 49.944165000000005,
+      "process_cpu_seconds": {
+        "lwd": 1.97,
+        "node": 0.2699999999999818
+      },
+      "allocated_bytes": 1067801352.0,
+      "mallocs": 11457547.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 20.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0
+      },
+      "measurement_window_seconds": 38.831565856933594,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-2-subtrees",
+      "binary": "subtrees",
+      "phase": "warm",
+      "recorded": false,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 35.826298083993606,
+      "client_cpu_seconds": 49.078218,
+      "process_cpu_seconds": {
+        "lwd": 0.7399999999999999,
+        "node": 0.28000000000383807
+      },
+      "allocated_bytes": 224722176.0,
+      "mallocs": 2658352.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0
+      },
+      "measurement_window_seconds": 37.87384581565857,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-3-subtrees",
+      "binary": "subtrees",
+      "phase": "cold",
+      "recorded": false,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 36.0004389580572,
+      "client_cpu_seconds": 49.663767,
+      "process_cpu_seconds": {
+        "lwd": 2.0,
+        "node": 0.2799999999897409
+      },
+      "allocated_bytes": 1067353792.0,
+      "mallocs": 11457190.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0
+      },
+      "measurement_window_seconds": 37.97028565406799,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-3-subtrees",
+      "binary": "subtrees",
+      "phase": "warm",
+      "recorded": false,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 34.85502970800735,
+      "client_cpu_seconds": 49.287557,
+      "process_cpu_seconds": {
+        "lwd": 0.7400000000000001,
+        "node": 0.25999999999976353
+      },
+      "allocated_bytes": 224758952.0,
+      "mallocs": 2661090.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0
+      },
+      "measurement_window_seconds": 37.09674882888794,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-4-baseline",
+      "binary": "baseline",
+      "phase": "cold",
+      "recorded": false,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.9875552499434,
+      "client_cpu_seconds": 49.725875,
+      "process_cpu_seconds": {
+        "lwd": 2.02,
+        "node": 0.2799999999947431
+      },
+      "allocated_bytes": 1067655136.0,
+      "mallocs": 11464680.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0
+      },
+      "measurement_window_seconds": 37.94208288192749,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-4-baseline",
+      "binary": "baseline",
+      "phase": "warm",
+      "recorded": false,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.99672054103576,
+      "client_cpu_seconds": 49.571227,
+      "process_cpu_seconds": {
+        "lwd": 2.01,
+        "node": 0.26999999999452484
+      },
+      "allocated_bytes": 1068290984.0,
+      "mallocs": 11464980.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0
+      },
+      "measurement_window_seconds": 38.27221870422363,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-5-baseline",
+      "binary": "baseline",
+      "phase": "cold",
+      "recorded": false,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.97125441697426,
+      "client_cpu_seconds": 48.884698,
+      "process_cpu_seconds": {
+        "lwd": 2.0300000000000002,
+        "node": 0.2699999999999818
+      },
+      "allocated_bytes": 1068544152.0,
+      "mallocs": 11468523.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0
+      },
+      "measurement_window_seconds": 38.031089305877686,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-5-baseline",
+      "binary": "baseline",
+      "phase": "warm",
+      "recorded": false,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.94161191594321,
+      "client_cpu_seconds": 49.667522000000005,
+      "process_cpu_seconds": {
+        "lwd": 2.08,
+        "node": 0.2699999999949796
+      },
+      "allocated_bytes": 1068103592.0,
+      "mallocs": 11465211.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0
+      },
+      "measurement_window_seconds": 38.09999990463257,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-6-subtrees",
+      "binary": "subtrees",
+      "phase": "cold",
+      "recorded": false,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 35.91157108405605,
+      "client_cpu_seconds": 49.717047,
+      "process_cpu_seconds": {
+        "lwd": 1.96,
+        "node": 0.2799999999947431
+      },
+      "allocated_bytes": 1067270664.0,
+      "mallocs": 11457251.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0
+      },
+      "measurement_window_seconds": 38.232195138931274,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-6-subtrees",
+      "binary": "subtrees",
+      "phase": "warm",
+      "recorded": false,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 34.834912959020585,
+      "client_cpu_seconds": 49.442381,
+      "process_cpu_seconds": {
+        "lwd": 0.7799999999999999,
+        "node": 0.2899999999985994
+      },
+      "allocated_bytes": 224689280.0,
+      "mallocs": 2659035.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 18.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0
+      },
+      "measurement_window_seconds": 36.61752390861511,
+      "subtree_streams": []
+    },
+    {
+      "label": "single-j-7-baseline",
+      "binary": "baseline",
+      "phase": "cold",
+      "recorded": true,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.94861283397768,
+      "client_cpu_seconds": 49.591834,
+      "process_cpu_seconds": {
+        "lwd": 2.02,
+        "node": 0.27000000000907676,
+        "recorder": 0.62
+      },
+      "allocated_bytes": 1068167088.0,
+      "mallocs": 11474921.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0
+      },
+      "measurement_window_seconds": 38.041823387145996,
+      "subtree_streams": [
+        {
+          "pool": 0,
+          "seconds": 0.89770169,
+          "messages": 1128
+        },
+        {
+          "pool": 1,
+          "seconds": 0.292022175,
+          "messages": 769
+        },
+        {
+          "pool": 2,
+          "seconds": 0.002064372,
+          "messages": 2
+        }
+      ]
+    },
+    {
+      "label": "single-j-7-baseline",
+      "binary": "baseline",
+      "phase": "warm",
+      "recorded": true,
+      "source": "d79cd1100575ff909d70e00d5514a4092df94934",
+      "wallet_seconds": 35.82348920800723,
+      "client_cpu_seconds": 49.26650299999999,
+      "process_cpu_seconds": {
+        "lwd": 2.0399999999999996,
+        "node": 0.26999999999452484,
+        "recorder": 0.6100000000000001
+      },
+      "allocated_bytes": 1068709032.0,
+      "mallocs": 11478809.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0
+      },
+      "measurement_window_seconds": 37.97185444831848,
+      "subtree_streams": [
+        {
+          "pool": 0,
+          "seconds": 0.901571561,
+          "messages": 1128
+        },
+        {
+          "pool": 1,
+          "seconds": 0.289057782,
+          "messages": 769
+        },
+        {
+          "pool": 2,
+          "seconds": 0.001833183,
+          "messages": 2
+        }
+      ]
+    },
+    {
+      "label": "single-j-8-subtrees",
+      "binary": "subtrees",
+      "phase": "cold",
+      "recorded": true,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 35.94348595896736,
+      "client_cpu_seconds": 49.450489000000005,
+      "process_cpu_seconds": {
+        "lwd": 2.08,
+        "node": 0.2799999999947431,
+        "recorder": 0.6200000000000001
+      },
+      "allocated_bytes": 1067967216.0,
+      "mallocs": 11470449.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0
+      },
+      "measurement_window_seconds": 37.93285822868347,
+      "subtree_streams": [
+        {
+          "pool": 0,
+          "seconds": 0.887055982,
+          "messages": 1128
+        },
+        {
+          "pool": 1,
+          "seconds": 0.306954902,
+          "messages": 769
+        },
+        {
+          "pool": 2,
+          "seconds": 0.002143209,
+          "messages": 2
+        }
+      ]
+    },
+    {
+      "label": "single-j-8-subtrees",
+      "binary": "subtrees",
+      "phase": "warm",
+      "recorded": true,
+      "source": "c6ca3d123c3a07dff0c41cf6e91f1660e7e6e7c8",
+      "wallet_seconds": 34.79432666709181,
+      "client_cpu_seconds": 48.753363,
+      "process_cpu_seconds": {
+        "lwd": 0.7399999999999999,
+        "node": 0.2699999999999818,
+        "recorder": 0.47
+      },
+      "allocated_bytes": 224906104.0,
+      "mallocs": 2662285.0,
+      "blocks_delivered": 20423,
+      "backend_rpc_deltas": {
+        "rpc_requests_total{method=\"getblockchaininfo\",status=\"success\"}": 13.0,
+        "rpc_requests_total{method=\"z_getsubtreesbyindex\",status=\"success\"}": 3.0,
+        "rpc_requests_total{method=\"getbestblockhash\",status=\"success\"}": 19.0,
+        "rpc_requests_total{method=\"getaddressutxos\",status=\"success\"}": 2.0,
+        "rpc_requests_total{method=\"z_gettreestate\",status=\"success\"}": 12.0
+      },
+      "measurement_window_seconds": 37.0789954662323,
+      "subtree_streams": [
+        {
+          "pool": 0,
+          "seconds": 0.011115925,
+          "messages": 1128
+        },
+        {
+          "pool": 1,
+          "seconds": 0.008329093,
+          "messages": 769
+        },
+        {
+          "pool": 2,
+          "seconds": 0.001966498,
+          "messages": 2
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "all_16_wallets_complete": true,
+    "all_phase_counters_recomputed": true,
+    "all_process_identities_unchanged": true,
+    "blocks_per_wallet": 20423,
+    "subtree_roots_per_wallet": 1899,
+    "recorded_wallets_matching_exact_reference": 4,
+    "primary_wallets_without_recorder": 12
+  }
+}

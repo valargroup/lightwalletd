@@ -76,6 +76,10 @@ compares individual PRs using actual wallet syncs and real mainnet blocks. It
 includes three paired repeats per PR, a chart, raw measurements and the limits
 of each result. Start there for the measured change recommendation.
 
+The [sequential wallet comparison](results/2026-09-05-single-wallet-cache.md)
+measures PR 9 with one wallet at a time, first after restart and then with the
+same server's hash map populated by the previous wallet.
+
 A separate [uncached wallet report](results/2026-09-05-mainnet-wallet-repeats.md)
 measures direct hash lookup when completing blocks are absent from the cache.
 [Mainnet preparation](MAINNET.md) documents the pinned fixture, wallet request

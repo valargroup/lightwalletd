@@ -4,6 +4,8 @@
 
 This measures wallets restoring 20,423 blocks with missing subtree metadata against a complete mainnet block cache. It does not establish the same benefit for already-synced wallets or a production server's maximum capacity.
 
+The [sequential wallet comparison](2026-09-05-single-wallet-cache.md) separately tests PR 9 with one wallet at a time, both after restart and after a prior wallet has populated its hash map.
+
 ![CPU, allocations and wallet completion for three separate PRs](2026-09-05-cached-wallet-repeats.png)
 
 ## Which changes are worth taking
