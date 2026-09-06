@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "artifacts": {
-    "2026-09-05-cached-wallet-repeats.svg": "d696db4c8f1a45c9bb62d680a6b996663fc949d0996243d663155901e9d7cf5f",
+    "2026-09-05-cached-wallet-repeats.svg": "a76e4f3093b70620728e4d35bfd9afad881cea8ffd7a3bef29d602f982a701d1",
     "2026-09-05-cached-wallet-repeats.md": "1d82364f44b585917a0190933795a3e9e54f4c798ff5991aae2a1d5f0e85649e",
     "2026-09-05-cached-wallet-repeats.png": "085f4d3cf1ab5e916b2b6b32172040fe814754112a2fca9ec1e3e735991f9def",
     "2026-09-05-cached-wallet-repeats.json": "d180cae4422db2e7c227e1593be6d64eb3030e5f2d9610a0c67484f43e26049d",
-    "2026-09-05-cached-wallet-repeats-evidence.tar.gz": "2c9983f3cd3825fa8fcf5ab224cb2643807fc5a2617e827f62f53b32f0e0df16"
+    "2026-09-05-cached-wallet-repeats-evidence.tar.gz": "4340ea91fc7867cfe20b94c2a8b054574afdc7043a658017608b3bd44c6a1887"
   },
   "archive_members": {
     "cached-subtrees-20260905i/cached-i-subtrees-1-subtrees-direct/state.json": "4c79f197f596b1559fbcd6c5eef28d23cee105add5738272567942f916bca4b7",
@@ -426,7 +426,7 @@
     "operator-scripts/analyze_cached_matrix.py": "e262904c9b7cf5dc0c5e8972a2277aefefb99c1c9334715a8c11e7b55324f9bb",
     "operator-scripts/summarize_cached_repeats.py": "0497679f5639480f2311d120e22afc8bbe5340c7bdd982102f0f3ff0763fbebb",
     "operator-scripts/validate_cached_evidence.py": "e8df62e647ef253c6769abfd230055ff0c470c1c6d118ca746a0b980b797287e",
-    "operator-scripts/plot_cached_repeats.py": "f2e505b81ac73d4f3e7cf3818277d7d67338b3ba2a4134d6ee748efdb431e6c0",
+    "operator-scripts/plot_cached_repeats.py": "4867ff0a863b243a5088075a806ddd0a201f20db21ffa362fd0b85ed4173c6ee",
     "operator-scripts/write_cached_report.py": "cb597d1fee5a0262384850c11708e4e4430267daf0b6e603d40bb6657e39cad6",
     "operator-scripts/package_cached_evidence.py": "fd60cfeccb06f91d53eb12005f7c1d48e6bf752fc25baff0c1d09bd0877b6178",
     "operator-scripts/wallet_sessions.py": "0457e8a8f1e482728bebdd0efeaf7ad1e0de94faf8c369888771f04e1d8cf092",
